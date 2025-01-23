@@ -28,8 +28,6 @@ public class HeroSpawner : MonoBehaviour
 
         heroPool = new ObjectPool<Hero>(OnCreateHero, OnGetHero, OnReleaseHero, OnDestroyHero);
         
-        heroSummonButton.onClick.AddListener(OnClickCreateHero);
-        
         heroSpawnPositionList = new();
         heroSpawnPointInCellList = new();
         
@@ -63,7 +61,7 @@ public class HeroSpawner : MonoBehaviour
         HeroSummonProbabilityIndex = 0;
     }
 
-    private void OnClickCreateHero()
+    public void OnClickCreateHero()
     {
         Hero hero = heroPool.Get();
 

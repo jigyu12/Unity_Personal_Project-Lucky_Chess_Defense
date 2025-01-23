@@ -1,0 +1,4 @@
+﻿Id,WaveNumber,SpawnMonsterId,HpMultiplier,SpawnMonsterCount,WaveTime
+0,1,0,1.0,5,3
+1,2,1,1.1,10,6
+2,3,2,1.2,15,9
