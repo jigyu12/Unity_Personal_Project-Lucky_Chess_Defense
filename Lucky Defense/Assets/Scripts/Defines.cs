@@ -9,3 +9,13 @@ public enum HeroRarity
     
     Count
 }
+
+public enum MonsterType
+{
+    None = -1,
+    
+    Normal,
+    Boss,
+    
+    Count
+}
