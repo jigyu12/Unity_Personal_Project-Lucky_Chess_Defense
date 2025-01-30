@@ -16,5 +16,5 @@ MonoBehaviour:
   waveNumber: 2
   spawnMonsterId: 1
   hpMultiplier: 1.1
-  spawnMonsterCount: 10
-  waveTime: 6
+  spawnMonsterCount: 4
+  waveTime: 10

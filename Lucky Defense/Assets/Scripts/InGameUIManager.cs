@@ -1,29 +1,27 @@
-using System;
-using System.Reflection;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class InGameUIManager : MonoBehaviour
 {
-    [FormerlySerializedAs("windowManager")] public HeroSpawner heroSpawner;
-    public Button heroSpawnButton;
+    [SerializeField] private HeroSpawner heroSpawner;
+    [SerializeField] private Button heroSpawnButton;
     
-    public TMP_Text waveNumberText;
-    public TMP_Text waveTimeText;
+    [SerializeField] private TMP_Text waveNumberText;
+    [SerializeField] private TMP_Text waveTimeText;
 
-    public Slider monsterCountSlider;
-    public TMP_Text monsterCountText;
+    [SerializeField] private Slider monsterCountSlider;
+    [SerializeField] private TMP_Text monsterCountText;
 
     private void Start()
     {
+        heroSpawnButton.onClick.RemoveAllListeners();
         heroSpawnButton.onClick.AddListener(heroSpawner.OnClickCreateHero);
     }
 
     public void SetWaveNumberText(int waveNumber)
     {
-        waveNumberText.text = $"Wave : {waveNumber}";
+        waveNumberText.SetText($"Wave : {waveNumber}");
     }
 
     public void SetWaveTimeText(int waveTime)
@@ -31,13 +29,13 @@ public class InGameUIManager : MonoBehaviour
         int minutes = waveTime / 60;
         int seconds = waveTime % 60;
         
-        waveTimeText.text = string.Format("{0:D2} : {1:D2}", minutes, seconds);
+        waveTimeText.SetText($"{minutes:D2} : {seconds:D2}");
     }
 
     public void SetMonsterCountSliderAndText(int currMonsterCount, int maxMonsterCount)
     {
         monsterCountSlider.value = (float)currMonsterCount / maxMonsterCount;
         
-        monsterCountText.text = $"{currMonsterCount} / {maxMonsterCount}";
+        monsterCountText.SetText($"{currMonsterCount} / {maxMonsterCount}");
     }
 }

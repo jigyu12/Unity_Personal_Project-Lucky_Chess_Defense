@@ -5,38 +5,23 @@ public class HeroSummonProbabilityData : ScriptableObject
 {
     [SerializeField] private int id;
 
-    public float Id
-    {
-        get { return id; }
-    }
+    public float Id => id;
     
     [SerializeField] private float commonProbability;
 
-    public float CommonProbability
-    {
-        get { return commonProbability; }
-    }
+    public float CommonProbability => commonProbability;
     
     [SerializeField] private float rareProbability;
 
-    public float RareProbability
-    {
-        get { return rareProbability; }
-    }
+    public float RareProbability => rareProbability;
     
     [SerializeField] private float heroicProbability;
 
-    public float HeroicProbability
-    {
-        get { return heroicProbability; }
-    }
+    public float HeroicProbability => heroicProbability;
     
     [SerializeField] private float legendaryProbability;
 
-    public float LegendaryProbability
-    {
-        get { return legendaryProbability; }
-    }
+    public float LegendaryProbability => legendaryProbability;
 }
 
 public class HeroSummonProbabilityCsvData

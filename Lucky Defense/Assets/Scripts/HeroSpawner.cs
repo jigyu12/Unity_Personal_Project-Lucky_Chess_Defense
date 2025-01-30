@@ -7,76 +7,96 @@ using UnityEngine.UI;
 
 public class HeroSpawner : MonoBehaviour
 {
-    public Button heroSummonButton;
+    [SerializeField] private Button heroSummonButton;
     
-    public GameObject heroPrefab;
-    public GameObject heroSpawnPointInCellPrefab;
+    [SerializeField] private GameObject heroPrefab;
+    [SerializeField] private GameObject heroSpawnPointInCellPrefab;
 
-    public Tilemap heroSpawnTilemap;
-    public IObjectPool<Hero> heroPool { get; private set; }
+    [SerializeField] private Tilemap heroSpawnTilemap;
+    private IObjectPool<Hero> HeroPool { get; set; }
 
-    public int HeroSummonProbabilityIndex { get; set; }
+    private int HeroSummonProbabilityIndex { get; set; }
+
+    private readonly List<Vector3Int> heroSpawnPositionList = new();
+    private List<HeroSpawnPointInCell> HeroSpawnPointInCellList { get; } = new();
+
+    private RectTransform heroSummonButtonRectTr;
     
-    private List<Vector3Int> heroSpawnPositionList;
-    private List<HeroSpawnPointInCell> heroSpawnPointInCellList;
+    public Dictionary<Collider2D, HeroSpawnPointInCell> CurrCellsDict { get; } = new();
+
+    private void Awake()
+    {
+        HeroPool = new ObjectPool<Hero>(OnCreateHero, OnGetHero, OnReleaseHero, OnDestroyHero);
+        
+        HeroSummonProbabilityIndex = 0;
+        
+        foreach (var pair in CurrCellsDict)
+            Destroy(pair.Value.gameObject);
+        
+        CurrCellsDict.Clear();
+    }
     
     private void Start()
     {
-        RectTransform heroSummonButtonRectTr = heroSummonButton.GetComponent<RectTransform>();
+        heroSummonButton.TryGetComponent(out heroSummonButtonRectTr);
         RectTransformUtility.ScreenPointToWorldPointInRectangle(heroSummonButtonRectTr, heroSummonButtonRectTr.position, Camera.main, out Vector3 position);
         transform.position = position;
 
-        heroPool = new ObjectPool<Hero>(OnCreateHero, OnGetHero, OnReleaseHero, OnDestroyHero);
-        
-        heroSpawnPositionList = new();
-        heroSpawnPointInCellList = new();
+        heroSpawnPositionList.Clear();
+
+        foreach (var cell in HeroSpawnPointInCellList)
+            Destroy(cell.gameObject);
+        HeroSpawnPointInCellList.Clear();
         
         BoundsInt bounds = heroSpawnTilemap.cellBounds;
-        
         foreach (Vector3Int cellPos in bounds.allPositionsWithin)
         {
             if (heroSpawnTilemap.HasTile(cellPos))
-            {
                 heroSpawnPositionList.Add(cellPos);
-            }
         }
         
         heroSpawnPositionList.Sort((a, b) =>
         {
             if (a.y != b.y)
-            {
                 return b.y.CompareTo(a.y);
-            }
+            
             return a.x.CompareTo(b.x);
         });
 
-        for (int i = 0; i < heroSpawnPositionList.Count; i++)
+        foreach (var pos in heroSpawnPositionList)
         {
-            HeroSpawnPointInCell cell = Instantiate(heroSpawnPointInCellPrefab).GetComponent<HeroSpawnPointInCell>();
-            heroSpawnPointInCellList.Add(cell);
+            Instantiate(heroSpawnPointInCellPrefab).TryGetComponent(out HeroSpawnPointInCell cell);
+            HeroSpawnPointInCellList.Add(cell);
+            CurrCellsDict.Add(cell.Coll2D, cell);
             
-            cell.transform.position = heroSpawnPositionList[i];
+            cell.transform.position = pos;
         }
-
-        HeroSummonProbabilityIndex = 0;
     }
 
     public void OnClickCreateHero()
     {
-        Hero hero = heroPool.Get();
+        Hero hero = HeroPool.Get();
 
         bool success = SetHeroDataByRandData(hero);
-        Debug.Assert(success, "SetHeroData Failed");
-        Debug.Log(hero.heroData.HeroId);
-
-        for (int i = 0; i < heroSpawnPointInCellList.Count; i++)
+        if (!success)
         {
-            if(heroSpawnPointInCellList[i].CanSpawnHero(hero))
+            Debug.Assert(false, "SetHeroData Failed");
+            
+            return;
+        }
+        
+        foreach (var cell in HeroSpawnPointInCellList)
+        {
+            if (cell.CanSpawnHero(hero))
+            {
+                hero.Initialize();
+                
                 return;
+            }
         }
         
         Debug.Log("Cant Spawn Hero");
-        hero.DestroyHero();
+        HeroPool.Release(hero);
     }
 
     private bool SetHeroDataByRandData(Hero hero)
@@ -85,9 +105,10 @@ public class HeroSpawner : MonoBehaviour
             return false;
 
         HeroSummonProbabilityData pData = heroSummonProbabilityDataLists[HeroSummonProbabilityIndex];
-        
-        List<float> probabilities = new();
-        foreach (var property in typeof(HeroSummonProbabilityData).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+
+        var properties = typeof(HeroSummonProbabilityData).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        List<float> probabilities = new(properties.Length);
+        foreach (var property in properties)
         {
             if (property.PropertyType == typeof(float) && property.Name.EndsWith("Probability"))
             {
@@ -117,16 +138,16 @@ public class HeroSpawner : MonoBehaviour
             return false;
 
         var dataList = heroDataRarityLists[listIndex].dataList;
-        hero.heroData = dataList[Random.Range(0, dataList.Count)];
+        hero.SetHeroData(dataList[Random.Range(0, dataList.Count)]);
         
         return true;
     }
     
     private Hero OnCreateHero()
     {
-        var hero = Instantiate(heroPrefab).GetComponent<Hero>();
+        Instantiate(heroPrefab).TryGetComponent(out Hero hero);
         
-        hero.SetPool(heroPool);
+        hero.SetPool(HeroPool);
         
         return hero;
     }
@@ -144,6 +165,22 @@ public class HeroSpawner : MonoBehaviour
     private void OnDestroyHero(Hero hero)
     {
         Destroy(hero.gameObject);
+    }
+
+    public void SortHeroSpawnPointInCellList()
+    {
+        HeroSpawnPointInCellList.Sort(CellPositionCmp);
+    }
+    
+    private int CellPositionCmp(HeroSpawnPointInCell cell1, HeroSpawnPointInCell cell2)
+    {
+        Vector3 cell1Pos = cell1.transform.position;
+        Vector3 cell2Pos = cell2.transform.position;
+        
+        if (System.Math.Abs(cell1Pos.y - cell2Pos.y) > 0.0001f) 
+            return cell2Pos.y.CompareTo(cell1Pos.y);
+        
+        return cell1Pos.x.CompareTo(cell2Pos.x);
     }
     
     [System.Serializable]

@@ -1,90 +1,112 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class WaveManager : MonoBehaviour
 {
-    public InGameUIManager inGameUIManager;
-    public MonsterSpawner monsterSpawner;
+    [SerializeField] private InGameUIManager inGameUIManager;
+    [SerializeField] private MonsterSpawner monsterSpawner;
     
-    private int waveIndex;
+    private int currWaveIndex;
     private float waveTimeAccumF;
     private int waveTimeAccumI;
     
     private float spawnMonsterIntervalAccum;
+    private float spawnMonsterIntervalDelay;
     private int spawnMonsterCount;
-
-    private int currentMonsterCountToSlider;
-    private const int maxMonsterCount = 100;
     
-    private void Start()
+    public int CurrentMonsterCountToSlider { get; set; }
+    public int MaxMonsterCount => 100;
+    public float CurrHpMultiplier => waveDataList[currWaveIndex].HpMultiplier;
+
+    public Dictionary<Collider2D, Monster> CurrMonstersDict { get; } = new();
+
+    private void Awake()
     {
-        waveIndex = 0;
+        currWaveIndex = 0;
         waveTimeAccumF = 0f;
         waveTimeAccumI = -1;
+        
+        spawnMonsterIntervalDelay =  waveDataList[currWaveIndex].WaveTime / (float)waveDataList[currWaveIndex].SpawnMonsterCount;
+        spawnMonsterIntervalAccum = spawnMonsterIntervalDelay;
 
-        spawnMonsterIntervalAccum = 0f;
         spawnMonsterCount = 0;
 
-        currentMonsterCountToSlider = 0;
+        CurrentMonsterCountToSlider = 0;
         
-        inGameUIManager.SetWaveTimeText(waveDataList[waveIndex].WaveTime);
-        inGameUIManager.SetWaveNumberText(waveDataList[waveIndex].WaveNumber);
-        inGameUIManager.SetMonsterCountSliderAndText(0, maxMonsterCount);
+        foreach (var pair in CurrMonstersDict)
+            pair.Value.DestroyMonster();
+        
+        CurrMonstersDict.Clear();
+    }
+
+    private void Start()
+    {
+        inGameUIManager.SetWaveTimeText(waveDataList[currWaveIndex].WaveTime);
+        inGameUIManager.SetWaveNumberText(waveDataList[currWaveIndex].WaveNumber);
+        inGameUIManager.SetMonsterCountSliderAndText(0, MaxMonsterCount);
     }
 
     private void Update()
     {
-        CalculateWaveTime();
+        float deltaTime = Time.deltaTime;
         
-        SpawnMonsterAtInterval();
+        CalculateWaveTime(deltaTime);
+        
+        SpawnMonsterAtInterval(deltaTime);
     }
 
-    private void CalculateWaveTime()
+    private void CalculateWaveTime(float deltaTime)
     {
-        waveTimeAccumF += Time.deltaTime;
+        waveTimeAccumF += deltaTime;
 
         if (waveTimeAccumF >= 1f)
         {
             waveTimeAccumF = 0f;
             ++waveTimeAccumI;
 
-            if (waveDataList[waveIndex].WaveTime - waveTimeAccumI >= 0)
-                inGameUIManager.SetWaveTimeText(waveDataList[waveIndex].WaveTime - waveTimeAccumI);
+            int remainWaveTime = waveDataList[currWaveIndex].WaveTime - waveTimeAccumI;
+            if (remainWaveTime >= 0)
+                inGameUIManager.SetWaveTimeText(remainWaveTime);
             else
             {
                 waveTimeAccumI = 0;
                 spawnMonsterCount = 0;
 
-                if (++waveIndex >= waveDataList.Count)
-                    waveIndex = waveDataList.Count - 1;
+                if (++currWaveIndex >= waveDataList.Count)
+                    currWaveIndex = waveDataList.Count - 1;
+                
+                spawnMonsterIntervalDelay =  waveDataList[currWaveIndex].WaveTime / (float)waveDataList[currWaveIndex].SpawnMonsterCount;
+                spawnMonsterIntervalAccum = spawnMonsterIntervalDelay;
 
-                inGameUIManager.SetWaveTimeText(waveDataList[waveIndex].WaveTime);
-                inGameUIManager.SetWaveNumberText(waveDataList[waveIndex].WaveNumber);
+                inGameUIManager.SetWaveTimeText(waveDataList[currWaveIndex].WaveTime);
+                inGameUIManager.SetWaveNumberText(waveDataList[currWaveIndex].WaveNumber);
             }
         }
     }
 
-    private void SpawnMonsterAtInterval()
+    private void SpawnMonsterAtInterval(float deltaTime)
     {
-        spawnMonsterIntervalAccum += Time.deltaTime;
+        spawnMonsterIntervalAccum += deltaTime;
 
-        if (spawnMonsterIntervalAccum >=
-            waveDataList[waveIndex].WaveTime / (float)waveDataList[waveIndex].SpawnMonsterCount
-            && spawnMonsterCount < (float)waveDataList[waveIndex].SpawnMonsterCount)
+        if (spawnMonsterIntervalAccum >= spawnMonsterIntervalDelay
+            && spawnMonsterCount < (float)waveDataList[currWaveIndex].SpawnMonsterCount)
         {
             spawnMonsterCount++;
             
             spawnMonsterIntervalAccum = 0f;
             
-            MonsterType currMonsterType = monsterSpawner.SpawnMonster(waveDataList[waveIndex].SpawnMonsterId);
+            Monster monster = monsterSpawner.SpawnMonster(waveDataList[currWaveIndex].SpawnMonsterId);
+            
+            if (monster is null)
+                return;
 
-            if (currMonsterType == MonsterType.Normal)
+            CurrMonstersDict.Add(monster.Coll2D, monster);
+
+            if (monster.Type == MonsterType.Normal)
             {
-                ++currentMonsterCountToSlider;
+                ++CurrentMonsterCountToSlider;
                 
-                inGameUIManager.SetMonsterCountSliderAndText(currentMonsterCountToSlider, maxMonsterCount);
+                inGameUIManager.SetMonsterCountSliderAndText(CurrentMonsterCountToSlider, MaxMonsterCount);
             }
         }
     }

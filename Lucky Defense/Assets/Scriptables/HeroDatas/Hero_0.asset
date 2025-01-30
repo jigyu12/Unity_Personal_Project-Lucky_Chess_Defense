@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: Hero_0
   m_EditorClassIdentifier: 
   heroId: 0
-  attackRange: 10
-  damage: 100
+  attackRange: 1
+  damage: 30
   rarity: 0
   cost: 1
+  attackMethod: 0
+  attackSpeed: 1

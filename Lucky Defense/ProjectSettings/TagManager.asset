@@ -3,7 +3,13 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - WaveManager
+  - InGameUIManager
+  - Cells
+  - Monsters
+  - Projectiles
+  - Heroes
   layers:
   - Default
   - TransparentFX
@@ -11,8 +17,8 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
+  - Monster
+  - Cell
   - 
   - 
   - 
