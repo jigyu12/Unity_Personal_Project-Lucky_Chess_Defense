@@ -1,31 +1,41 @@
-using System;
 using System.Collections.Generic;
-using System.Reflection;
-using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.Tilemaps;
-using UnityEngine.UI;
 
 public class MonsterSpawner : MonoBehaviour
 {
-    public GameObject monsterPrefab;
+    [SerializeField] private GameObject monsterPrefab;
 
-    public Tilemap monsterSpawnTilemap;
+    [SerializeField] private Tilemap monsterSpawnTilemap;
 
-    public Vector3 monsterSpawnCellPosition;
-    public List<Vector3> monsterWayCellPoint;
+    [SerializeField] private Vector3 monsterSpawnCellPosition;
+    [SerializeField] private List<Vector3> monsterWayCellPoint;
 
-    public IObjectPool<Monster> monsterPool { get; private set; }
-    
-    private Dictionary<int, MonsterData> monsterDataDictionary { get; set; }
+    private IObjectPool<Monster> MonsterPool { get; set; }
+
+    private Dictionary<int, MonsterData> MonsterDataDict { get; } = new();
     
     private Vector3 cellSizeOffset;
 
+    private void Awake()
+    {
+        MonsterPool = new ObjectPool<Monster>(OnCreateMonster, OnGetMonster, OnReleaseMonster, OnDestroyMonster);
+        
+        MonsterDataDict.Clear();
+        foreach (var monsterDataList in monsterDataLists)
+        {
+            List<MonsterData> dataList = monsterDataList.dataList;
+            foreach (var monsterData in dataList)
+            {
+                if(!MonsterDataDict.TryAdd(monsterData.Id, monsterData))
+                    Debug.Assert(false, "Duplicate monster ID");
+            }
+        }
+    }
+
     private void Start()
     {
-        monsterPool = new ObjectPool<Monster>(OnCreateMonster, OnGetMonster, OnReleaseMonster, OnDestroyMonster);
-        
         cellSizeOffset = monsterSpawnTilemap.cellSize * 0.5f;
         
         monsterSpawnCellPosition += cellSizeOffset;
@@ -33,45 +43,13 @@ public class MonsterSpawner : MonoBehaviour
         {
             monsterWayCellPoint[i] += cellSizeOffset;
         }
-        
-        monsterDataDictionary = new Dictionary<int, MonsterData>();
-        for (int i = 0; i < monsterDataLists.Count; i++)
-        {
-            List<MonsterData> monsterDataList = monsterDataLists[i].dataList;
-            for (int j = 0; j < monsterDataList.Count; j++)
-            {
-                MonsterData monsterData = monsterDataList[j];
-                if(monsterDataDictionary.ContainsKey(monsterData.Id))
-                    Debug.Assert(false, "Duplicate monster ID");
-                else
-                    monsterDataDictionary.Add(monsterData.Id, monsterData);
-            }
-        }
-    }
-    
-    void Update()
-    {
-#if UNITY_STANDALONE || UNITY_EDITOR
-        if (Input.GetMouseButtonDown(0))
-        {
-            Debug.Log("Tilemap Cell Size: " + monsterSpawnTilemap.cellSize);
-            
-            Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector3Int cellPosition = monsterSpawnTilemap.WorldToCell(mouseWorldPos);
-
-            if (monsterSpawnTilemap.HasTile(cellPosition))
-            {
-                Debug.Log($"Cell Position: {cellPosition}");
-            }
-        }
-#endif
     }
     
     private Monster OnCreateMonster()
     {
-        var monster = Instantiate(monsterPrefab).GetComponent<Monster>();
+        Instantiate(monsterPrefab).TryGetComponent(out Monster monster);
 
-        monster.SetPool(monsterPool);
+        monster.SetPool(MonsterPool);
 
         return monster;
     }
@@ -91,31 +69,38 @@ public class MonsterSpawner : MonoBehaviour
         Destroy(monster.gameObject);
     }
 
-    public MonsterType SpawnMonster(int spawnMonsterId)
+    public Monster SpawnMonster(int spawnMonsterId)
     {
-        Monster monster = monsterPool.Get();
-        
-        monster.transform.position = monsterSpawnCellPosition;
-
-        monster.waypoint = monsterWayCellPoint;
+        Monster monster = MonsterPool.Get();
         
         bool success = SetMonsterData(monster, spawnMonsterId);
+        
         if (success)
-            return monster.monsterData.Type;
+        {
+            monster.transform.position = monsterSpawnCellPosition;
+
+            monster.SetWaypoint(monsterWayCellPoint);
+            
+            monster.Initialize();
+
+            return monster;
+        }
         else
         {
+            MonsterPool.Release(monster);
+            
             Debug.Assert(false, "SetMonsterData Failed");
             
-            return MonsterType.None;
+            return null;
         }
     }
 
     private bool SetMonsterData(Monster monster, int spawnMonsterId)
     {
-        if (!monsterDataDictionary.ContainsKey(spawnMonsterId))
+        if (!MonsterDataDict.TryGetValue(spawnMonsterId, out MonsterData monsterData))
             return false;
 
-        monster.monsterData = monsterDataDictionary[spawnMonsterId];
+        monster.SetMonsterData(monsterData);
         
         return true;
     }
@@ -142,4 +127,18 @@ public class MonsterSpawner : MonoBehaviour
             monsterDataLists.RemoveAt(monsterDataLists.Count - 1);
         }
     }
+    
+    // Get Tilemap cellSize by Click MouseLeftButton
+    // if (Input.GetMouseButtonDown(0))
+    // {
+    //     Debug.Log("Tilemap Cell Size: " + monsterSpawnTilemap.cellSize);
+    //     
+    //     Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+    //     Vector3Int cellPosition = monsterSpawnTilemap.WorldToCell(mouseWorldPos);
+    //
+    //     if (monsterSpawnTilemap.HasTile(cellPosition))
+    //     {
+    //         Debug.Log($"Cell Position: {cellPosition}");
+    //     }
+    // }
 }

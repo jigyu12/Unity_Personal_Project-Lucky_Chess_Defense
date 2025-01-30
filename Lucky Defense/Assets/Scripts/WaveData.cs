@@ -5,45 +5,27 @@ public class WaveData : ScriptableObject
 {
     [SerializeField] private int id;
 
-    public int Id
-    {
-        get { return id; }
-    }
+    public int Id => id;
     
     [SerializeField] private int waveNumber;
 
-    public int WaveNumber
-    {
-        get { return waveNumber; }
-    }
+    public int WaveNumber => waveNumber;
     
     [SerializeField] private int spawnMonsterId;
 
-    public int SpawnMonsterId
-    {
-        get { return spawnMonsterId; }
-    }
+    public int SpawnMonsterId => spawnMonsterId;
     
     [SerializeField] private float hpMultiplier;
 
-    public float HpMultiplier
-    {
-        get { return hpMultiplier; }
-    }
+    public float HpMultiplier => hpMultiplier;
     
     [SerializeField] private int spawnMonsterCount;
 
-    public int SpawnMonsterCount
-    {
-        get { return spawnMonsterCount; }
-    }
+    public int SpawnMonsterCount => spawnMonsterCount;
     
     [SerializeField] private int waveTime;
 
-    public int WaveTime
-    {
-        get { return waveTime; }
-    }
+    public int WaveTime => waveTime;
 }
 
 public class WaveCsvData

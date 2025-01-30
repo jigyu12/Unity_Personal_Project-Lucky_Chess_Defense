@@ -5,45 +5,27 @@ public class MonsterData : ScriptableObject
 {
     [SerializeField] private int id;
 
-    public int Id
-    {
-        get { return id; }
-    }
+    public int Id => id;
     
     [SerializeField] private MonsterType type;
 
-    public MonsterType Type
-    {
-        get { return type; }
-    }
+    public MonsterType Type => type;
     
     [SerializeField] private int hp;
 
-    public int Hp
-    {
-        get { return hp; }
-    }
+    public int Hp => hp;
     
     [SerializeField] private float speed;
 
-    public float Speed
-    {
-        get { return speed; }
-    }
+    public float Speed => speed;
     
     [SerializeField] private int rewardType;
 
-    public int RewardType
-    {
-        get { return rewardType; }
-    }
+    public int RewardType => rewardType;
     
     [SerializeField] private int quantity;
 
-    public int Quantity
-    {
-        get { return quantity; }
-    }
+    public int Quantity => quantity;
 }
 
 public class MonsterCsvData

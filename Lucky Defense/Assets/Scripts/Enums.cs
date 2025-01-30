@@ -10,6 +10,16 @@ public enum HeroRarity
     Count
 }
 
+public enum HeroAttackMethod
+{
+    None = -1,
+    
+    Melee,
+    Ranged,
+    
+    Count
+}
+
 public enum MonsterType
 {
     None = -1,
