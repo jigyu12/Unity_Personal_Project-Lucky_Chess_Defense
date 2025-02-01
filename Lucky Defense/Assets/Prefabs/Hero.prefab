@@ -98,10 +98,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1899ec88b09741439dd4099ec6e592b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  heroData: {fileID: 0}
   monsterLayer:
     serializedVersion: 2
     m_Bits: 64
   heroProjectilePrefab: {fileID: 7488080384236013488, guid: dea7b48e8205a464690b83adb6a85a52, type: 3}
+  destPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &7938855073979272616
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -30,7 +30,6 @@ public class HeroSpawnPointInCell : MonoBehaviour
     [SerializeField] private float outlineThickness = 0.025f;
     private float circleSpeed;
     private bool isCellSwapping;
-    private readonly Vector3 centerPosOffset = new(0.5f, 0.5f, 0f);
     
     private Camera mainCamera;
     
@@ -39,7 +38,7 @@ public class HeroSpawnPointInCell : MonoBehaviour
     [SerializeField] private SpriteRenderer squareRenderer;
     public Collider2D Coll2D { get; private set; }
     
-    public LayerMask cellMask;
+    [SerializeField] private LayerMask cellLayer;
     
     private void Awake()
     {
@@ -102,10 +101,10 @@ public class HeroSpawnPointInCell : MonoBehaviour
         if (Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
-
+            
             Vector2 touchPosition = mainCamera.ScreenToWorldPoint(touch.position);
 
-            Collider2D hitCollider = Physics2D.OverlapPoint(touchPosition, cellMask);
+            Collider2D hitCollider = Physics2D.OverlapPoint(touchPosition, cellLayer);
 
             if (touch.phase == TouchPhase.Began)
             {
@@ -162,7 +161,7 @@ public class HeroSpawnPointInCell : MonoBehaviour
         if(!isCellSwapping)
             return;
         
-        Vector3 destPosition = transform.position + centerPosOffset;
+        Vector3 destPosition = singlePos.transform.position;
         
         circleRenderer.transform.position = Vector3.MoveTowards(circleRenderer.transform.position, destPosition, 
             circleSpeed * Time.deltaTime);
@@ -199,7 +198,7 @@ public class HeroSpawnPointInCell : MonoBehaviour
         AttackRange = hero.AttackRange;
 
         heroList.Add(hero);
-        HeroCount++;
+        ++HeroCount;
 
         PlaceHero();
                 
@@ -214,7 +213,7 @@ public class HeroSpawnPointInCell : MonoBehaviour
                 break;
             case 1:
             {
-                for (int i = 0; i < singlePosList.Count; i++)
+                for (int i = 0; i < singlePosList.Count; ++i)
                 {
                     if (teleport)
                     {
@@ -234,7 +233,7 @@ public class HeroSpawnPointInCell : MonoBehaviour
                 break;
             case 2:
             {
-                for (int i = 0; i < doublePosList.Count; i++)
+                for (int i = 0; i < doublePosList.Count; ++i)
                 {
                     if (teleport)
                     {
@@ -255,7 +254,7 @@ public class HeroSpawnPointInCell : MonoBehaviour
                 break; 
             case 3:
             {
-                for (int i = 0; i < triplePosList.Count; i++)
+                for (int i = 0; i < triplePosList.Count; ++i)
                 {
                     if (teleport)
                     {
@@ -277,5 +276,10 @@ public class HeroSpawnPointInCell : MonoBehaviour
                 Debug.Assert(false, "Invalid Hero Count");
                 break;
         }
+    }
+
+    public Vector3 GetCenterPos()
+    {
+        return singlePos.transform.position;
     }
 }

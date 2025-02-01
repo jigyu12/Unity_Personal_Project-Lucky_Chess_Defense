@@ -10,15 +10,16 @@ TagManager:
   - Monsters
   - Projectiles
   - Heroes
+  - GameManager
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Cell
   - Water
   - UI
   - Monster
-  - Cell
+  - 
   - 
   - 
   - 
