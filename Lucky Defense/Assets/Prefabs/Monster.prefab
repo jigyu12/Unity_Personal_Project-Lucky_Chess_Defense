@@ -174,10 +174,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b14d61efefe8bb0498ce901b3fca7420, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  monsterData: {fileID: 0}
   waypoint: []
   currentWaypointIndex: 0
   hpSlider: {fileID: 2394716122442939013}
   hpFill: {fileID: 8018042057712477327}
+  sliderPosOffset: {x: 0, y: 0.7, z: 0}
 --- !u!58 &2662048261956627102
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -425,7 +427,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 10}
   m_SizeDelta: {x: 30, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2394716122442939013

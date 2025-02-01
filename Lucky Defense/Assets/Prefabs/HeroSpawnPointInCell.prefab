@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7335744233997560874}
   - component: {fileID: 750285118488602869}
   - component: {fileID: 7965957327728828410}
-  m_Layer: 7
+  m_Layer: 3
   m_Name: HeroSpawnPointInCell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -62,9 +62,9 @@ MonoBehaviour:
   circleOutlineRenderer: {fileID: 8486341289021127260}
   outlineThickness: 0.025
   squareRenderer: {fileID: 8231177153636090944}
-  cellMask:
+  cellLayer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 8
 --- !u!61 &7965957327728828410
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -120,7 +120,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5102263016744939763}
   - component: {fileID: 8486341289021127260}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: AttackRangeCircleOutline
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -203,7 +203,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6497881985987563630}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Single
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -235,7 +235,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 96328519929535978}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: triple pos 0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -266,7 +266,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3353153085177384680}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: single pos 0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -297,7 +297,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2295259214174573091}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: double pos 0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -328,7 +328,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7901397543160609696}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: triple pos 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -360,7 +360,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2543391169896412431}
   - component: {fileID: 8231177153636090944}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: SwapPlaceSquare
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -443,7 +443,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3306748677296770952}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Triple
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -478,7 +478,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8740394084964101650}
   - component: {fileID: 8710703950791274483}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: AttackRangeCircle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -561,7 +561,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3914566097246472579}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: double pos 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -592,7 +592,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7934339129544416195}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Double
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -625,7 +625,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8902983656202392285}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: triple pos 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}

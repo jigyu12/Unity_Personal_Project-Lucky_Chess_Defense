@@ -33,7 +33,7 @@ public class Monster : MonoBehaviour
     [SerializeField] private Slider hpSlider;
     [SerializeField] private Image hpFill;
     private RectTransform hpSliderRectTr;
-    private readonly Vector3 sliderPosOffset = new(0, 0.3f, 0);
+    [SerializeField] private Vector3 sliderPosOffset;
 
     private GameObject parent;
     
@@ -69,17 +69,6 @@ public class Monster : MonoBehaviour
     {
         parent = GameObject.FindGameObjectWithTag("Monsters");
         transform.SetParent(parent.transform);
-        
-        OnDead.RemoveAllListeners();
-        OnDead.AddListener(() => { IsDead = true; });
-        OnDead.AddListener(() => waveManager.CurrMonstersDict.Remove(Coll2D));
-        OnDead.AddListener(() => Coll2D.enabled = false);
-        if (monsterData.Type == MonsterType.Normal)
-            OnDead.AddListener(() => inGameUIManager.SetMonsterCountSliderAndText
-                (--waveManager.CurrentMonsterCountToSlider, waveManager.MaxMonsterCount));
-        
-        OnDestroy.RemoveAllListeners();
-        OnDestroy.AddListener(DestroyMonster);
     }
 
     private void Update()
@@ -89,7 +78,7 @@ public class Monster : MonoBehaviour
         
         transform.position = Vector3.MoveTowards(transform.position, waypoint[currentWaypointIndex], monsterData.Speed * Time.deltaTime);
         
-        hpSliderRectTr.position = mainCamera.WorldToScreenPoint(transform.position + sliderPosOffset);
+        hpSliderRectTr.position = mainCamera.WorldToScreenPoint(transform.position + sliderPosOffset * transform.localScale.y);
         
         if (Vector3.Distance(transform.position, waypoint[currentWaypointIndex]) < 0.01f)
         {
@@ -111,7 +100,20 @@ public class Monster : MonoBehaviour
         hpSlider.value = 1f;
         hpFill.color = Color.green;
         
-        hpSliderRectTr.position = mainCamera.WorldToScreenPoint(transform.position + sliderPosOffset);
+        hpSliderRectTr.position = mainCamera.WorldToScreenPoint(transform.position + sliderPosOffset * transform.localScale.y);
+        
+        OnDead.RemoveAllListeners();
+        OnDead.AddListener(() => { IsDead = true; });
+        OnDead.AddListener(() => waveManager.CurrMonstersDict.Remove(Coll2D));
+        OnDead.AddListener(() => Coll2D.enabled = false);
+        if (monsterData.Type == MonsterType.Normal)
+            OnDead.AddListener(() => inGameUIManager.SetMonsterCountSliderAndText
+                (--waveManager.CurrentMonsterCountToSlider, waveManager.MaxMonsterCount));
+        
+        OnDestroy.RemoveAllListeners();
+        if (monsterData.Type == MonsterType.Boss)
+            OnDestroy.AddListener(() => waveManager.ReduceBossMonsterCount());
+        OnDestroy.AddListener(DestroyMonster);
     }
 
     public void SetPool(IObjectPool<Monster> pool)
@@ -156,6 +158,6 @@ public class Monster : MonoBehaviour
 
     public void SetMonsterData(MonsterData newMonsterData)
     {
-        this.monsterData = newMonsterData;
+        monsterData = newMonsterData;
     }
 }

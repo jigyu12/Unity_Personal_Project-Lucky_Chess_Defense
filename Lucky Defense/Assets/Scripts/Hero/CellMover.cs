@@ -3,16 +3,17 @@ using UnityEngine;
 public class CellMover : MonoBehaviour
 {
     private LineRenderer lineRenderer;
-    private readonly Vector3 centerPosOffset = new(0.5f, 0.5f, -1f);
     
     private HeroSpawner heroSpawner;
     private HeroSpawnPointInCell touchedCell;
     private HeroSpawnPointInCell firstSelectedMoveCell;
     private HeroSpawnPointInCell lastSelectedMoveCell;
     
-    public LayerMask cellMask;
+    [SerializeField] private LayerMask cellLayer;
     
     private Camera mainCamera;
+    
+    [SerializeField] private float cameraDistanceZ;
 
     private void Awake()
     {
@@ -43,7 +44,7 @@ public class CellMover : MonoBehaviour
             
             Vector2 touchPosition = mainCamera.ScreenToWorldPoint(touch.position);
             
-            Collider2D hitCollider = Physics2D.OverlapPoint(touchPosition, cellMask);
+            Collider2D hitCollider = Physics2D.OverlapPoint(touchPosition, cellLayer);
             
             if (hitCollider is not null)
                 touchedCell = heroSpawner.CurrCellsDict[hitCollider];
@@ -66,7 +67,7 @@ public class CellMover : MonoBehaviour
                     
                 lastSelectedMoveCell = touchedCell;
                 lastSelectedMoveCell.ShowHighlightMoveCell();
-                DrawLineBetweenCells(firstSelectedMoveCell.transform.position, lastSelectedMoveCell.transform.position);
+                DrawLineBetweenCells(firstSelectedMoveCell.GetCenterPos(), lastSelectedMoveCell.GetCenterPos());
             }
             else if (touch.phase == TouchPhase.Ended)
             {
@@ -89,8 +90,11 @@ public class CellMover : MonoBehaviour
     {
         lineRenderer.positionCount = 2;
         
-        lineRenderer.SetPosition(0, start + centerPosOffset);
-        lineRenderer.SetPosition(1, end + centerPosOffset);
+        start.z += cameraDistanceZ;
+        end.z += cameraDistanceZ;
+        
+        lineRenderer.SetPosition(0, start);
+        lineRenderer.SetPosition(1, end);
     }
 
     private void ClearLine()

@@ -5,6 +5,7 @@ public class WaveManager : MonoBehaviour
 {
     [SerializeField] private InGameUIManager inGameUIManager;
     [SerializeField] private MonsterSpawner monsterSpawner;
+    [SerializeField] private GameManager gameManager;
     
     private int currWaveIndex;
     private float waveTimeAccumF;
@@ -19,12 +20,16 @@ public class WaveManager : MonoBehaviour
     public float CurrHpMultiplier => waveDataList[currWaveIndex].HpMultiplier;
 
     public Dictionary<Collider2D, Monster> CurrMonstersDict { get; } = new();
+    
+    private const int BossWaveDivider = 3; // original value : 10
+    private const int LastBossWaveRemainder = 1; // original value : 8
+    private int bossMonsterCount;
 
     private void Awake()
     {
         currWaveIndex = 0;
         waveTimeAccumF = 0f;
-        waveTimeAccumI = -1;
+        waveTimeAccumI = 0;
         
         spawnMonsterIntervalDelay =  waveDataList[currWaveIndex].WaveTime / (float)waveDataList[currWaveIndex].SpawnMonsterCount;
         spawnMonsterIntervalAccum = spawnMonsterIntervalDelay;
@@ -37,13 +42,15 @@ public class WaveManager : MonoBehaviour
             pair.Value.DestroyMonster();
         
         CurrMonstersDict.Clear();
+
+        bossMonsterCount = 0;
     }
 
     private void Start()
     {
         inGameUIManager.SetWaveTimeText(waveDataList[currWaveIndex].WaveTime);
         inGameUIManager.SetWaveNumberText(waveDataList[currWaveIndex].WaveNumber);
-        inGameUIManager.SetMonsterCountSliderAndText(0, MaxMonsterCount);
+        inGameUIManager.SetMonsterCountSliderAndText(CurrentMonsterCountToSlider, MaxMonsterCount);
     }
 
     private void Update()
@@ -72,8 +79,18 @@ public class WaveManager : MonoBehaviour
                 waveTimeAccumI = 0;
                 spawnMonsterCount = 0;
 
+                if (waveDataList[currWaveIndex].WaveNumber % BossWaveDivider == 0 && bossMonsterCount > 0)
+                {
+                    gameManager.EndGame(false);
+
+                    return;
+                }
+                
                 if (++currWaveIndex >= waveDataList.Count)
                     currWaveIndex = waveDataList.Count - 1;
+                
+                if (waveDataList[currWaveIndex].WaveNumber % BossWaveDivider == 0)
+                    bossMonsterCount = waveDataList[currWaveIndex].SpawnMonsterCount;
                 
                 spawnMonsterIntervalDelay =  waveDataList[currWaveIndex].WaveTime / (float)waveDataList[currWaveIndex].SpawnMonsterCount;
                 spawnMonsterIntervalAccum = spawnMonsterIntervalDelay;
@@ -91,7 +108,7 @@ public class WaveManager : MonoBehaviour
         if (spawnMonsterIntervalAccum >= spawnMonsterIntervalDelay
             && spawnMonsterCount < (float)waveDataList[currWaveIndex].SpawnMonsterCount)
         {
-            spawnMonsterCount++;
+            ++spawnMonsterCount;
             
             spawnMonsterIntervalAccum = 0f;
             
@@ -103,12 +120,17 @@ public class WaveManager : MonoBehaviour
             CurrMonstersDict.Add(monster.Coll2D, monster);
 
             if (monster.Type == MonsterType.Normal)
-            {
-                ++CurrentMonsterCountToSlider;
-                
-                inGameUIManager.SetMonsterCountSliderAndText(CurrentMonsterCountToSlider, MaxMonsterCount);
-            }
+                inGameUIManager.SetMonsterCountSliderAndText(++CurrentMonsterCountToSlider, MaxMonsterCount);
+
+            if (CurrentMonsterCountToSlider >= MaxMonsterCount)
+                gameManager.EndGame(false);
         }
+    }
+
+    public void ReduceBossMonsterCount()
+    {
+        if (--bossMonsterCount <= 0 && waveDataList[currWaveIndex].WaveNumber / BossWaveDivider == LastBossWaveRemainder)
+            gameManager.EndGame(true);
     }
 
     public List<WaveData> waveDataList = new();

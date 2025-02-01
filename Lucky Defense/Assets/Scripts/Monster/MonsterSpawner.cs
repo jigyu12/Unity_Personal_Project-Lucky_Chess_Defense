@@ -29,7 +29,7 @@ public class MonsterSpawner : MonoBehaviour
             foreach (var monsterData in dataList)
             {
                 if(!MonsterDataDict.TryAdd(monsterData.Id, monsterData))
-                    Debug.Assert(false, "Duplicate monster ID");
+                    Debug.Assert(false, $"Duplicate monster ID {monsterData.Id.ToString()}");
             }
         }
     }
@@ -39,7 +39,7 @@ public class MonsterSpawner : MonoBehaviour
         cellSizeOffset = monsterSpawnTilemap.cellSize * 0.5f;
         
         monsterSpawnCellPosition += cellSizeOffset;
-        for (int i = 0; i < monsterWayCellPoint.Count; i++)
+        for (int i = 0; i < monsterWayCellPoint.Count; ++i)
         {
             monsterWayCellPoint[i] += cellSizeOffset;
         }
