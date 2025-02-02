@@ -1,4 +1,4 @@
-﻿HeroId,AttackRange,Damage,Rarity,Cost,AttackMethod,AttackSpeed
+﻿Id,AttackRange,Damage,Rarity,Cost,AttackMethod,AttackSpeed
 0,1.0,30,0,1,0,1.0
 1,2.0,20,0,1,1,0.7
 2,1.0,30,1,1,0,0.7

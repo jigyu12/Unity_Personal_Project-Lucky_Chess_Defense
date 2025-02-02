@@ -37,7 +37,7 @@ public class Monster : MonoBehaviour
 
     private GameObject parent;
     
-    public MonsterType Type => monsterData.Type;
+    public MonsterType Type => monsterData.MonType;
 
     public Collider2D Coll2D { get; private set; }
 
@@ -76,7 +76,7 @@ public class Monster : MonoBehaviour
         if(IsDead)
             return;
         
-        transform.position = Vector3.MoveTowards(transform.position, waypoint[currentWaypointIndex], monsterData.Speed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, waypoint[currentWaypointIndex], monsterData.MonSpeed * Time.deltaTime);
         
         hpSliderRectTr.position = mainCamera.WorldToScreenPoint(transform.position + sliderPosOffset * transform.localScale.y);
         
@@ -93,7 +93,7 @@ public class Monster : MonoBehaviour
     /// </summary>
     public void Initialize()
     {
-        maxHp = (int)(monsterData.Hp * waveManager.CurrHpMultiplier);
+        maxHp = (int)(monsterData.MonHp * waveManager.CurrHpMultiplier);
         currentHp = maxHp;
         
         hpSlider.maxValue = 1f;
@@ -106,14 +106,17 @@ public class Monster : MonoBehaviour
         OnDead.AddListener(() => { IsDead = true; });
         OnDead.AddListener(() => waveManager.CurrMonstersDict.Remove(Coll2D));
         OnDead.AddListener(() => Coll2D.enabled = false);
-        if (monsterData.Type == MonsterType.Normal)
+        if (monsterData.MonType == MonsterType.Normal)
             OnDead.AddListener(() => inGameUIManager.SetMonsterCountSliderAndText
                 (--waveManager.CurrentMonsterCountToSlider, waveManager.MaxMonsterCount));
         
         OnDestroy.RemoveAllListeners();
-        if (monsterData.Type == MonsterType.Boss)
+        if (monsterData.MonType == MonsterType.Boss)
             OnDestroy.AddListener(() => waveManager.ReduceBossMonsterCount());
         OnDestroy.AddListener(DestroyMonster);
+        
+        if (monsterData.MonType == MonsterType.Boss)
+            GetComponent<SpriteRenderer>().color = Color.red;
     }
 
     public void SetPool(IObjectPool<Monster> pool)

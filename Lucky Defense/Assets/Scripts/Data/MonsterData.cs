@@ -3,37 +3,42 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "MonsterData", menuName = "Scriptable Object/MonsterData")]
 public class MonsterData : ScriptableObject
 {
-    [SerializeField] private int id;
+    [SerializeField] private int monsterID;
 
-    public int Id => id;
+    public int MonsterID => monsterID;
     
-    [SerializeField] private MonsterType type;
+    [SerializeField] private int stringKey;
 
-    public MonsterType Type => type;
+    public int StringKey => stringKey;
     
-    [SerializeField] private int hp;
+    [SerializeField] private MonsterType monType;
 
-    public int Hp => hp;
+    public MonsterType MonType => monType;
     
-    [SerializeField] private float speed;
+    [SerializeField] private int monHp;
 
-    public float Speed => speed;
+    public int MonHp => monHp;
     
-    [SerializeField] private int rewardType;
+    [SerializeField] private float monSpeed;
 
-    public int RewardType => rewardType;
+    public float MonSpeed => monSpeed;
     
-    [SerializeField] private int quantity;
+    [SerializeField] private int monReward;
 
-    public int Quantity => quantity;
+    public int MonReward => monReward;
+    
+    [SerializeField] private int monQuantity;
+
+    public int MonQuantity => monQuantity;
 }
 
 public class MonsterCsvData
 {
-    public int Id { get; set; }
-    public int Type { get; set; }
-    public int Hp { get; set; }
-    public float Speed { get; set; }
-    public int RewardType { get; set; }
-    public int Quantity { get; set; }
+    public int MonsterID { get; set; }
+    public int StringKey { get; set; }
+    public int MonType { get; set; }
+    public int MonHp { get; set; }
+    public float MonSpeed { get; set; }
+    public int MonReward { get; set; }
+    public int MonQuantity { get; set; }
 }
