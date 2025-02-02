@@ -1,31 +1,21 @@
-public enum HeroRarity
+public enum HeroGrade
 {
-    None = -1,
-    
-    Common,
+    Common = 1,
     Rare,
     Heroic,
     Legendary,
-    
-    Count
+    Mythic,
 }
 
-public enum HeroAttackMethod
+public enum HeroAttackType
 {
-    None = -1,
-    
-    Melee,
+    Melee = 1,
     Ranged,
-    
-    Count
 }
 
 public enum MonsterType
 {
-    None = -1,
-    
-    Normal,
+    Normal = 1,
+    Unique,
     Boss,
-    
-    Count
 }

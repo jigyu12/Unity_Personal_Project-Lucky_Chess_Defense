@@ -24,9 +24,9 @@ public class Hero : MonoBehaviour
 
     private float attackSpeedTimeAccum;
     
-    public int HeroId => heroData.HeroId;
-    public int Cost => heroData.Cost;
-    public float AttackRange => heroData.AttackRange;
+    public int HeroId => heroData.HeroID;
+    public int Cost => heroData.BlockCost;
+    public float AttackRange => heroData.AtkRange;
     
     public bool IsMoving { get; set; }
     public Vector3 destPosition;
@@ -68,7 +68,7 @@ public class Hero : MonoBehaviour
     {
         attackSpeedTimeAccum += Time.deltaTime;
 
-        if (attackSpeedTimeAccum >= heroData.AttackSpeed)
+        if (attackSpeedTimeAccum >= heroData.AtkSpeed)
         {
             bool canAttack = CheckCanAttack();
 
@@ -84,9 +84,9 @@ public class Hero : MonoBehaviour
     /// </summary>
     public void Initialize()
     {
-        if (heroData.AttackMethod == HeroAttackMethod.Melee)
+        if (heroData.AtkType == HeroAttackType.Melee)
             attackMethod = new MeleeAttack();
-        else if (heroData.AttackMethod == HeroAttackMethod.Ranged)
+        else if (heroData.AtkType == HeroAttackType.Ranged)
         {
             TryGetComponent(out rangedAttack);
 
@@ -99,7 +99,7 @@ public class Hero : MonoBehaviour
 
         OnAttack.AddListener(attackMethod.Attack);
 
-        attackSpeedTimeAccum = heroData.AttackSpeed;
+        attackSpeedTimeAccum = heroData.AtkSpeed;
     }
 
     private bool CheckCanAttack()
@@ -111,7 +111,7 @@ public class Hero : MonoBehaviour
         
         if (isTargetInvalid)
         {
-            int monsterCount = Physics2D.OverlapCircle(transform.position, heroData.AttackRange, contactFilter, monsterCollList);
+            int monsterCount = Physics2D.OverlapCircle(transform.position, heroData.AtkRange, contactFilter, monsterCollList);
             
             if (monsterCount <= 0)
                 return false;
@@ -137,7 +137,7 @@ public class Hero : MonoBehaviour
 
         float distanceToTarget = Vector3.Distance(transform.position, targetMonster.transform.position);
 
-        if (distanceToTarget > heroData.AttackRange)
+        if (distanceToTarget > heroData.AtkRange)
         {
             targetMonster = null;
             
@@ -151,7 +151,7 @@ public class Hero : MonoBehaviour
     {
         attackSpeedTimeAccum = 0f;
 
-        OnAttack?.Invoke(targetMonster, heroData.Damage);
+        OnAttack?.Invoke(targetMonster, heroData.HeroDamage);
     }
 
     public void SetPool(IObjectPool<Hero> pool)
@@ -203,7 +203,7 @@ public class Hero : MonoBehaviour
             return;
 
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, heroData.AttackRange);
+        Gizmos.DrawWireSphere(transform.position, heroData.AtkRange);
     }
 #endif
 }

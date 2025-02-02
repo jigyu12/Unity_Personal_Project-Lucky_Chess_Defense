@@ -15,21 +15,21 @@ public class MonsterSpawner : MonoBehaviour
     private IObjectPool<Monster> MonsterPool { get; set; }
 
     private Dictionary<int, MonsterData> MonsterDataDict { get; } = new();
-    
+
     private Vector3 cellSizeOffset;
 
     private void Awake()
     {
         MonsterPool = new ObjectPool<Monster>(OnCreateMonster, OnGetMonster, OnReleaseMonster, OnDestroyMonster);
-        
+
         MonsterDataDict.Clear();
         foreach (var monsterDataList in monsterDataLists)
         {
             List<MonsterData> dataList = monsterDataList.dataList;
             foreach (var monsterData in dataList)
             {
-                if(!MonsterDataDict.TryAdd(monsterData.Id, monsterData))
-                    Debug.Assert(false, $"Duplicate monster ID {monsterData.Id.ToString()}");
+                if (!MonsterDataDict.TryAdd(monsterData.MonsterID, monsterData))
+                    Debug.Assert(false, $"Duplicate monster ID {monsterData.MonsterID.ToString()}");
             }
         }
     }
@@ -37,14 +37,14 @@ public class MonsterSpawner : MonoBehaviour
     private void Start()
     {
         cellSizeOffset = monsterSpawnTilemap.cellSize * 0.5f;
-        
+
         monsterSpawnCellPosition += cellSizeOffset;
         for (int i = 0; i < monsterWayCellPoint.Count; ++i)
         {
             monsterWayCellPoint[i] += cellSizeOffset;
         }
     }
-    
+
     private Monster OnCreateMonster()
     {
         Instantiate(monsterPrefab).TryGetComponent(out Monster monster);
@@ -72,27 +72,25 @@ public class MonsterSpawner : MonoBehaviour
     public Monster SpawnMonster(int spawnMonsterId)
     {
         Monster monster = MonsterPool.Get();
-        
+
         bool success = SetMonsterData(monster, spawnMonsterId);
-        
+
         if (success)
         {
             monster.transform.position = monsterSpawnCellPosition;
 
             monster.SetWaypoint(monsterWayCellPoint);
-            
+
             monster.Initialize();
 
             return monster;
         }
-        else
-        {
-            MonsterPool.Release(monster);
-            
-            Debug.Assert(false, "SetMonsterData Failed");
-            
-            return null;
-        }
+        
+        MonsterPool.Release(monster);
+
+        Debug.Assert(false, "SetMonsterData Failed");
+        
+        return null;
     }
 
     private bool SetMonsterData(Monster monster, int spawnMonsterId)
@@ -101,21 +99,21 @@ public class MonsterSpawner : MonoBehaviour
             return false;
 
         monster.SetMonsterData(monsterData);
-        
+
         return true;
     }
-    
+
     [System.Serializable]
     public class MonsterDataList
     {
         public List<MonsterData> dataList = new();
     }
 
-    [HideInInspector]
-    public List<MonsterDataList> monsterDataLists = new();
+    [HideInInspector] public List<MonsterDataList> monsterDataLists = new();
+
     private void OnValidate()
     {
-        int targetCount = (int)MonsterType.Count;
+        int targetCount = Utility.MonsterTypeCount;
 
         while (monsterDataLists.Count < targetCount)
         {
@@ -127,7 +125,7 @@ public class MonsterSpawner : MonoBehaviour
             monsterDataLists.RemoveAt(monsterDataLists.Count - 1);
         }
     }
-    
+
     // Get Tilemap cellSize by Click MouseLeftButton
     // if (Input.GetMouseButtonDown(0))
     // {

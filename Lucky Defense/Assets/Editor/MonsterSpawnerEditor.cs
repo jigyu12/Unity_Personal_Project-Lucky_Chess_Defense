@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(MonsterSpawner))]
-public class MonsterSpawnerEditor : UnityEditor.Editor
+public class MonsterSpawnerEditor : Editor
 {
     public override void OnInspectorGUI()
     {
@@ -14,7 +14,7 @@ public class MonsterSpawnerEditor : UnityEditor.Editor
 
         MonsterSpawner spawner = (MonsterSpawner)target;
 
-        int targetCount = (int)MonsterType.Count;
+        int targetCount = Utility.MonsterTypeCount;
         while (spawner.monsterDataLists.Count < targetCount)
         {
             spawner.monsterDataLists.Add(new MonsterSpawner.MonsterDataList());
@@ -27,7 +27,7 @@ public class MonsterSpawnerEditor : UnityEditor.Editor
 
         for (int i = 0; i < spawner.monsterDataLists.Count; ++i)
         {
-            EditorGUILayout.LabelField(((MonsterType)i).ToString());
+            EditorGUILayout.LabelField(((MonsterType)i+1).ToString());
             SerializedProperty listProperty =
                 serializedObject.FindProperty($"monsterDataLists.Array.data[{i}].dataList");
             EditorGUILayout.PropertyField(listProperty, true);
@@ -62,42 +62,45 @@ public class MonsterSpawnerEditor : UnityEditor.Editor
 
             foreach (var record in records)
             {
-                Debug.Assert(record.Type >= 0 && record.Type < (int)MonsterType.Count,
-                    $"Invalid type value for Monster ID {record.Id}");
+                Debug.Assert(record.MonType >= 1 && record.MonType <= Utility.MonsterTypeCount,
+                    $"Invalid type value for Monster ID {record.MonsterID}");
 
-                MonsterType type = (MonsterType)record.Type;
+                MonsterType type = (MonsterType)record.MonType;
 
                 MonsterData monsterData = ScriptableObject.CreateInstance<MonsterData>();
-                monsterData.name = $"Monster_{record.Id}";
+                monsterData.name = $"Monster_{record.MonsterID}";
 
                 typeof(MonsterData)
-                    .GetField("id", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                    ?.SetValue(monsterData, record.Id);
+                    .GetField("monsterID", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(monsterData, record.MonsterID);
                 typeof(MonsterData)
-                    .GetField("type",
+                    .GetField("stringKey", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(monsterData, record.StringKey);
+                typeof(MonsterData)
+                    .GetField("monType",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
                     ?.SetValue(monsterData, type);
                 typeof(MonsterData)
-                    .GetField("hp", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                    ?.SetValue(monsterData, record.Hp);
+                    .GetField("monHp", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(monsterData, record.MonHp);
                 typeof(MonsterData)
-                    .GetField("speed",
+                    .GetField("monSpeed",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                    ?.SetValue(monsterData, record.Speed);
+                    ?.SetValue(monsterData, record.MonSpeed);
                 typeof(MonsterData)
-                    .GetField("rewardType",
+                    .GetField("monReward",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                    ?.SetValue(monsterData, record.RewardType);
+                    ?.SetValue(monsterData, record.MonReward);
                 typeof(MonsterData)
-                    .GetField("quantity",
+                    .GetField("monQuantity",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                    ?.SetValue(monsterData, record.Quantity);
+                    ?.SetValue(monsterData, record.MonQuantity);
 
-                string assetPath = $"Assets/Scriptables/MonsterDatas/Monster_{record.Id}.asset";
+                string assetPath = $"Assets/Scriptables/MonsterDatas/Monster_{record.MonsterID}.asset";
                 Directory.CreateDirectory("Assets/Scriptables/MonsterDatas");
                 AssetDatabase.CreateAsset(monsterData, assetPath);
 
-                spawner.monsterDataLists[(int)type].dataList.Add(monsterData);
+                spawner.monsterDataLists[(int)type - 1].dataList.Add(monsterData);
             }
         }
 

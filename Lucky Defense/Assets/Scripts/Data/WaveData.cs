@@ -3,25 +3,25 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "WaveData", menuName = "Scriptable Object/WaveData")]
 public class WaveData : ScriptableObject
 {
-    [SerializeField] private int id;
+    [SerializeField] private int waveID;
 
-    public int Id => id;
+    public int WaveID => waveID;
     
     [SerializeField] private int waveNumber;
 
     public int WaveNumber => waveNumber;
     
-    [SerializeField] private int spawnMonsterId;
+    [SerializeField] private int monsterID;
 
-    public int SpawnMonsterId => spawnMonsterId;
+    public int MonsterID => monsterID;
     
-    [SerializeField] private float hpMultiplier;
+    [SerializeField] private float monHpMlt;
 
-    public float HpMultiplier => hpMultiplier;
+    public float MonHpMlt => monHpMlt;
     
-    [SerializeField] private int spawnMonsterCount;
+    [SerializeField] private int createMonNumber;
 
-    public int SpawnMonsterCount => spawnMonsterCount;
+    public int CreateMonNumber => createMonNumber;
     
     [SerializeField] private int waveTime;
 
@@ -30,10 +30,10 @@ public class WaveData : ScriptableObject
 
 public class WaveCsvData
 {
-    public int Id { get; set; }
+    public int WaveID { get; set; }
     public int WaveNumber { get; set; }
-    public int SpawnMonsterId { get; set; }
-    public float HpMultiplier { get; set; }
-    public int SpawnMonsterCount { get; set; }
+    public int MonsterID { get; set; }
+    public float MonHpMlt { get; set; }
+    public int CreateMonNumber { get; set; }
     public int WaveTime { get; set; }
 }

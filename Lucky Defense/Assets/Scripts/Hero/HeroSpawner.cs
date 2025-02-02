@@ -139,7 +139,7 @@ public class HeroSpawner : MonoBehaviour
 
         float probability = Random.value * 100f;
         float pSum = 0f;
-        for (int i = 0; i < (int)HeroRarity.Count; ++i)
+        for (int i = 0; i < Utility.HeroGradeCount; ++i)
         {
             pSum += probabilities[i];
 
@@ -215,7 +215,7 @@ public class HeroSpawner : MonoBehaviour
 
     private void OnValidate()
     {
-        int targetCount = (int)HeroRarity.Count;
+        int targetCount = Utility.HeroGradeCount;
 
         while (heroDataRarityLists.Count < targetCount)
         {

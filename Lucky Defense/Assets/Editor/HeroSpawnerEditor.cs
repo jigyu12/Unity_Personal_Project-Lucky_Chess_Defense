@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(HeroSpawner))]
-public class HeroSpawnerEditor : UnityEditor.Editor
+public class HeroSpawnerEditor : Editor
 {
     public override void OnInspectorGUI()
     {
@@ -19,7 +19,7 @@ public class HeroSpawnerEditor : UnityEditor.Editor
             LoadCsvAndCreateHeroSummonProbabilityDataScriptables(spawner);
         }
 
-        int targetCount = (int)HeroRarity.Count;
+        int targetCount = Utility.HeroGradeCount;
         while (spawner.heroDataRarityLists.Count < targetCount)
         {
             spawner.heroDataRarityLists.Add(new HeroSpawner.HeroDataList());
@@ -32,7 +32,7 @@ public class HeroSpawnerEditor : UnityEditor.Editor
 
         for (int i = 0; i < spawner.heroDataRarityLists.Count; ++i)
         {
-            EditorGUILayout.LabelField(((HeroRarity)i).ToString());
+            EditorGUILayout.LabelField(((HeroGrade)i+1).ToString());
             SerializedProperty listProperty =
                 serializedObject.FindProperty($"heroDataRarityLists.Array.data[{i}].dataList");
             EditorGUILayout.PropertyField(listProperty, true);
@@ -67,48 +67,65 @@ public class HeroSpawnerEditor : UnityEditor.Editor
 
             foreach (var record in records)
             {
-                Debug.Assert(record.Rarity >= 0 && record.Rarity < (int)HeroRarity.Count,
-                    $"Invalid rarity value for Hero ID {record.HeroId}");
+                Debug.Assert(1 <= record.Grade && record.Grade <= Utility.HeroGradeCount,
+                    $"Invalid rarity value for Hero ID {record.HeroID}");
 
-                HeroRarity rarity = (HeroRarity)record.Rarity;
+                HeroGrade grade = (HeroGrade)record.Grade;
 
                 HeroData heroData = ScriptableObject.CreateInstance<HeroData>();
-                heroData.name = $"Hero_{record.HeroId}";
+                heroData.name = $"Hero_{record.HeroID}";
 
                 typeof(HeroData)
-                    .GetField("heroId",
+                    .GetField("heroID",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                    ?.SetValue(heroData, record.HeroId);
+                    ?.SetValue(heroData, record.HeroID);
                 typeof(HeroData)
-                    .GetField("attackRange",
+                    .GetField("stringKey",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                    ?.SetValue(heroData, record.AttackRange);
+                    ?.SetValue(heroData, record.StringKey);
                 typeof(HeroData)
-                    .GetField("damage",
+                    .GetField("grade",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                    ?.SetValue(heroData, record.Damage);
+                    ?.SetValue(heroData, grade);
                 typeof(HeroData)
-                    .GetField("rarity",
+                    .GetField("atkType",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                    ?.SetValue(heroData, rarity);
+                    ?.SetValue(heroData, record.AtkType);
                 typeof(HeroData)
-                    .GetField("cost",
+                    .GetField("atkRange",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                    ?.SetValue(heroData, record.Cost);
+                    ?.SetValue(heroData, record.AtkRange);
                 typeof(HeroData)
-                    .GetField("attackMethod",
+                    .GetField("heroDamage",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                    ?.SetValue(heroData, record.AttackMethod);
+                    ?.SetValue(heroData, record.HeroDamage);
                 typeof(HeroData)
-                    .GetField("attackSpeed",
+                    .GetField("atkSpeed",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                    ?.SetValue(heroData, record.AttackSpeed);
+                    ?.SetValue(heroData, record.AtkSpeed);
+                typeof(HeroData)
+                    .GetField("heroSkill",
+                        System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(heroData, record.HeroSkill);
+                typeof(HeroData)
+                    .GetField("blockCost",
+                        System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(heroData, record.BlockCost);
+                typeof(HeroData)
+                    .GetField("saleType",
+                        System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(heroData, record.SaleType);
+                typeof(HeroData)
+                    .GetField("saleQuantity",
+                        System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(heroData, record.SaleQuantity);
+                
 
-                string assetPath = $"Assets/Scriptables/HeroDatas/Hero_{record.HeroId}.asset";
+                string assetPath = $"Assets/Scriptables/HeroDatas/Hero_{record.HeroID}.asset";
                 Directory.CreateDirectory("Assets/Scriptables/HeroDatas");
                 AssetDatabase.CreateAsset(heroData, assetPath);
 
-                spawner.heroDataRarityLists[(int)rarity].dataList.Add(heroData);
+                spawner.heroDataRarityLists[(int)grade-1].dataList.Add(heroData);
             }
         }
 

@@ -3,42 +3,62 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "HeroData", menuName = "Scriptable Object/HeroData")]
 public class HeroData : ScriptableObject
 {
-    [SerializeField] private int heroId;
+    [SerializeField] private int heroID;
 
-    public int HeroId => heroId;
+    public int HeroID => heroID;
     
-    [SerializeField] private float attackRange;
+    [SerializeField] private int stringKey;
 
-    public float AttackRange => attackRange;
+    public int StringKey => stringKey;
     
-    [SerializeField] private int damage;
+    [SerializeField] private HeroGrade grade;
+    
+    public HeroGrade Grade => grade;
+    
+    [SerializeField] private HeroAttackType atkType;
 
-    public int Damage => damage;
+    public HeroAttackType AtkType => atkType;
     
-    [SerializeField] private HeroRarity rarity;
-    
-    public HeroRarity Rarity => rarity;
-    
-    [SerializeField] private int cost;
-    
-    public int Cost => cost;
+    [SerializeField] private float atkRange;
 
-    [SerializeField] private HeroAttackMethod attackMethod;
-
-    public HeroAttackMethod AttackMethod => attackMethod;
+    public float AtkRange => atkRange;
     
-    [SerializeField] private float attackSpeed;
+    [SerializeField] private int heroDamage;
 
-    public float AttackSpeed => attackSpeed;
+    public int HeroDamage => heroDamage;
+    
+    [SerializeField] private float atkSpeed;
+
+    public float AtkSpeed => atkSpeed;
+    
+    [SerializeField] private int heroSkill;
+
+    public int HeroSkill => heroSkill;
+    
+    [SerializeField] private int blockCost;
+    
+    public int BlockCost => blockCost;
+    
+    [SerializeField] private int saleType;
+    
+    public int SaleType => saleType;
+    
+    [SerializeField] private int saleQuantity;
+    
+    public int SaleQuantity => saleQuantity;
 }
 
 public class HeroCsvData
 {
-    public int HeroId { get; set; }
-    public float AttackRange { get; set; }
-    public int Damage { get; set; }
-    public int Rarity { get; set; }
-    public int Cost { get; set; }
-    public HeroAttackMethod AttackMethod { get; set; }
-    public float AttackSpeed  { get; set; }
+    public int HeroID { get; set; }
+    public int StringKey { get; set; }
+    public int Grade { get; set; }
+    public HeroAttackType AtkType { get; set; }
+    public float AtkRange { get; set; }
+    public int HeroDamage { get; set; }
+    public float AtkSpeed  { get; set; }
+    public int HeroSkill { get; set; }
+    public int BlockCost { get; set; }
+    public int SaleType { get; set; }
+    public int SaleQuantity { get; set; }
 }

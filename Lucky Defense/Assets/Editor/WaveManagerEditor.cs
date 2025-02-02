@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(WaveManager))]
-public class WaveManagerEditor : UnityEditor.Editor
+public class WaveManagerEditor : Editor
 {
     public override void OnInspectorGUI()
     {
@@ -41,33 +41,33 @@ public class WaveManagerEditor : UnityEditor.Editor
             foreach (var record in records)
             {
                 WaveData waveData = ScriptableObject.CreateInstance<WaveData>();
-                waveData.name = $"WaveData_{record.Id}";
+                waveData.name = $"WaveData_{record.WaveID}";
 
                 typeof(WaveData)
-                    .GetField("id", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                    ?.SetValue(waveData, record.Id);
+                    .GetField("waveID", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(waveData, record.WaveID);
                 typeof(WaveData)
                     .GetField("waveNumber",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
                     ?.SetValue(waveData, record.WaveNumber);
                 typeof(WaveData)
-                    .GetField("spawnMonsterId",
+                    .GetField("monsterID",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                    ?.SetValue(waveData, record.SpawnMonsterId);
+                    ?.SetValue(waveData, record.MonsterID);
                 typeof(WaveData)
-                    .GetField("hpMultiplier",
+                    .GetField("monHpMlt",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                    ?.SetValue(waveData, record.HpMultiplier);
+                    ?.SetValue(waveData, record.MonHpMlt);
                 typeof(WaveData)
-                    .GetField("spawnMonsterCount",
+                    .GetField("createMonNumber",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                    ?.SetValue(waveData, record.SpawnMonsterCount);
+                    ?.SetValue(waveData, record.CreateMonNumber);
                 typeof(WaveData)
                     .GetField("waveTime",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
                     ?.SetValue(waveData, record.WaveTime);
 
-                string assetPath = $"Assets/Scriptables/WaveDatas/WaveData_{record.Id}.asset";
+                string assetPath = $"Assets/Scriptables/WaveDatas/WaveData_{record.WaveID}.asset";
                 Directory.CreateDirectory("Assets/Scriptables/WaveDatas");
                 AssetDatabase.CreateAsset(waveData, assetPath);
 
