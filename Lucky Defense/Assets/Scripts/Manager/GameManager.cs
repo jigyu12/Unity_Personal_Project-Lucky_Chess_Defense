@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
         
         isPaused = true;
         
-        inGameUIManager.SetGameResult(isGameClear);
+        inGameUIManager.SetGameResultPanel(isGameClear);
     }
 
 #if UNITY_STANDALONE || UNITY_EDITOR

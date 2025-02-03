@@ -33,7 +33,7 @@ public class HeroProjectile : MonoBehaviour
         else
             targetMonster = null;
         
-        if (Vector3.Distance(projectilePosition, targetLastPosition) < 0.3f)
+        if (Vector3.Distance(projectilePosition, targetLastPosition) < 0.5f)
         {
             if(isTargetValid)
                 targetMonster.OnDamaged(damage);

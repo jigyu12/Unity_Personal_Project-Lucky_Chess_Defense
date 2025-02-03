@@ -11,6 +11,7 @@ TagManager:
   - Projectiles
   - Heroes
   - GameManager
+  - InGameResourceManager
   layers:
   - Default
   - TransparentFX

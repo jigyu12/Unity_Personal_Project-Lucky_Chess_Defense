@@ -41,6 +41,8 @@ public class Monster : MonoBehaviour
 
     public Collider2D Coll2D { get; private set; }
 
+    private InGameResourceManager inGameResourceManager;
+
     private void Awake()
     {
         TryGetComponent(out Collider2D coll);
@@ -51,6 +53,7 @@ public class Monster : MonoBehaviour
     {
         GameObject.FindGameObjectWithTag("WaveManager").TryGetComponent(out waveManager);
         GameObject.FindGameObjectWithTag("InGameUIManager").TryGetComponent(out inGameUIManager);
+        GameObject.FindGameObjectWithTag("InGameResourceManager").TryGetComponent(out inGameResourceManager);
         
         mainCamera = Camera.main;
         
@@ -109,6 +112,16 @@ public class Monster : MonoBehaviour
         if (monsterData.MonType == MonsterType.Normal)
             OnDead.AddListener(() => inGameUIManager.SetMonsterCountSliderAndText
                 (--waveManager.CurrentMonsterCountToSlider, waveManager.MaxMonsterCount));
+        if ((MonsterRewardType)monsterData.MonReward == MonsterRewardType.Coin)
+        {
+            OnDead.AddListener(() => inGameResourceManager.AddCoin(monsterData.MonReward));
+        }
+        else if ((MonsterRewardType)monsterData.MonReward == MonsterRewardType.Gem)
+        {
+            OnDead.AddListener(() => inGameResourceManager.AddGem(monsterData.MonReward));
+        }
+        else
+            Debug.Assert(false, "Invalid monster reward type");
         
         OnDestroy.RemoveAllListeners();
         if (monsterData.MonType == MonsterType.Boss)
