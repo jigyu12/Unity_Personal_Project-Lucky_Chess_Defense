@@ -4540,7 +4540,7 @@ MonoBehaviour:
   gameResultText: {fileID: 307550807}
   probabilityInfoButton: {fileID: 108944948}
   probabilityInfoPanel: {fileID: 462965254}
-  probabilityEnforceButton: {fileID: 0}
+  probabilityEnforceButton: {fileID: 874128067}
   probabilityEnforceText: {fileID: 254119053}
   currCoinInProbabilityButtonText: {fileID: 1128279309}
   commonProbabilityText: {fileID: 1345858198}
