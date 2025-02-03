@@ -28,7 +28,7 @@ public class Monster : MonoBehaviour
     
     private readonly WaitForFixedUpdate waitForFixedUpdate = new();
     private float destroyTimeAccum;
-    private const float DestroyTimeDelay = 1f;
+    private const float DestroyTimeDelay = 0.5f;
     
     [SerializeField] private Slider hpSlider;
     [SerializeField] private Image hpFill;

@@ -6,7 +6,7 @@ public class HeroProjectile : MonoBehaviour
 {
     private IObjectPool<HeroProjectile> heroProjectilePool;
     
-    private const float ProjectileSpeed = 4f;
+    private const float ProjectileSpeed = 8f;
     
     private Vector3 targetLastPosition;
     private Vector3 direction;
