@@ -19,3 +19,9 @@ public enum MonsterType
     Unique,
     Boss,
 }
+
+public enum MonsterRewardType
+{
+    Coin = 1,
+    Gem,
+}

@@ -29,7 +29,8 @@ public class WaveManagerEditor : Editor
     private void LoadCsvAndCreateWaveDataScriptables(WaveManager manager)
     {
         string path = EditorUtility.OpenFilePanel("Load Wave Data CSV", "Assets/Resources/Tables", "csv");
-        if (string.IsNullOrEmpty(path)) return;
+        if (string.IsNullOrEmpty(path)) 
+            return;
 
         manager.waveDataList.Clear();
 

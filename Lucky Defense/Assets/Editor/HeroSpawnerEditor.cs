@@ -53,7 +53,8 @@ public class HeroSpawnerEditor : Editor
     private void LoadCsvAndCreateHeroDataScriptables(HeroSpawner spawner)
     {
         string path = EditorUtility.OpenFilePanel("Load Hero Data CSV", "Assets/Resources/Tables", "csv");
-        if (string.IsNullOrEmpty(path)) return;
+        if (string.IsNullOrEmpty(path)) 
+            return;
 
         foreach (var list in spawner.heroDataRarityLists)
         {
@@ -138,7 +139,8 @@ public class HeroSpawnerEditor : Editor
     {
         string path =
             EditorUtility.OpenFilePanel("Load HeroSummonProbability Data CSV", "Assets/Resources/Tables", "csv");
-        if (string.IsNullOrEmpty(path)) return;
+        if (string.IsNullOrEmpty(path)) 
+            return;
 
         spawner.heroSummonProbabilityDataLists.Clear();
 
@@ -151,11 +153,17 @@ public class HeroSpawnerEditor : Editor
             {
                 HeroSummonProbabilityData heroSummonProbabilityData =
                     ScriptableObject.CreateInstance<HeroSummonProbabilityData>();
-                heroSummonProbabilityData.name = $"HeroSummonProbabilityData_{record.Id}";
+                heroSummonProbabilityData.name = $"HeroSummonProbabilityData_{record.ProbabilityID}";
 
                 typeof(HeroSummonProbabilityData)
-                    .GetField("id", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                    ?.SetValue(heroSummonProbabilityData, record.Id);
+                    .GetField("probabilityID", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(heroSummonProbabilityData, record.ProbabilityID);
+                typeof(HeroSummonProbabilityData)
+                    .GetField("enforceLevel", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(heroSummonProbabilityData, record.EnforceLevel);
+                typeof(HeroSummonProbabilityData)
+                    .GetField("enforceCost", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(heroSummonProbabilityData, record.EnforceCost);
                 typeof(HeroSummonProbabilityData)
                     .GetField("commonProbability",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
@@ -174,7 +182,7 @@ public class HeroSpawnerEditor : Editor
                     ?.SetValue(heroSummonProbabilityData, record.LegendaryProbability);
 
                 string assetPath =
-                    $"Assets/Scriptables/HeroSummonProbabilityDatas/HeroSummonProbabilityData_{record.Id}.asset";
+                    $"Assets/Scriptables/HeroSummonProbabilityDatas/HeroSummonProbabilityData_{record.ProbabilityID}.asset";
                 Directory.CreateDirectory("Assets/Scriptables/HeroSummonProbabilityDatas");
                 AssetDatabase.CreateAsset(heroSummonProbabilityData, assetPath);
 

@@ -3,9 +3,17 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "HeroSummonProbabilityData", menuName = "Scriptable Object/HeroSummonProbabilityData")]
 public class HeroSummonProbabilityData : ScriptableObject
 {
-    [SerializeField] private int id;
+    [SerializeField] private int probabilityID;
 
-    public float Id => id;
+    public int ProbabilityID => probabilityID;
+    
+    [SerializeField] private int enforceLevel;
+
+    public int EnforceLevel => enforceLevel;
+    
+    [SerializeField] private int enforceCost;
+
+    public int EnforceCost => enforceCost;
     
     [SerializeField] private float commonProbability;
 
@@ -26,7 +34,9 @@ public class HeroSummonProbabilityData : ScriptableObject
 
 public class HeroSummonProbabilityCsvData
 {
-    public int Id { get; set; }
+    public int ProbabilityID { get; set; }
+    public int EnforceLevel { get; set; }
+    public int EnforceCost { get; set; }
     public float CommonProbability { get; set; }
     public float RareProbability { get; set; }
     public float HeroicProbability { get; set; }

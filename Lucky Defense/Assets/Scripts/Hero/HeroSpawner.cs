@@ -16,6 +16,8 @@ public class HeroSpawner : MonoBehaviour
 
     [SerializeField] private InGameUIManager inGameUIManager;
 
+    [SerializeField] private InGameResourceManager inGameResourceManager;
+    
     private IObjectPool<Hero> HeroPool { get; set; }
 
     private int HeroSummonProbabilityIndex { get; set; }
@@ -30,6 +32,17 @@ public class HeroSpawner : MonoBehaviour
     private int currHeroCount;
     public int MaxHeroCount { get; private set; } = 20;
 
+    public HeroSummonProbabilityData CurrentHeroSummonProbabilityData
+    {
+        get;
+        private set;
+    }
+
+    public int CurrProbabilityLevel => HeroSummonProbabilityIndex + 1;
+    public int MaxProbabilityLevel => heroSummonProbabilityDataLists.Count;
+    
+    [SerializeField] private Button probabilityEnforceButton;
+
     private void Awake()
     {
         HeroPool = new ObjectPool<Hero>(OnCreateHero, OnGetHero, OnReleaseHero, OnDestroyHero);
@@ -42,6 +55,8 @@ public class HeroSpawner : MonoBehaviour
         CurrCellsDict.Clear();
 
         currHeroCount = 0;
+        
+        CurrentHeroSummonProbabilityData = heroSummonProbabilityDataLists[HeroSummonProbabilityIndex];
     }
 
     private void Start()
@@ -82,10 +97,19 @@ public class HeroSpawner : MonoBehaviour
         }
 
         inGameUIManager.SetHeroCountText(currHeroCount, MaxHeroCount);
+        inGameUIManager.SetProbabilityTexts();
     }
 
     public void OnClickCreateHero()
     {
+        bool canUseCoin = inGameResourceManager.TryUseCoin(inGameResourceManager.CurrentHeroSummonCoinCost);
+        if (!canUseCoin)
+        {
+            Debug.Log("Not enough coins to summon a hero.");
+
+            return;
+        }
+        
         if (currHeroCount >= MaxHeroCount)
         {
             Debug.Log("Hero count is full");
@@ -110,6 +134,10 @@ public class HeroSpawner : MonoBehaviour
                 hero.Initialize();
 
                 inGameUIManager.SetHeroCountText(++currHeroCount, MaxHeroCount);
+                
+                inGameResourceManager.AddHeroSummonCoinCost();
+                
+                Debug.Log($"Summoned hero ID : {hero.HeroId}");
 
                 return;
             }
@@ -117,6 +145,28 @@ public class HeroSpawner : MonoBehaviour
 
         Debug.Log("Cant Spawn Hero");
         HeroPool.Release(hero);
+    }
+
+    public void OnClickEnforceProbability()
+    {
+        bool canUseCoin = inGameResourceManager.TryUseCoin(CurrentHeroSummonProbabilityData.EnforceCost);
+        if (!canUseCoin)
+        {
+            Debug.Log("Not enough coins to enforce a probability.");
+
+            return;
+        }
+
+        ++HeroSummonProbabilityIndex;
+        
+        CurrentHeroSummonProbabilityData = heroSummonProbabilityDataLists[HeroSummonProbabilityIndex];
+        
+        if (CurrProbabilityLevel == MaxProbabilityLevel)
+        {
+            probabilityEnforceButton.interactable = false;
+        }
+
+        inGameUIManager.SetProbabilityTexts();
     }
 
     private bool SetHeroDataByRandData(Hero hero)

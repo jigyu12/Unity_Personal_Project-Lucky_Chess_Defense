@@ -48,7 +48,8 @@ public class MonsterSpawnerEditor : Editor
     private void LoadCsvAndCreateMonsterDataScriptables(MonsterSpawner spawner)
     {
         string path = EditorUtility.OpenFilePanel("Load Monster Data CSV", "Assets/Resources/Tables", "csv");
-        if (string.IsNullOrEmpty(path)) return;
+        if (string.IsNullOrEmpty(path)) 
+            return;
 
         foreach (var list in spawner.monsterDataLists)
         {

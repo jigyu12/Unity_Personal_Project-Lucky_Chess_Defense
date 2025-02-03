@@ -10,6 +10,7 @@ public class WaveManager : MonoBehaviour
     private int currWaveIndex;
     private float waveTimeAccumF;
     private int waveTimeAccumI;
+    private const int WaveTimeRemainOffset = 4;
     
     private float spawnMonsterIntervalAccum;
     private float spawnMonsterIntervalDelay;
@@ -22,7 +23,7 @@ public class WaveManager : MonoBehaviour
     public Dictionary<Collider2D, Monster> CurrMonstersDict { get; } = new();
     
     private const int BossWaveDivider = 10;
-    private const int LastBossWaveRemainder = 1;
+    private const int LastBossWaveRemainder = 8;
     private int bossMonsterCount;
 
     private bool isGameEnd;
@@ -32,9 +33,8 @@ public class WaveManager : MonoBehaviour
         currWaveIndex = 0;
         waveTimeAccumF = 0f;
         waveTimeAccumI = 0;
-        
-        spawnMonsterIntervalDelay =  waveDataList[currWaveIndex].WaveTime / (float)waveDataList[currWaveIndex].CreateMonNumber;
-        spawnMonsterIntervalAccum = spawnMonsterIntervalDelay;
+
+        SetSpawnDelayAndAccumMax();
 
         spawnMonsterCount = 0;
 
@@ -97,14 +97,19 @@ public class WaveManager : MonoBehaviour
                 
                 if (waveDataList[currWaveIndex].WaveNumber % BossWaveDivider == 0)
                     bossMonsterCount = waveDataList[currWaveIndex].CreateMonNumber;
-                
-                spawnMonsterIntervalDelay =  waveDataList[currWaveIndex].WaveTime / (float)waveDataList[currWaveIndex].CreateMonNumber;
-                spawnMonsterIntervalAccum = spawnMonsterIntervalDelay;
+
+                SetSpawnDelayAndAccumMax();
 
                 inGameUIManager.SetWaveTimeText(waveDataList[currWaveIndex].WaveTime);
                 inGameUIManager.SetWaveNumberText(waveDataList[currWaveIndex].WaveNumber);
             }
         }
+    }
+
+    private void SetSpawnDelayAndAccumMax()
+    {
+        spawnMonsterIntervalDelay =  (waveDataList[currWaveIndex].WaveTime- WaveTimeRemainOffset) / (float)waveDataList[currWaveIndex].CreateMonNumber ;
+        spawnMonsterIntervalAccum = spawnMonsterIntervalDelay;
     }
 
     private void SpawnMonsterAtInterval(float deltaTime)
