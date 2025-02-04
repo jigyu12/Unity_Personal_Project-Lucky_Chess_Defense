@@ -43,6 +43,16 @@ public class InGameUIManager : MonoBehaviour
     [SerializeField] private TMP_Text heroicProbabilityText;
     [SerializeField] private TMP_Text legendaryProbabilityText;
 
+    [SerializeField] private Button luckySummonButton;
+    [SerializeField] private GameObject luckySummonPanel;
+    [SerializeField] private Button luckySummonCancelButton;
+    [SerializeField] private TMP_Text rareSummonCostButtonText;
+    [SerializeField] private TMP_Text heroicSummonCostButtonText;
+    [SerializeField] private TMP_Text legendarySummonCostButtonText;
+    [SerializeField] private Button rareSummonButton;
+    [SerializeField] private Button heroicSummonButton;
+    [SerializeField] private Button legendarySummonButton;
+    
     private readonly StringBuilder stringBuilder = new(20);
 
     private void Awake()
@@ -53,7 +63,7 @@ public class InGameUIManager : MonoBehaviour
     private void Start()
     {
         heroSpawnButton.onClick.RemoveAllListeners();
-        heroSpawnButton.onClick.AddListener(heroSpawner.OnClickCreateHero);
+        heroSpawnButton.onClick.AddListener(() => heroSpawner.OnClickCreateHero());
         heroSpawnButton.onClick.AddListener(SetCurrCoinInButtonText);
         
         settingPanelButton.onClick.RemoveAllListeners();
@@ -71,6 +81,29 @@ public class InGameUIManager : MonoBehaviour
         
         probabilityEnforceButton.onClick.RemoveAllListeners();
         probabilityEnforceButton.onClick.AddListener(heroSpawner.OnClickEnforceProbability);
+        
+        commonProbabilityText.color = Color.white;
+        rareProbabilityText.color = Color.blue;
+        heroicProbabilityText.color = new Color(0.65f, 0.32f, 0.92f);
+        legendaryProbabilityText.color = Color.yellow;
+        
+        luckySummonButton.onClick.RemoveAllListeners();
+        luckySummonButton.onClick.AddListener(OnClickLuckySummonPanelActive);
+        
+        luckySummonCancelButton.onClick.RemoveAllListeners();
+        luckySummonCancelButton.onClick.AddListener(OnClickLuckySummonPanelInActive);
+        
+        rareSummonButton.onClick.RemoveAllListeners();
+        rareSummonButton.onClick.AddListener(() => 
+            heroSpawner.OnClickCreateHero(true, heroSpawner.RareSummonOnlyProbability, HeroGrade.Rare, false));
+        
+        heroicSummonButton.onClick.RemoveAllListeners();
+        heroicSummonButton.onClick.AddListener(() => 
+            heroSpawner.OnClickCreateHero(true, heroSpawner.HeroicSummonOnlyProbability, HeroGrade.Heroic, false));
+        
+        legendarySummonButton.onClick.RemoveAllListeners();
+        legendarySummonButton.onClick.AddListener(() => 
+            heroSpawner.OnClickCreateHero(true, heroSpawner.LegendarySummonOnlyProbability, HeroGrade.Legendary, false));
     }
 
     public void SetWaveNumberText(int waveNumber)
@@ -200,30 +233,67 @@ public class InGameUIManager : MonoBehaviour
         {
             stringBuilder.Clear();
             
-            stringBuilder.AppendFormat($"{currProbData.CommonProbability:F2}");
+            stringBuilder.AppendFormat($"Common \n: {currProbData.CommonProbability:F2} %");
             
             commonProbabilityText.SetText(stringBuilder.ToString());
         }
         {
             stringBuilder.Clear();
             
-            stringBuilder.AppendFormat($"{currProbData.RareProbability:F2}");
+            stringBuilder.AppendFormat($"Rare \n: {currProbData.RareProbability:F2} %");
             
             rareProbabilityText.SetText(stringBuilder.ToString());
         }
         {
             stringBuilder.Clear();
             
-            stringBuilder.AppendFormat($"{currProbData.HeroicProbability:F2}");
+            stringBuilder.AppendFormat($"Heroic \n: {currProbData.HeroicProbability:F2} %");
             
             heroicProbabilityText.SetText(stringBuilder.ToString());
         }
         {
             stringBuilder.Clear();
             
-            stringBuilder.AppendFormat($"{currProbData.LegendaryProbability:F2}");
+            stringBuilder.AppendFormat($"Legendary \n: {currProbData.LegendaryProbability:F2} %");
             
             legendaryProbabilityText.SetText(stringBuilder.ToString());
+        }
+    }
+
+    private void OnClickLuckySummonPanelActive()
+    {
+        luckySummonPanel.SetActive(true);
+        luckySummonCancelButton.gameObject.SetActive(true);
+    }
+
+    private void OnClickLuckySummonPanelInActive()
+    {
+        luckySummonPanel.SetActive(false);
+        luckySummonCancelButton.gameObject.SetActive(false);
+    }
+
+    public void SetLuckySummonGemCostTexts()
+    {
+        {
+            stringBuilder.Clear();
+
+            stringBuilder.Append(inGameResourceManager.InitialRareSummonGemCost.ToString());
+        
+            rareSummonCostButtonText.SetText(stringBuilder.ToString());
+        }
+        {
+            stringBuilder.Clear();
+            
+            stringBuilder.Append(inGameResourceManager.InitialHeroicSummonGemCost.ToString());
+            
+            heroicSummonCostButtonText.SetText(stringBuilder.ToString());
+        }
+        {
+            stringBuilder.Clear();
+            
+            stringBuilder.Append(inGameResourceManager.InitialLegendarySummonGemCost.ToString());
+            
+            legendarySummonCostButtonText.SetText(stringBuilder.ToString());
         }
     }
 }

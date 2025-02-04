@@ -16,6 +16,10 @@ public class InGameResourceManager : MonoBehaviour
     public int CurrentHeroSummonCoinCost { get; private set; }
     private const int NextHeroSummonCoinCostOffset = 2;
 
+    public int InitialRareSummonGemCost => 1;
+    public int InitialHeroicSummonGemCost => 1;
+    public int InitialLegendarySummonGemCost => 2;
+
     private void Awake()
     {
         currentCoin = InitialCoin;
