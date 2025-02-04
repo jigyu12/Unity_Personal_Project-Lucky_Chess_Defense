@@ -43,6 +43,10 @@ public class HeroSpawner : MonoBehaviour
     
     [SerializeField] private Button probabilityEnforceButton;
 
+    public float RareSummonOnlyProbability => 60f;
+    public float HeroicSummonOnlyProbability => 20f;
+    public float LegendarySummonOnlyProbability => 10f;
+
     private void Awake()
     {
         HeroPool = new ObjectPool<Hero>(OnCreateHero, OnGetHero, OnReleaseHero, OnDestroyHero);
@@ -98,16 +102,51 @@ public class HeroSpawner : MonoBehaviour
 
         inGameUIManager.SetHeroCountText(currHeroCount, MaxHeroCount);
         inGameUIManager.SetProbabilityTexts();
+        inGameUIManager.SetLuckySummonGemCostTexts();
     }
-
-    public void OnClickCreateHero()
+    
+    /// <param name="isLuckySummon">If this value is true, do a lucky summon; if it is false(default), do a random summon.</param>
+    /// <param name="probability">Assign this value only when isLuckySummon is true.</param>
+    /// <param name="heroGrade">Assign this value only when isLuckySummon is true.</param>
+    /// /// <param name="useCoin">Assign this value as false only when isLuckySummon is true. If this value is false, use the gem instead.</param>
+    public void OnClickCreateHero(bool isLuckySummon = false, float? probability = null, HeroGrade? heroGrade = null, bool useCoin = true)
     {
-        bool canUseCoin = inGameResourceManager.TryUseCoin(inGameResourceManager.CurrentHeroSummonCoinCost);
-        if (!canUseCoin)
+        if (useCoin)
         {
-            Debug.Log("Not enough coins to summon a hero.");
+            bool canUseCoin = inGameResourceManager.TryUseCoin(inGameResourceManager.CurrentHeroSummonCoinCost);
+            if (!canUseCoin)
+            {
+                Debug.Log("Not enough coins to summon a hero.");
 
-            return;
+                return;
+            }
+        }
+        else
+        {
+            int gemCost;
+            switch (heroGrade)
+            {
+                case HeroGrade.Rare:
+                    gemCost = inGameResourceManager.InitialRareSummonGemCost;
+                    break;
+                case HeroGrade.Heroic:
+                    gemCost = inGameResourceManager.InitialHeroicSummonGemCost;
+                    break;
+                case HeroGrade.Legendary:
+                    gemCost = inGameResourceManager.InitialLegendarySummonGemCost;
+                    break;
+                default:
+                    Debug.Log("Invalid Hero Grade for luckysummon.");
+                    return;
+            }
+            
+            bool canUseGem = inGameResourceManager.TryUseGem(gemCost);
+            if (!canUseGem)
+            {
+                Debug.Log("Not enough gems to summon a hero.");
+
+                return;
+            }
         }
         
         if (currHeroCount >= MaxHeroCount)
@@ -119,14 +158,30 @@ public class HeroSpawner : MonoBehaviour
 
         Hero hero = HeroPool.Get();
 
-        bool success = SetHeroDataByRandData(hero);
-        if (!success)
-        {
-            Debug.Assert(false, "SetHeroData Failed");
+        bool? success;
+        if (isLuckySummon)
+            success = SetHeroDataByLuckySummon(hero, probability, heroGrade);
+        else
+            success = SetHeroDataByRandData(hero);
 
+        if (success is false)
+        {
+            Debug.Log("Lucky Summon failed.....");
+            
+            HeroPool.Release(hero);
+            
             return;
         }
-
+        
+        if (success is null)
+        {
+            HeroPool.Release(hero);
+            
+            Debug.Assert(false, "SetHeroData Failed");
+            
+            return;
+        }
+        
         foreach (var cell in HeroSpawnPointInCellList)
         {
             if (cell.CanSpawnHero(hero))
@@ -143,7 +198,7 @@ public class HeroSpawner : MonoBehaviour
             }
         }
 
-        Debug.Log("Cant Spawn Hero");
+        Debug.Log("There is no cell available to spawn a hero.");
         HeroPool.Release(hero);
     }
 
@@ -169,10 +224,10 @@ public class HeroSpawner : MonoBehaviour
         inGameUIManager.SetProbabilityTexts();
     }
 
-    private bool SetHeroDataByRandData(Hero hero)
+    private bool? SetHeroDataByRandData(Hero hero)
     {
         if (HeroSummonProbabilityIndex < 0 || HeroSummonProbabilityIndex >= heroSummonProbabilityDataLists.Count)
-            return false;
+            return null;
 
         HeroSummonProbabilityData pData = heroSummonProbabilityDataLists[HeroSummonProbabilityIndex];
 
@@ -199,13 +254,13 @@ public class HeroSpawner : MonoBehaviour
             }
         }
 
-        return false;
+        return null;
     }
 
-    private bool SetHeroData(Hero hero, int listIndex)
+    private bool? SetHeroData(Hero hero, int listIndex)
     {
         if (listIndex < 0 || listIndex >= heroDataRarityLists.Count)
-            return false;
+            return null;
 
         var dataList = heroDataRarityLists[listIndex].dataList;
         hero.SetHeroData(dataList[Random.Range(0, dataList.Count)]);
@@ -276,5 +331,20 @@ public class HeroSpawner : MonoBehaviour
         {
             heroDataRarityLists.RemoveAt(heroDataRarityLists.Count - 1);
         }
+    }
+
+    private bool? SetHeroDataByLuckySummon(Hero hero, float? probability, HeroGrade? heroGrade)
+    {
+        if (probability is null || heroGrade is null)
+            return null;
+
+        float randProbability = Random.value * 100f;
+
+        if (probability < randProbability)
+        {
+            return false;
+        }
+        
+        return SetHeroData(hero, (int)heroGrade - 1);
     }
 }
