@@ -27,6 +27,8 @@ public class Hero : MonoBehaviour
     public int HeroId => heroData.HeroID;
     public int Cost => heroData.BlockCost;
     public float AttackRange => heroData.AtkRange;
+    public int SaleType => heroData.SaleType;
+    public int SaleQuantity => heroData.SaleQuantity;
     
     public bool IsMoving { get; set; }
     public Vector3 destPosition;

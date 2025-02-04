@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class HeroSpawnPointInCell : MonoBehaviour
 {
@@ -21,6 +23,9 @@ public class HeroSpawnPointInCell : MonoBehaviour
     public int OccupyHeroId { get; private set; }
     public float AttackRange { get; private set; }
     
+    private const int DefaultOccupyHeroId = -1;
+    private const float DefaultAttackRange = 0f;
+    
     [SerializeField] private List<Hero> heroList;
 
     private const int HeroCountMax = 3;
@@ -40,6 +45,20 @@ public class HeroSpawnPointInCell : MonoBehaviour
     
     [SerializeField] private LayerMask cellLayer;
     
+    [SerializeField] private Button heroSellButton;
+    private RectTransform heroSellButtonRectTr;
+    [SerializeField] private Vector3 heroSellButtonPosOffset;
+    
+    private EventSystem eventSystem;
+    private PointerEventData eventData;
+    private List<RaycastResult> results;
+    [SerializeField] private GraphicRaycaster graphicRaycaster;
+    private InGameResourceManager inGameResourceManager;
+    private HeroSpawner heroSpawner;
+    
+    private delegate void HeroSellEvent(HeroSpawnPointInCell sellerCell);
+    private static event HeroSellEvent OnHeroSellEvent;
+    
     private void Awake()
     {
         heroList.Capacity = HeroCountMax;
@@ -52,6 +71,10 @@ public class HeroSpawnPointInCell : MonoBehaviour
         singlePosList.Clear();
         doublePosList.Clear();
         triplePosList.Clear();
+
+        heroSellButton.TryGetComponent(out heroSellButtonRectTr);
+        heroSellButton.onClick.RemoveAllListeners();
+        heroSellButton.onClick.AddListener(OnClickSellHero);
     }
 
     private void OnEnable()
@@ -63,11 +86,18 @@ public class HeroSpawnPointInCell : MonoBehaviour
         
         Cost = 3;
         HeroCount = 0;
-        OccupyHeroId = -1;
-        AttackRange = 0f;
+        OccupyHeroId = DefaultOccupyHeroId;
+        AttackRange = DefaultAttackRange;
 
         HideAttackRangeCircle();
         HideHighlightMoveCell();
+        
+        OnHeroSellEvent += HandleHeroSellEvent;
+    }
+
+    private void OnDisable()
+    {
+        OnHeroSellEvent -= HandleHeroSellEvent;
     }
     
     private void Start()
@@ -87,10 +117,18 @@ public class HeroSpawnPointInCell : MonoBehaviour
         triplePosList.Add(triplePos2);
 
         circleSpeed = Hero.HeroSwapSpeed;
+        
+        eventSystem = GameObject.FindGameObjectWithTag("EventSystem").GetComponent<EventSystem>();
+        eventData = new PointerEventData(eventSystem);
+        results = new ();
+        inGameResourceManager = GameObject.FindGameObjectWithTag("InGameResourceManager").GetComponent<InGameResourceManager>();
+        heroSpawner = GameObject.FindGameObjectWithTag("HeroSpawner").GetComponent<HeroSpawner>();
     }
     
     private void Update()
     {
+        heroSellButtonRectTr.position = mainCamera.WorldToScreenPoint(singlePos.transform.position + heroSellButtonPosOffset * transform.localScale.y);
+        
         DetectTouch();
         
         CircleMoveToCurrCellPos();
@@ -105,13 +143,20 @@ public class HeroSpawnPointInCell : MonoBehaviour
             Vector2 touchPosition = mainCamera.ScreenToWorldPoint(touch.position);
 
             Collider2D hitCollider = Physics2D.OverlapPoint(touchPosition, cellLayer);
+            bool isUIButtonTouched = IsUIButtonTouched(touch.position);
 
             if (touch.phase == TouchPhase.Began)
             {
-                if (hitCollider?.gameObject == gameObject && AttackRange != 0f)
+                if ((hitCollider?.gameObject == gameObject || isUIButtonTouched) && AttackRange != DefaultAttackRange)
+                {
                     ShowAttackRangeCircle();
+                    ShowHeroSellButton();
+                }
                 else
+                {
                     HideAttackRangeCircle();
+                    HideHeroSellButton();
+                }
             }
         }
     }
@@ -144,8 +189,23 @@ public class HeroSpawnPointInCell : MonoBehaviour
         circleOutlineRenderer.gameObject.SetActive(false);
     }
 
+    private void ShowHeroSellButton()
+    {
+        if (isCellSwapping)
+            return;
+        
+        heroSellButton.gameObject.SetActive(true);
+    }
+    
+    private void HideHeroSellButton()
+    {
+        heroSellButton.gameObject.SetActive(false);
+    }
+
     public void MoveCell(Vector3 destPos)
     {
+        HideHeroSellButton();
+        
         circleRenderer.transform.SetParent(null);
         circleOutlineRenderer.transform.SetParent(null);
         
@@ -182,7 +242,7 @@ public class HeroSpawnPointInCell : MonoBehaviour
 
     public bool CanSpawnHero(Hero hero)
     {
-        if (OccupyHeroId == -1)
+        if (OccupyHeroId == DefaultOccupyHeroId)
             return CalculatePlaceHeroByCostAndCount(hero);
         
         return OccupyHeroId == hero.HeroId && CalculatePlaceHeroByCostAndCount(hero);
@@ -192,15 +252,8 @@ public class HeroSpawnPointInCell : MonoBehaviour
     {
         if (Cost < hero.Cost || HeroCount >= HeroCountMax) 
             return false;
-                
-        OccupyHeroId = hero.HeroId;
-        Cost -= hero.Cost;
-        AttackRange = hero.AttackRange;
 
-        heroList.Add(hero);
-        ++HeroCount;
-
-        PlaceHero();
+        AddHero(hero);
                 
         return true;
     }
@@ -281,5 +334,110 @@ public class HeroSpawnPointInCell : MonoBehaviour
     public Vector3 GetCenterPos()
     {
         return singlePos.transform.position;
+    }
+
+    private void OnClickSellHero()
+    {
+        if (heroList.Count <= 0)
+        {
+            Debug.Assert(false, "The hero list is empty, but try selling a hero.");
+            
+            return;
+        }
+
+        Hero removedHero = RemoveLastHero();
+        removedHero.DestroyHero();
+        
+        OnHeroSellEvent?.Invoke(this);
+    }
+    
+    bool IsUIButtonTouched(Vector2 touchPosition)
+    {
+        eventData.position = touchPosition;
+
+        results.Clear();
+        graphicRaycaster.Raycast(eventData, results);
+
+        foreach (var result in results)
+        {
+            if (result.gameObject.CompareTag("HeroButton"))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private void HandleHeroSellEvent(HeroSpawnPointInCell sellerCell)
+    {
+        if (this == sellerCell)
+            return;
+        
+        if (OccupyHeroId != sellerCell.OccupyHeroId)
+            return;
+        
+        if (0 < HeroCount && HeroCount < HeroCountMax)
+        {
+            sellerCell.AddHero(RemoveLastHero());
+        }
+    }
+
+    private void AddHero(Hero hero, bool teleport = true)
+    {
+        if (OccupyHeroId == DefaultOccupyHeroId)
+        {
+            OccupyHeroId = hero.HeroId;
+
+            if (!heroSpawner.CellsByOccupyHeroIdDict.ContainsKey(OccupyHeroId))
+            {
+                List<HeroSpawnPointInCell> newList = new();
+                newList.Add(this);
+                heroSpawner.CellsByOccupyHeroIdDict.Add(OccupyHeroId, newList);
+            }
+            else if (!heroSpawner.CellsByOccupyHeroIdDict[OccupyHeroId].Contains(this))
+            {
+                heroSpawner.CellsByOccupyHeroIdDict[OccupyHeroId].Add(this);
+            }
+        }
+        Cost -= hero.Cost;
+        AttackRange = hero.AttackRange;
+        ++HeroCount;
+        
+        heroList.Add(hero);
+
+        PlaceHero(teleport);
+    }
+
+    private Hero RemoveLastHero(bool teleport = true)
+    {
+        var lastHero = heroList[heroList.Count - 1];
+        
+        if (heroList.Count == 1)
+        {
+            heroSpawner.CellsByOccupyHeroIdDict[OccupyHeroId].Remove(this);
+            
+            OccupyHeroId = DefaultOccupyHeroId;
+            AttackRange = DefaultAttackRange;
+            
+            HideAttackRangeCircle();
+            HideHeroSellButton();
+        }
+        
+        Cost += lastHero.Cost;
+        --HeroCount;
+        heroSpawner.RemoveOneCurrHeroCount();
+
+        if ((InGameResourceType)lastHero.SaleType == InGameResourceType.Coin)
+            inGameResourceManager.AddCoin(lastHero.SaleQuantity);
+        else if ((InGameResourceType)lastHero.SaleType == InGameResourceType.Gem)
+            inGameResourceManager.AddGem(lastHero.SaleQuantity);
+        else
+            Debug.Assert(false, "Invalid Sale Quantity In Last Hero.");
+        
+        heroList.RemoveAt(heroList.Count - 1);
+        
+        PlaceHero(teleport);
+        
+        return lastHero;
     }
 }

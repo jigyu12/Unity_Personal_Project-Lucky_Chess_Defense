@@ -20,7 +20,7 @@ public enum MonsterType
     Boss,
 }
 
-public enum MonsterRewardType
+public enum InGameResourceType
 {
     Coin = 1,
     Gem,

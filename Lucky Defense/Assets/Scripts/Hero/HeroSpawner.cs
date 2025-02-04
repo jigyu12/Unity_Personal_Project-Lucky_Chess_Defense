@@ -47,6 +47,8 @@ public class HeroSpawner : MonoBehaviour
     public float HeroicSummonOnlyProbability => 20f;
     public float LegendarySummonOnlyProbability => 10f;
 
+    public Dictionary<int, List<HeroSpawnPointInCell>> CellsByOccupyHeroIdDict { get; } = new();
+
     private void Awake()
     {
         HeroPool = new ObjectPool<Hero>(OnCreateHero, OnGetHero, OnReleaseHero, OnDestroyHero);
@@ -61,6 +63,8 @@ public class HeroSpawner : MonoBehaviour
         currHeroCount = 0;
         
         CurrentHeroSummonProbabilityData = heroSummonProbabilityDataLists[HeroSummonProbabilityIndex];
+        
+        CellsByOccupyHeroIdDict.Clear();
     }
 
     private void Start()
@@ -136,7 +140,7 @@ public class HeroSpawner : MonoBehaviour
                     gemCost = inGameResourceManager.InitialLegendarySummonGemCost;
                     break;
                 default:
-                    Debug.Log("Invalid Hero Grade for luckysummon.");
+                    Debug.Log("Invalid Hero Grade for luckySummon.");
                     return;
             }
             
@@ -181,25 +185,44 @@ public class HeroSpawner : MonoBehaviour
             
             return;
         }
+
+        if (CellsByOccupyHeroIdDict.ContainsKey(hero.HeroId))
+        {
+            foreach (var cell in CellsByOccupyHeroIdDict[hero.HeroId])
+            {
+                bool canSpawnHeroInCell = CanSpawnHeroInCell(cell, hero);
+                if(canSpawnHeroInCell)
+                    return;
+            }
+        }
         
         foreach (var cell in HeroSpawnPointInCellList)
         {
-            if (cell.CanSpawnHero(hero))
-            {
-                hero.Initialize();
-
-                inGameUIManager.SetHeroCountText(++currHeroCount, MaxHeroCount);
-                
-                inGameResourceManager.AddHeroSummonCoinCost();
-                
-                Debug.Log($"Summoned hero ID : {hero.HeroId}");
-
+            bool canSpawnHeroInCell = CanSpawnHeroInCell(cell, hero);
+            if(canSpawnHeroInCell)
                 return;
-            }
         }
 
         Debug.Log("There is no cell available to spawn a hero.");
         HeroPool.Release(hero);
+    }
+
+    private bool CanSpawnHeroInCell(HeroSpawnPointInCell cell, Hero hero)
+    {
+        if (cell.CanSpawnHero(hero))
+        {
+            hero.Initialize();
+
+            inGameUIManager.SetHeroCountText(++currHeroCount, MaxHeroCount);
+                
+            inGameResourceManager.AddHeroSummonCoinCost();
+                
+            Debug.Log($"Summoned hero ID : {hero.HeroId}");
+
+            return true;
+        }
+        
+        return false;
     }
 
     public void OnClickEnforceProbability()
@@ -346,5 +369,10 @@ public class HeroSpawner : MonoBehaviour
         }
         
         return SetHeroData(hero, (int)heroGrade - 1);
+    }
+
+    public void RemoveOneCurrHeroCount()
+    {
+        inGameUIManager.SetHeroCountText(--currHeroCount, MaxHeroCount);
     }
 }
