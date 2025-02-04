@@ -210,6 +210,7 @@ public class InGameUIManager : MonoBehaviour
     private void OnClickSwitchProbabilityInfoPanelActive()
     {
         probabilityInfoPanel.SetActive(!probabilityInfoPanel.activeSelf);
+        luckySummonButton.gameObject.SetActive(!luckySummonButton.gameObject.activeSelf);
     }
 
     public void SetProbabilityTexts()

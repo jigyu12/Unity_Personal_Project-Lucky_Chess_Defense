@@ -12,6 +12,9 @@ TagManager:
   - Heroes
   - GameManager
   - InGameResourceManager
+  - EventSystem
+  - HeroButton
+  - HeroSpawner
   layers:
   - Default
   - TransparentFX

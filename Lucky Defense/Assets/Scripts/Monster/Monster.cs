@@ -112,11 +112,11 @@ public class Monster : MonoBehaviour
         if (monsterData.MonType == MonsterType.Normal)
             OnDead.AddListener(() => inGameUIManager.SetMonsterCountSliderAndText
                 (--waveManager.CurrentMonsterCountToSlider, waveManager.MaxMonsterCount));
-        if ((MonsterRewardType)monsterData.MonReward == MonsterRewardType.Coin)
+        if ((InGameResourceType)monsterData.MonReward == InGameResourceType.Coin)
         {
             OnDead.AddListener(() => inGameResourceManager.AddCoin(monsterData.MonReward));
         }
-        else if ((MonsterRewardType)monsterData.MonReward == MonsterRewardType.Gem)
+        else if ((InGameResourceType)monsterData.MonReward == InGameResourceType.Gem)
         {
             OnDead.AddListener(() => inGameResourceManager.AddGem(monsterData.MonReward));
         }
