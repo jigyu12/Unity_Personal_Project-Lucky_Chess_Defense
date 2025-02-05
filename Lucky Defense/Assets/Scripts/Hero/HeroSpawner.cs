@@ -103,7 +103,7 @@ public class HeroSpawner : MonoBehaviour
 
             cell.transform.position = pos;
         }
-
+        
         inGameUIManager.SetHeroCountText(currHeroCount, MaxHeroCount);
         inGameUIManager.SetProbabilityTexts();
         inGameUIManager.SetLuckySummonGemCostTexts();
@@ -112,44 +112,49 @@ public class HeroSpawner : MonoBehaviour
     /// <param name="isLuckySummon">If this value is true, do a lucky summon; if it is false(default), do a random summon.</param>
     /// <param name="probability">Assign this value only when isLuckySummon is true.</param>
     /// <param name="heroGrade">Assign this value only when isLuckySummon is true.</param>
-    /// /// <param name="useCoin">Assign this value as false only when isLuckySummon is true. If this value is false, use the gem instead.</param>
-    public void OnClickCreateHero(bool isLuckySummon = false, float? probability = null, HeroGrade? heroGrade = null, bool useCoin = true)
+    /// <param name="isSummonHeroInCell">Assign this value only if isLuckySummon is true. If it is false, just return the hero; do not summon it in the cell.</param>
+    /// <param name="useInGameResource">Assign this value as false only when isLuckySummon is true. If this value is false, Does not consume InGameResources.</param>
+    /// <param name="useCoin">Assign this value as false only when isLuckySummon and useInGameResource is true. If this value is false, use the gem instead.</param>
+    public Hero OnClickCreateHero(bool isLuckySummon = false, float? probability = null, HeroGrade? heroGrade = null,bool isSummonHeroInCell = true ,bool useInGameResource = true, bool useCoin = true)
     {
-        if (useCoin)
+        if (useInGameResource)
         {
-            bool canUseCoin = inGameResourceManager.TryUseCoin(inGameResourceManager.CurrentHeroSummonCoinCost);
-            if (!canUseCoin)
+            if (useCoin)
             {
-                Debug.Log("Not enough coins to summon a hero.");
+                bool canUseCoin = inGameResourceManager.TryUseCoin(inGameResourceManager.CurrentHeroSummonCoinCost);
+                if (!canUseCoin)
+                {
+                    Debug.Log("Not enough coins to summon a hero.");
 
-                return;
+                    return null;
+                }
             }
-        }
-        else
-        {
-            int gemCost;
-            switch (heroGrade)
+            else
             {
-                case HeroGrade.Rare:
-                    gemCost = inGameResourceManager.InitialRareSummonGemCost;
-                    break;
-                case HeroGrade.Heroic:
-                    gemCost = inGameResourceManager.InitialHeroicSummonGemCost;
-                    break;
-                case HeroGrade.Legendary:
-                    gemCost = inGameResourceManager.InitialLegendarySummonGemCost;
-                    break;
-                default:
-                    Debug.Log("Invalid Hero Grade for luckySummon.");
-                    return;
-            }
+                int gemCost;
+                switch (heroGrade)
+                {
+                    case HeroGrade.Rare:
+                        gemCost = inGameResourceManager.InitialRareSummonGemCost;
+                        break;
+                    case HeroGrade.Heroic:
+                        gemCost = inGameResourceManager.InitialHeroicSummonGemCost;
+                        break;
+                    case HeroGrade.Legendary:
+                        gemCost = inGameResourceManager.InitialLegendarySummonGemCost;
+                        break;
+                    default:
+                        Debug.Log("Invalid Hero Grade for luckySummon.");
+                        return null;
+                }
             
-            bool canUseGem = inGameResourceManager.TryUseGem(gemCost);
-            if (!canUseGem)
-            {
-                Debug.Log("Not enough gems to summon a hero.");
+                bool canUseGem = inGameResourceManager.TryUseGem(gemCost);
+                if (!canUseGem)
+                {
+                    Debug.Log("Not enough gems to summon a hero.");
 
-                return;
+                    return null;
+                }
             }
         }
         
@@ -157,7 +162,7 @@ public class HeroSpawner : MonoBehaviour
         {
             Debug.Log("Hero count is full");
 
-            return;
+            return null;
         }
 
         Hero hero = HeroPool.Get();
@@ -174,7 +179,7 @@ public class HeroSpawner : MonoBehaviour
             
             HeroPool.Release(hero);
             
-            return;
+            return null;
         }
         
         if (success is null)
@@ -183,8 +188,11 @@ public class HeroSpawner : MonoBehaviour
             
             Debug.Assert(false, "SetHeroData Failed");
             
-            return;
+            return null;
         }
+        
+        if(!isSummonHeroInCell)
+            return hero;
 
         if (CellsByOccupyHeroIdDict.ContainsKey(hero.HeroId))
         {
@@ -192,7 +200,7 @@ public class HeroSpawner : MonoBehaviour
             {
                 bool canSpawnHeroInCell = CanSpawnHeroInCell(cell, hero);
                 if(canSpawnHeroInCell)
-                    return;
+                    return hero;
             }
         }
         
@@ -200,29 +208,36 @@ public class HeroSpawner : MonoBehaviour
         {
             bool canSpawnHeroInCell = CanSpawnHeroInCell(cell, hero);
             if(canSpawnHeroInCell)
-                return;
+                return hero;
         }
 
         Debug.Log("There is no cell available to spawn a hero.");
         HeroPool.Release(hero);
+
+        return null;
     }
 
     private bool CanSpawnHeroInCell(HeroSpawnPointInCell cell, Hero hero)
     {
         if (cell.CanSpawnHero(hero))
         {
-            hero.Initialize();
-
-            inGameUIManager.SetHeroCountText(++currHeroCount, MaxHeroCount);
-                
-            inGameResourceManager.AddHeroSummonCoinCost();
-                
+            SpawnHeroInit(hero);
+            
             Debug.Log($"Summoned hero ID : {hero.HeroId}");
 
             return true;
         }
         
         return false;
+    }
+
+    public void SpawnHeroInit(Hero hero)
+    {
+        hero.Initialize();
+
+        inGameUIManager.SetHeroCountText(++currHeroCount, MaxHeroCount);
+                
+        inGameResourceManager.AddHeroSummonCoinCost();
     }
 
     public void OnClickEnforceProbability()
@@ -371,8 +386,10 @@ public class HeroSpawner : MonoBehaviour
         return SetHeroData(hero, (int)heroGrade - 1);
     }
 
-    public void RemoveOneCurrHeroCount()
+    public void RemoveCurrHeroCount(int countAmount)
     {
-        inGameUIManager.SetHeroCountText(--currHeroCount, MaxHeroCount);
+        currHeroCount -= countAmount;
+        
+        inGameUIManager.SetHeroCountText(currHeroCount, MaxHeroCount);
     }
 }

@@ -35,13 +35,10 @@ public class InGameResourceManager : MonoBehaviour
 
 #if UNITY_STANDALONE || UNITY_EDITOR
 
-    private void Update()
+    public void OnClickShowMeTheMoney()
     {
-        if (Input.GetKeyDown(KeyCode.F12))
-        {
-            AddCoin(100000);
-            AddGem(100);
-        }
+        AddCoin(10000);
+        AddGem(100);
     }
     
 #endif

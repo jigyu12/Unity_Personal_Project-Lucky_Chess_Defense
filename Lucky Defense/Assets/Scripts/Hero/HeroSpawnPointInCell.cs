@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -49,15 +50,22 @@ public class HeroSpawnPointInCell : MonoBehaviour
     private RectTransform heroSellButtonRectTr;
     [SerializeField] private Vector3 heroSellButtonPosOffset;
     
-    private EventSystem eventSystem;
-    private PointerEventData eventData;
-    private List<RaycastResult> results;
-    [SerializeField] private GraphicRaycaster graphicRaycaster;
+    [SerializeField] private Button heroFusionButton;
+    private RectTransform heroFusionButtonRectTr;
+    [SerializeField] private Vector3 heroFusionButtonPosOffset;
+    
     private InGameResourceManager inGameResourceManager;
     private HeroSpawner heroSpawner;
     
     private delegate void HeroSellEvent(HeroSpawnPointInCell sellerCell);
     private static event HeroSellEvent OnHeroSellEvent;
+    
+#if UNITY_STANDALONE || UNITY_EDITOR
+
+    [SerializeField] private TMP_Text occupyHeroIdDebugText;
+    private RectTransform occupyHeroIdDebugTextRectTr;
+    
+#endif
     
     private void Awake()
     {
@@ -75,9 +83,31 @@ public class HeroSpawnPointInCell : MonoBehaviour
         heroSellButton.TryGetComponent(out heroSellButtonRectTr);
         heroSellButton.onClick.RemoveAllListeners();
         heroSellButton.onClick.AddListener(OnClickSellHero);
+        
+        heroFusionButton.TryGetComponent(out heroFusionButtonRectTr);
+        heroFusionButton.onClick.RemoveAllListeners();
+        heroFusionButton.onClick.AddListener(OnClickFusionHero);
+        
+#if UNITY_STANDALONE || UNITY_EDITOR
+
+        occupyHeroIdDebugText.TryGetComponent(out occupyHeroIdDebugTextRectTr);
+
+#endif
     }
 
     private void OnEnable()
+    {
+        ClearCell();
+        
+        OnHeroSellEvent += HandleHeroSellEvent;
+    }
+
+    private void OnDisable()
+    {
+        OnHeroSellEvent -= HandleHeroSellEvent;
+    }
+
+    private void ClearCell()
     {
         foreach (Hero hero in heroList)
             hero.DestroyHero();
@@ -86,18 +116,22 @@ public class HeroSpawnPointInCell : MonoBehaviour
         
         Cost = 3;
         HeroCount = 0;
+        
+        if(heroSpawner is not null && heroSpawner.CellsByOccupyHeroIdDict.ContainsKey(OccupyHeroId))
+            heroSpawner.CellsByOccupyHeroIdDict[OccupyHeroId].Remove(this);
         OccupyHeroId = DefaultOccupyHeroId;
         AttackRange = DefaultAttackRange;
 
         HideAttackRangeCircle();
         HideHighlightMoveCell();
+        HideHeroSellButton();
+        HideHeroFusionButton();
         
-        OnHeroSellEvent += HandleHeroSellEvent;
-    }
+#if UNITY_STANDALONE || UNITY_EDITOR
 
-    private void OnDisable()
-    {
-        OnHeroSellEvent -= HandleHeroSellEvent;
+        occupyHeroIdDebugText.SetText(OccupyHeroId.ToString());
+    
+#endif
     }
     
     private void Start()
@@ -118,9 +152,6 @@ public class HeroSpawnPointInCell : MonoBehaviour
 
         circleSpeed = Hero.HeroSwapSpeed;
         
-        eventSystem = GameObject.FindGameObjectWithTag("EventSystem").GetComponent<EventSystem>();
-        eventData = new PointerEventData(eventSystem);
-        results = new ();
         inGameResourceManager = GameObject.FindGameObjectWithTag("InGameResourceManager").GetComponent<InGameResourceManager>();
         heroSpawner = GameObject.FindGameObjectWithTag("HeroSpawner").GetComponent<HeroSpawner>();
     }
@@ -128,10 +159,26 @@ public class HeroSpawnPointInCell : MonoBehaviour
     private void Update()
     {
         heroSellButtonRectTr.position = mainCamera.WorldToScreenPoint(singlePos.transform.position + heroSellButtonPosOffset * transform.localScale.y);
+        heroFusionButtonRectTr.position = mainCamera.WorldToScreenPoint(singlePos.transform.position + heroFusionButtonPosOffset * transform.localScale.y);
         
         DetectTouch();
         
         CircleMoveToCurrCellPos();
+        
+#if UNITY_STANDALONE || UNITY_EDITOR
+        
+        occupyHeroIdDebugTextRectTr.position = mainCamera.WorldToScreenPoint(singlePos.transform.position * transform.localScale.y);
+        
+        if (DebugModeUI.IsDebugMode)
+        {
+            occupyHeroIdDebugText.gameObject.SetActive(true);
+        }
+        else
+        {
+            occupyHeroIdDebugText.gameObject.SetActive(false);
+        }
+    
+#endif
     }
 
     private void DetectTouch()
@@ -139,23 +186,29 @@ public class HeroSpawnPointInCell : MonoBehaviour
         if (Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
-            
-            Vector2 touchPosition = mainCamera.ScreenToWorldPoint(touch.position);
 
-            Collider2D hitCollider = Physics2D.OverlapPoint(touchPosition, cellLayer);
-            bool isUIButtonTouched = IsUIButtonTouched(touch.position);
+            if (EventSystem.current.IsPointerOverGameObject(touch.fingerId))
+                return;
+            
+            Vector2 touchWorldPosition = mainCamera.ScreenToWorldPoint(touch.position);
+
+            Collider2D hitCollider = Physics2D.OverlapPoint(touchWorldPosition, cellLayer);
 
             if (touch.phase == TouchPhase.Began)
             {
-                if ((hitCollider?.gameObject == gameObject || isUIButtonTouched) && AttackRange != DefaultAttackRange)
+                if (hitCollider?.gameObject == gameObject && AttackRange != DefaultAttackRange)
                 {
                     ShowAttackRangeCircle();
                     ShowHeroSellButton();
+                    
+                    if(heroList[0].HeroGrade != HeroGrade.Mythic)
+                        ShowHeroFusionButton();
                 }
                 else
                 {
                     HideAttackRangeCircle();
                     HideHeroSellButton();
+                    HideHeroFusionButton();
                 }
             }
         }
@@ -201,10 +254,24 @@ public class HeroSpawnPointInCell : MonoBehaviour
     {
         heroSellButton.gameObject.SetActive(false);
     }
+    
+    private void ShowHeroFusionButton()
+    {
+        if (isCellSwapping)
+            return;
+        
+        heroFusionButton.gameObject.SetActive(true);
+    }
+    
+    private void HideHeroFusionButton()
+    {
+        heroFusionButton.gameObject.SetActive(false);
+    }
 
     public void MoveCell(Vector3 destPos)
     {
         HideHeroSellButton();
+        HideHeroFusionButton();
         
         circleRenderer.transform.SetParent(null);
         circleOutlineRenderer.transform.SetParent(null);
@@ -351,23 +418,6 @@ public class HeroSpawnPointInCell : MonoBehaviour
         OnHeroSellEvent?.Invoke(this);
     }
     
-    bool IsUIButtonTouched(Vector2 touchPosition)
-    {
-        eventData.position = touchPosition;
-
-        results.Clear();
-        graphicRaycaster.Raycast(eventData, results);
-
-        foreach (var result in results)
-        {
-            if (result.gameObject.CompareTag("HeroButton"))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-    
     private void HandleHeroSellEvent(HeroSpawnPointInCell sellerCell)
     {
         if (this == sellerCell)
@@ -402,10 +452,18 @@ public class HeroSpawnPointInCell : MonoBehaviour
         Cost -= hero.Cost;
         AttackRange = hero.AttackRange;
         ++HeroCount;
+        if(HeroCount == HeroCountMax)
+            heroFusionButton.interactable = true;
         
         heroList.Add(hero);
 
         PlaceHero(teleport);
+        
+#if UNITY_STANDALONE || UNITY_EDITOR
+
+        occupyHeroIdDebugText.SetText(OccupyHeroId.ToString());
+    
+#endif
     }
 
     private Hero RemoveLastHero(bool teleport = true)
@@ -421,11 +479,13 @@ public class HeroSpawnPointInCell : MonoBehaviour
             
             HideAttackRangeCircle();
             HideHeroSellButton();
+            HideHeroFusionButton();
         }
         
         Cost += lastHero.Cost;
         --HeroCount;
-        heroSpawner.RemoveOneCurrHeroCount();
+        heroSpawner.RemoveCurrHeroCount(1);
+        heroFusionButton.interactable = false;
 
         if ((InGameResourceType)lastHero.SaleType == InGameResourceType.Coin)
             inGameResourceManager.AddCoin(lastHero.SaleQuantity);
@@ -438,6 +498,48 @@ public class HeroSpawnPointInCell : MonoBehaviour
         
         PlaceHero(teleport);
         
+#if UNITY_STANDALONE || UNITY_EDITOR
+
+        occupyHeroIdDebugText.SetText(OccupyHeroId.ToString());
+    
+#endif
+        
         return lastHero;
+    }
+
+    private void OnClickFusionHero()
+    {
+        HeroGrade nextGrade = heroList[0].HeroGrade + 1;
+        if (nextGrade == HeroGrade.Mythic)
+            HideHeroFusionButton();
+        else
+            heroFusionButton.interactable = false;
+
+        heroSpawner.RemoveCurrHeroCount(HeroCountMax);
+        var newHero = heroSpawner.OnClickCreateHero(true, 100f, nextGrade, false, false);
+
+        ClearCell();
+        
+        heroSpawner.SpawnHeroInit(newHero);
+        
+        Debug.Log($"Fused hero ID : {newHero.HeroId}");
+
+        if (heroSpawner.CellsByOccupyHeroIdDict.ContainsKey(newHero.HeroId))
+        {
+            foreach (var cell in heroSpawner.CellsByOccupyHeroIdDict[newHero.HeroId])
+            {
+                bool canSpawnHero = cell.CanSpawnHero(newHero);
+                if (canSpawnHero)
+                {
+                    cell.ShowAttackRangeCircle();
+                    
+                    return;
+                }
+            }
+        }
+        
+        AddHero(newHero);
+            
+        ShowAttackRangeCircle();
     }
 }

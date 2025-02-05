@@ -5542,6 +5542,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9156efac9b5b85f49b17cbd4fd02dea9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debugButton: {fileID: 2021268255}
+  inGameResourceManager: {fileID: 1086915664}
 --- !u!120 &1170194222
 LineRenderer:
   serializedVersion: 2
@@ -12456,7 +12458,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9198624439746576116, guid: 18f9bf6faf96ab04da5c4e26485990b5, type: 3}
       propertyPath: m_Name
-      value: FrameCounterButton
+      value: DebugButton
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -95,15 +95,18 @@ public class InGameUIManager : MonoBehaviour
         
         rareSummonButton.onClick.RemoveAllListeners();
         rareSummonButton.onClick.AddListener(() => 
-            heroSpawner.OnClickCreateHero(true, heroSpawner.RareSummonOnlyProbability, HeroGrade.Rare, false));
+            heroSpawner.OnClickCreateHero(true, heroSpawner.RareSummonOnlyProbability, HeroGrade.Rare,
+                true,true,false));
         
         heroicSummonButton.onClick.RemoveAllListeners();
         heroicSummonButton.onClick.AddListener(() => 
-            heroSpawner.OnClickCreateHero(true, heroSpawner.HeroicSummonOnlyProbability, HeroGrade.Heroic, false));
+            heroSpawner.OnClickCreateHero(true, heroSpawner.HeroicSummonOnlyProbability, HeroGrade.Heroic,
+                true,true ,false));
         
         legendarySummonButton.onClick.RemoveAllListeners();
         legendarySummonButton.onClick.AddListener(() => 
-            heroSpawner.OnClickCreateHero(true, heroSpawner.LegendarySummonOnlyProbability, HeroGrade.Legendary, false));
+            heroSpawner.OnClickCreateHero(true, heroSpawner.LegendarySummonOnlyProbability, HeroGrade.Legendary,
+                true,true,false));
     }
 
     public void SetWaveNumberText(int waveNumber)

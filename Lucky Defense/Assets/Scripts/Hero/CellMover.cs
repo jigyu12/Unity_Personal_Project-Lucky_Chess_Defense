@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class CellMover : MonoBehaviour
 {
@@ -41,6 +42,9 @@ public class CellMover : MonoBehaviour
         if (Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
+            
+            if (EventSystem.current.IsPointerOverGameObject(touch.fingerId))
+                return;
             
             Vector2 touchPosition = mainCamera.ScreenToWorldPoint(touch.position);
             
