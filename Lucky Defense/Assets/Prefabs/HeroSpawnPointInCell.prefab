@@ -70,6 +70,7 @@ MonoBehaviour:
   heroSellButtonPosOffset: {x: 0, y: 0.55, z: 0}
   heroFusionButton: {fileID: 8479795763756121082}
   heroFusionButtonPosOffset: {x: 0, y: -0.55, z: 0}
+  sellTypeInHeroSellButtonText: {fileID: 6224915300986776331}
   occupyHeroIdDebugText: {fileID: 3201616751707955773}
 --- !u!61 &7965957327728828410
 BoxCollider2D:

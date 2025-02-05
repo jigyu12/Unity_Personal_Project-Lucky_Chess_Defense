@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -59,6 +60,8 @@ public class HeroSpawnPointInCell : MonoBehaviour
     
     private delegate void HeroSellEvent(HeroSpawnPointInCell sellerCell);
     private static event HeroSellEvent OnHeroSellEvent;
+    [SerializeField] private TMP_Text sellTypeInHeroSellButtonText;
+    private StringBuilder stringBuilder; 
     
 #if UNITY_STANDALONE || UNITY_EDITOR
 
@@ -87,6 +90,9 @@ public class HeroSpawnPointInCell : MonoBehaviour
         heroFusionButton.TryGetComponent(out heroFusionButtonRectTr);
         heroFusionButton.onClick.RemoveAllListeners();
         heroFusionButton.onClick.AddListener(OnClickFusionHero);
+
+        stringBuilder = new();
+        stringBuilder.Clear();
         
 #if UNITY_STANDALONE || UNITY_EDITOR
 
@@ -428,7 +434,7 @@ public class HeroSpawnPointInCell : MonoBehaviour
         
         if (0 < HeroCount && HeroCount < HeroCountMax)
         {
-            sellerCell.AddHero(RemoveLastHero());
+            sellerCell.AddHero(RemoveLastHero(true));
         }
     }
 
@@ -437,6 +443,10 @@ public class HeroSpawnPointInCell : MonoBehaviour
         if (OccupyHeroId == DefaultOccupyHeroId)
         {
             OccupyHeroId = hero.HeroId;
+            
+            stringBuilder.Clear();
+            stringBuilder.Append(hero.SaleQuantity);
+            sellTypeInHeroSellButtonText.SetText(stringBuilder.ToString());
 
             if (!heroSpawner.CellsByOccupyHeroIdDict.ContainsKey(OccupyHeroId))
             {
@@ -466,7 +476,7 @@ public class HeroSpawnPointInCell : MonoBehaviour
 #endif
     }
 
-    private Hero RemoveLastHero(bool teleport = true)
+    private Hero RemoveLastHero(bool isRemovedHeroMoveToOtherCell = false, bool teleport = true)
     {
         var lastHero = heroList[heroList.Count - 1];
         
@@ -480,11 +490,16 @@ public class HeroSpawnPointInCell : MonoBehaviour
             HideAttackRangeCircle();
             HideHeroSellButton();
             HideHeroFusionButton();
+
+            stringBuilder.Clear();
+            stringBuilder.Append(00);
+            sellTypeInHeroSellButtonText.SetText(stringBuilder.ToString());
         }
         
         Cost += lastHero.Cost;
         --HeroCount;
-        heroSpawner.RemoveCurrHeroCount(1);
+        if(!isRemovedHeroMoveToOtherCell)
+            heroSpawner.RemoveCurrHeroCount(1);
         heroFusionButton.interactable = false;
 
         if ((InGameResourceType)lastHero.SaleType == InGameResourceType.Coin)

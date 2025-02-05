@@ -117,6 +117,14 @@ public class HeroSpawner : MonoBehaviour
     /// <param name="useCoin">Assign this value as false only when isLuckySummon and useInGameResource is true. If this value is false, use the gem instead.</param>
     public Hero OnClickCreateHero(bool isLuckySummon = false, float? probability = null, HeroGrade? heroGrade = null,bool isSummonHeroInCell = true ,bool useInGameResource = true, bool useCoin = true)
     {
+        
+        if (currHeroCount >= MaxHeroCount)
+        {
+            Debug.Log("Hero count is full");
+
+            return null;
+        }
+        
         if (useInGameResource)
         {
             if (useCoin)
@@ -156,13 +164,6 @@ public class HeroSpawner : MonoBehaviour
                     return null;
                 }
             }
-        }
-        
-        if (currHeroCount >= MaxHeroCount)
-        {
-            Debug.Log("Hero count is full");
-
-            return null;
         }
 
         Hero hero = HeroPool.Get();
