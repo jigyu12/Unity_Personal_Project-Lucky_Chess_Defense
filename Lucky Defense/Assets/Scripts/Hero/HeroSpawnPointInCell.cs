@@ -498,16 +498,18 @@ public class HeroSpawnPointInCell : MonoBehaviour
         
         Cost += lastHero.Cost;
         --HeroCount;
-        if(!isRemovedHeroMoveToOtherCell)
+        if (!isRemovedHeroMoveToOtherCell)
+        {
             heroSpawner.RemoveCurrHeroCount(1);
+            
+            if ((InGameResourceType)lastHero.SaleType == InGameResourceType.Coin)
+                inGameResourceManager.AddCoin(lastHero.SaleQuantity);
+            else if ((InGameResourceType)lastHero.SaleType == InGameResourceType.Gem)
+                inGameResourceManager.AddGem(lastHero.SaleQuantity);
+            else
+                Debug.Assert(false, "Invalid Sale Quantity In Last Hero.");
+        }
         heroFusionButton.interactable = false;
-
-        if ((InGameResourceType)lastHero.SaleType == InGameResourceType.Coin)
-            inGameResourceManager.AddCoin(lastHero.SaleQuantity);
-        else if ((InGameResourceType)lastHero.SaleType == InGameResourceType.Gem)
-            inGameResourceManager.AddGem(lastHero.SaleQuantity);
-        else
-            Debug.Assert(false, "Invalid Sale Quantity In Last Hero.");
         
         heroList.RemoveAt(heroList.Count - 1);
         
