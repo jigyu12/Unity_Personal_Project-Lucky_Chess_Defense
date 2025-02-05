@@ -25,6 +25,7 @@ public class Hero : MonoBehaviour
     private float attackSpeedTimeAccum;
     
     public int HeroId => heroData.HeroID;
+    public HeroGrade HeroGrade => heroData.Grade;
     public int Cost => heroData.BlockCost;
     public float AttackRange => heroData.AtkRange;
     public int SaleType => heroData.SaleType;
@@ -48,7 +49,7 @@ public class Hero : MonoBehaviour
         destPosition = new(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
     }
     
-    private void OnEnable()
+    private void OnDisable()
     {
         OnAttack.RemoveAllListeners();
         
