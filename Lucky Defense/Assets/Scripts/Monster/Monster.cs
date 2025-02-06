@@ -127,11 +127,6 @@ public class Monster : MonoBehaviour
         if (monsterData.MonType == MonsterType.Boss)
             OnDestroy.AddListener(() => waveManager.ReduceBossMonsterCount());
         OnDestroy.AddListener(DestroyMonster);
-        
-        if (monsterData.MonType == MonsterType.Normal)
-            GetComponent<SpriteRenderer>().color = Color.white;
-        if (monsterData.MonType == MonsterType.Boss)
-            GetComponent<SpriteRenderer>().color = Color.red;
     }
 
     public void SetPool(IObjectPool<Monster> pool)

@@ -23,7 +23,7 @@ public class WaveManager : MonoBehaviour
     public Dictionary<Collider2D, Monster> CurrMonstersDict { get; } = new();
     
     private const int BossWaveDivider = 10;
-    private const int LastBossWaveRemainder = 8;
+    private int LastBossWaveRemainder;
     private int bossMonsterCount;
 
     private bool isGameEnd;
@@ -48,6 +48,8 @@ public class WaveManager : MonoBehaviour
         bossMonsterCount = 0;
         
         isGameEnd = false;
+        
+        LastBossWaveRemainder = waveDataList.Count / BossWaveDivider;
     }
 
     private void Start()
