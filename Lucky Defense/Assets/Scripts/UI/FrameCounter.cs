@@ -16,7 +16,8 @@ public class FrameCounter : MonoBehaviour
     {
         deltaTime = 0f;
         
-        Application.targetFrameRate = -1;
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 9999;
 
         isVisibleFrame = false;
     }
