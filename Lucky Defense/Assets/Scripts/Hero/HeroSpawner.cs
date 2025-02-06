@@ -194,6 +194,9 @@ public class HeroSpawner : MonoBehaviour
         
         if(!isSummonHeroInCell)
             return hero;
+        
+        if(!isLuckySummon)
+            inGameResourceManager.AddHeroSummonCoinCost();
 
         if (CellsByOccupyHeroIdDict.ContainsKey(hero.HeroId))
         {
@@ -237,8 +240,6 @@ public class HeroSpawner : MonoBehaviour
         hero.Initialize();
 
         inGameUIManager.SetHeroCountText(++currHeroCount, MaxHeroCount);
-                
-        inGameResourceManager.AddHeroSummonCoinCost();
     }
 
     public void OnClickEnforceProbability()
