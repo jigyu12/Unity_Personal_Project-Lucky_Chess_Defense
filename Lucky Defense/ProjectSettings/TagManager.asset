@@ -3,15 +3,27 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - WaveManager
+  - InGameUIManager
+  - Cells
+  - Monsters
+  - Projectiles
+  - Heroes
+  - GameManager
+  - InGameResourceManager
+  - EventSystem
+  - HeroButton
+  - HeroSpawner
+  - HeroSpumSpawner
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Cell
   - Water
   - UI
-  - 
+  - Monster
   - 
   - 
   - 

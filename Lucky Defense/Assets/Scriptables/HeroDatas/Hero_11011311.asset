@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1eb145cc14311ba46bbfde4573139604, type: 3}
+  m_Name: Hero_11011311
+  m_EditorClassIdentifier: 
+  heroID: 11011311
+  stringKey: 2000011
+  grade: 3
+  atkType: 1
+  atkRange: 1.5
+  heroDamage: 650
+  atkSpeed: 2
+  heroSkill: 0
+  blockCost: 1
+  saleType: 2
+  saleQuantity: 2
+  criticalPercent: 0
+  criticalMlt: 0
+  heroSpumPrefab: {fileID: 7603570953787971613, guid: 7a205218afe11c041af8bfe929d9d050, type: 3}
