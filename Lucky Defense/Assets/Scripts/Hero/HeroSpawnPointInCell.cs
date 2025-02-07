@@ -353,6 +353,7 @@ public class HeroSpawnPointInCell : MonoBehaviour
                         heroList[i].destPosition = singlePosList[i].transform.position;
                         
                         heroList[i].IsMoving = true;
+                        heroList[i].SetHeroAnimMove();
                     }
                 }
             }
@@ -373,6 +374,7 @@ public class HeroSpawnPointInCell : MonoBehaviour
                         heroList[i].destPosition = doublePosList[i].transform.position;
                         
                         heroList[i].IsMoving = true;
+                        heroList[i].SetHeroAnimMove();
                     }
                        
                 }
@@ -394,6 +396,7 @@ public class HeroSpawnPointInCell : MonoBehaviour
                         heroList[i].destPosition = triplePosList[i].transform.position;
                         
                         heroList[i].IsMoving = true;
+                        heroList[i].SetHeroAnimMove();
                     }
                 }
             }

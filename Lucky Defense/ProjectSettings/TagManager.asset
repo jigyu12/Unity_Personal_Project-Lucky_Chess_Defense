@@ -15,6 +15,7 @@ TagManager:
   - EventSystem
   - HeroButton
   - HeroSpawner
+  - HeroSpumSpawner
   layers:
   - Default
   - TransparentFX

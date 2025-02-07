@@ -16,10 +16,13 @@ MonoBehaviour:
   stringKey: 2000022
   grade: 5
   atkType: 1
-  atkRange: 1
+  atkRange: 1.5
   heroDamage: 2700
   atkSpeed: 3
   heroSkill: 3
   blockCost: 3
   saleType: 2
   saleQuantity: 4
+  criticalPercent: 0
+  criticalMlt: 0
+  heroSpumPrefab: {fileID: 6982882634815926684, guid: 5a658fe89b448bf4da7e9e3fd88896a5, type: 3}

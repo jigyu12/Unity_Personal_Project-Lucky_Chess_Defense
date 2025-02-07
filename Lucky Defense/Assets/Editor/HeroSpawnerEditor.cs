@@ -120,7 +120,22 @@ public class HeroSpawnerEditor : Editor
                     .GetField("saleQuantity",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
                     ?.SetValue(heroData, record.SaleQuantity);
-                
+                typeof(HeroData)
+                    .GetField("criticalPercent",
+                        System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(heroData, record.CriticalPercent);
+                typeof(HeroData)
+                    .GetField("criticalMlt",
+                        System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(heroData, record.CriticalMlt);
+                GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(Utility.HeroPrefabPath + record.PrefabName + ".prefab");
+                if (prefab == null)
+                {
+                    Debug.Assert(false, $"Prefab not found at path: {Utility.HeroPrefabPath + record.PrefabName + ".prefab"} for Hero ID {record.HeroID}");
+                }
+                typeof(HeroData)
+                    .GetField("heroSpumPrefab", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(heroData, prefab);
 
                 string assetPath = $"Assets/Scriptables/HeroDatas/Hero_{record.HeroID}.asset";
                 Directory.CreateDirectory("Assets/Scriptables/HeroDatas");

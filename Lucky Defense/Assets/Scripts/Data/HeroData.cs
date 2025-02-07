@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "HeroData", menuName = "Scriptable Object/HeroData")]
@@ -46,6 +47,18 @@ public class HeroData : ScriptableObject
     [SerializeField] private int saleQuantity;
     
     public int SaleQuantity => saleQuantity;
+
+    [SerializeField] private float criticalPercent;
+
+    public float CriticalPercent => criticalPercent;
+    
+    [SerializeField] private float criticalMlt;
+
+    public float CriticalMlt => criticalMlt;
+    
+    [SerializeField] private GameObject heroSpumPrefab;
+    
+    public GameObject HeroSpumPrefab => heroSpumPrefab;
 }
 
 public class HeroCsvData
@@ -61,4 +74,7 @@ public class HeroCsvData
     public int BlockCost { get; set; }
     public int SaleType { get; set; }
     public int SaleQuantity { get; set; }
+    public float CriticalPercent { get; set; }
+    public float CriticalMlt { get; set; }
+    public String PrefabName { get; set; }
 }

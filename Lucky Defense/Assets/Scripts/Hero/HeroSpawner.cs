@@ -48,11 +48,10 @@ public class HeroSpawner : MonoBehaviour
     public float LegendarySummonOnlyProbability => 10f;
 
     public Dictionary<int, List<HeroSpawnPointInCell>> CellsByOccupyHeroIdDict { get; } = new();
-
     private void Awake()
     {
         HeroPool = new ObjectPool<Hero>(OnCreateHero, OnGetHero, OnReleaseHero, OnDestroyHero);
-
+            
         HeroSummonProbabilityIndex = 0;
 
         foreach (var pair in CurrCellsDict)
@@ -347,6 +346,28 @@ public class HeroSpawner : MonoBehaviour
 
         return cell1Pos.x.CompareTo(cell2Pos.x);
     }
+    
+    private bool? SetHeroDataByLuckySummon(Hero hero, float? probability, HeroGrade? heroGrade)
+    {
+        if (probability is null || heroGrade is null)
+            return null;
+
+        float randProbability = Random.value * 100f;
+
+        if (probability < randProbability)
+        {
+            return false;
+        }
+        
+        return SetHeroData(hero, (int)heroGrade - 1);
+    }
+
+    public void RemoveCurrHeroCount(int countAmount)
+    {
+        currHeroCount -= countAmount;
+        
+        inGameUIManager.SetHeroCountText(currHeroCount, MaxHeroCount);
+    }
 
     [System.Serializable]
     public class HeroDataList
@@ -371,27 +392,5 @@ public class HeroSpawner : MonoBehaviour
         {
             heroDataRarityLists.RemoveAt(heroDataRarityLists.Count - 1);
         }
-    }
-
-    private bool? SetHeroDataByLuckySummon(Hero hero, float? probability, HeroGrade? heroGrade)
-    {
-        if (probability is null || heroGrade is null)
-            return null;
-
-        float randProbability = Random.value * 100f;
-
-        if (probability < randProbability)
-        {
-            return false;
-        }
-        
-        return SetHeroData(hero, (int)heroGrade - 1);
-    }
-
-    public void RemoveCurrHeroCount(int countAmount)
-    {
-        currHeroCount -= countAmount;
-        
-        inGameUIManager.SetHeroCountText(currHeroCount, MaxHeroCount);
     }
 }

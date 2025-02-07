@@ -3,6 +3,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Pool;
+using ColorUtility = UnityEngine.ColorUtility;
 
 public class Hero : MonoBehaviour
 {
@@ -37,6 +38,10 @@ public class Hero : MonoBehaviour
 
     private GameObject parent;
 
+    private HeroSpumSpawner heroSpumSpawner;
+    private GameObject spumHeroGo;
+    private SPUM_Prefabs spumPrefabs;
+    
     private void Awake()
     {
         contactFilter.layerMask = monsterLayer;
@@ -56,6 +61,8 @@ public class Hero : MonoBehaviour
         monsterCollList.Clear();
         
         targetMonster = null;
+        
+        heroSpumSpawner.heroSpumPoolDict[heroData.HeroID].Release(spumHeroGo);
     }
     
     private void Start()
@@ -103,6 +110,14 @@ public class Hero : MonoBehaviour
         OnAttack.AddListener(attackMethod.Attack);
 
         attackSpeedTimeAccum = heroData.AtkSpeed;
+
+        GameObject.FindGameObjectWithTag("HeroSpumSpawner").TryGetComponent(out heroSpumSpawner);
+        spumHeroGo = heroSpumSpawner.heroSpumPoolDict[heroData.HeroID].Get();
+        spumHeroGo.transform.SetParent(transform);
+        spumHeroGo.transform.localPosition = Vector3.zero;
+        
+        spumHeroGo.TryGetComponent(out spumPrefabs);
+        spumPrefabs.OverrideControllerInit();
     }
 
     private bool CheckCanAttack()
@@ -155,6 +170,8 @@ public class Hero : MonoBehaviour
         attackSpeedTimeAccum = 0f;
 
         OnAttack?.Invoke(targetMonster, heroData.HeroDamage);
+
+        spumPrefabs.PlayAnimation(PlayerState.ATTACK, 0);
     }
 
     public void SetPool(IObjectPool<Hero> pool)
@@ -196,9 +213,16 @@ public class Hero : MonoBehaviour
             IsMoving = false;
 
             transform.position = destPosition;
+            
+            spumPrefabs.PlayAnimation(PlayerState.IDLE, 0);
         }
     }
-
+    
+    public void SetHeroAnimMove()
+    {
+        spumPrefabs.PlayAnimation(PlayerState.MOVE, 0);
+    }
+    
 #if UNITY_STANDALONE || UNITY_EDITOR
     private void OnDrawGizmos()
     {
