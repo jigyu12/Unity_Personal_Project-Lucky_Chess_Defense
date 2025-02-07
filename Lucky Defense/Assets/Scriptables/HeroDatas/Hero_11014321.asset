@@ -25,4 +25,4 @@ MonoBehaviour:
   saleQuantity: 2
   criticalPercent: 0
   criticalMlt: 0
-  heroSpumPrefab: {fileID: 4933855055947102481, guid: eb1cd62a45a8bad47ae8f918ae300e70, type: 3}
+  heroSpumPrefab: {fileID: 2787126104453602477, guid: 2d021ecfb40110c42bcb0b8e41eb5ebf, type: 3}

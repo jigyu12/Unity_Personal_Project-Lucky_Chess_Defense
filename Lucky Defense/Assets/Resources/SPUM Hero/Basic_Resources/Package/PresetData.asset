@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Presets:
   - UnitType: Unit
-    PresetName: 20250207104027187
+    PresetName: 20250207213001484
     Packages:
     - Name: Undead
       Path: Assets/SPUM/Resources/Addons
@@ -1387,14 +1387,14 @@ MonoBehaviour:
         Name: 0_Attack_Magic.anim
         StateType: ATTACK
         ClipPath: Addons/Legacy/0_Unit/1_Animation/02_Attack/02_MagicAttack/0_Attack_Magic.anim
-        HasData: 0
+        HasData: 1
         UnitType: Unit
         SubCategory: MagicAttack
-      - index: 0
+      - index: 1
         Name: 1_Skill_Magic.anim
         StateType: ATTACK
         ClipPath: Addons/Legacy/0_Unit/1_Animation/02_Attack/02_MagicAttack/1_Skill_Magic.anim
-        HasData: 0
+        HasData: 1
         UnitType: Unit
         SubCategory: MagicAttack
       - index: 0
@@ -3557,7 +3557,7 @@ MonoBehaviour:
         Name: AxeAttack_1.anim
         StateType: ATTACK
         ClipPath: Addons/Ver300/0_Unit/1_Animation/02_Attack/00_MeleeAttack/AxeAttack_1.anim
-        HasData: 1
+        HasData: 0
         UnitType: Unit
         SubCategory: MeleeAttack
       - index: 0

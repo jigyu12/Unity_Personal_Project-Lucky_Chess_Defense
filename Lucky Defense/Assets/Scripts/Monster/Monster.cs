@@ -151,7 +151,7 @@ public class Monster : MonoBehaviour
         hpSlider.value = (float)currentHp / maxHp;
         hpFill.color = Color.Lerp(Color.red,Color.green , hpSlider.value);
 
-        if (currentHp <= 0)
+        if (!IsDead && currentHp <= 0)
             StartCoroutine(OnDeadCoroutine());
     }
 
