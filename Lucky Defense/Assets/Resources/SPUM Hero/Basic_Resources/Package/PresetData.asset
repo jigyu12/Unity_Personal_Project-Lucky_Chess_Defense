@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Presets:
   - UnitType: Unit
-    PresetName: 20250207104027187
+    PresetName: 20250208185824660
     Packages:
     - Name: Undead
       Path: Assets/SPUM/Resources/Addons
@@ -1345,14 +1345,14 @@ MonoBehaviour:
         Name: 0_idle.anim
         StateType: IDLE
         ClipPath: Addons/Legacy/0_Unit/1_Animation/00_Idle/0_idle.anim
-        HasData: 1
+        HasData: 0
         UnitType: Unit
         SubCategory: 
       - index: 0
         Name: 0_move.anim
         StateType: MOVE
         ClipPath: Addons/Legacy/0_Unit/1_Animation/01_Move/0_move.anim
-        HasData: 1
+        HasData: 0
         UnitType: Unit
         SubCategory: 
       - index: 0
@@ -1415,28 +1415,28 @@ MonoBehaviour:
         Name: 0_Debuff_Stun.anim
         StateType: DEBUFF
         ClipPath: Addons/Legacy/0_Unit/1_Animation/05_Debuff/0_Debuff_Stun.anim
-        HasData: 0
+        HasData: 1
         UnitType: Unit
         SubCategory: 
       - index: 0
         Name: 0_Conecntrate.anim
         StateType: OTHER
         ClipPath: Addons/Legacy/0_Unit/1_Animation/06_Other/00_Concentrate/0_Conecntrate.anim
-        HasData: 1
+        HasData: 0
         UnitType: Unit
         SubCategory: Concentrate
-      - index: 1
+      - index: 0
         Name: 0_Buff.anim
         StateType: OTHER
         ClipPath: Addons/Legacy/0_Unit/1_Animation/06_Other/01_Buff/0_Buff.anim
-        HasData: 1
+        HasData: 0
         UnitType: Unit
         SubCategory: Buff
-      - index: 2
+      - index: 0
         Name: 0_Sit.anim
         StateType: OTHER
         ClipPath: Addons/Legacy/0_Unit/1_Animation/06_Other/02_Etc/0_Sit.anim
-        HasData: 1
+        HasData: 0
         UnitType: Unit
         SubCategory: Etc
       - index: 0
@@ -3557,7 +3557,7 @@ MonoBehaviour:
         Name: AxeAttack_1.anim
         StateType: ATTACK
         ClipPath: Addons/Ver300/0_Unit/1_Animation/02_Attack/00_MeleeAttack/AxeAttack_1.anim
-        HasData: 1
+        HasData: 0
         UnitType: Unit
         SubCategory: MeleeAttack
       - index: 0
@@ -4432,18 +4432,18 @@ MonoBehaviour:
       Version: 
       CreationDate: 2024-09-20 16:37:48
       SpumAnimationData:
-      - index: 1
+      - index: 0
         Name: 0_idle.anim
         StateType: IDLE
         ClipPath: Addons/Legacy/0_Unit/1_Animation/00_Idle/0_idle.anim
         HasData: 0
         UnitType: Unit
         SubCategory: 
-      - index: 1
+      - index: 0
         Name: 0_move.anim
         StateType: MOVE
         ClipPath: Addons/Legacy/0_Unit/1_Animation/01_Move/0_move.anim
-        HasData: 0
+        HasData: 1
         UnitType: Unit
         SubCategory: 
       - index: 0
@@ -4492,14 +4492,14 @@ MonoBehaviour:
         Name: 0_Damaged.anim
         StateType: DAMAGED
         ClipPath: Addons/Legacy/0_Unit/1_Animation/03_Damaged/0_Damaged.anim
-        HasData: 0
+        HasData: 1
         UnitType: Unit
         SubCategory: 
       - index: 0
         Name: 0_Die.anim
         StateType: DEATH
         ClipPath: Addons/Legacy/0_Unit/1_Animation/04_Death/0_Die.anim
-        HasData: 0
+        HasData: 1
         UnitType: Unit
         SubCategory: 
       - index: 0
@@ -4509,21 +4509,21 @@ MonoBehaviour:
         HasData: 0
         UnitType: Unit
         SubCategory: 
-      - index: 3
+      - index: 0
         Name: 0_Conecntrate.anim
         StateType: OTHER
         ClipPath: Addons/Legacy/0_Unit/1_Animation/06_Other/00_Concentrate/0_Conecntrate.anim
         HasData: 0
         UnitType: Unit
         SubCategory: Concentrate
-      - index: 3
+      - index: 0
         Name: 0_Buff.anim
         StateType: OTHER
         ClipPath: Addons/Legacy/0_Unit/1_Animation/06_Other/01_Buff/0_Buff.anim
         HasData: 0
         UnitType: Unit
         SubCategory: Buff
-      - index: 3
+      - index: 0
         Name: 0_Sit.anim
         StateType: OTHER
         ClipPath: Addons/Legacy/0_Unit/1_Animation/06_Other/02_Etc/0_Sit.anim

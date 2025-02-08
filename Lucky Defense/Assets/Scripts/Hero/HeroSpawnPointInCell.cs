@@ -283,10 +283,16 @@ public class HeroSpawnPointInCell : MonoBehaviour
         circleOutlineRenderer.transform.SetParent(null);
         
         isCellSwapping = true;
+
+        bool? heroAnimFlipVal;
+        if (Mathf.Approximately(transform.position.x, destPos.x))
+            heroAnimFlipVal = null;
+        else
+            heroAnimFlipVal = transform.position.x > destPos.x;
         
         transform.position = destPos;
         
-        PlaceHero(false);
+        PlaceHero(false, heroAnimFlipVal);
     }
     
     private void CircleMoveToCurrCellPos()
@@ -331,7 +337,7 @@ public class HeroSpawnPointInCell : MonoBehaviour
         return true;
     }
 
-    private void PlaceHero(bool teleport = true)
+    private void PlaceHero(bool teleport = true, bool? heroAnimFlipVal = null)
     {
         switch (HeroCount)
         {
@@ -353,7 +359,7 @@ public class HeroSpawnPointInCell : MonoBehaviour
                         heroList[i].destPosition = singlePosList[i].transform.position;
                         
                         heroList[i].IsMoving = true;
-                        heroList[i].SetHeroAnimMove();
+                        heroList[i].SetHeroAnimMove(heroAnimFlipVal);
                     }
                 }
             }
@@ -374,7 +380,7 @@ public class HeroSpawnPointInCell : MonoBehaviour
                         heroList[i].destPosition = doublePosList[i].transform.position;
                         
                         heroList[i].IsMoving = true;
-                        heroList[i].SetHeroAnimMove();
+                        heroList[i].SetHeroAnimMove(heroAnimFlipVal);
                     }
                        
                 }
@@ -396,7 +402,7 @@ public class HeroSpawnPointInCell : MonoBehaviour
                         heroList[i].destPosition = triplePosList[i].transform.position;
                         
                         heroList[i].IsMoving = true;
-                        heroList[i].SetHeroAnimMove();
+                        heroList[i].SetHeroAnimMove(heroAnimFlipVal);
                     }
                 }
             }
@@ -553,13 +559,25 @@ public class HeroSpawnPointInCell : MonoBehaviour
                 {
                     cell.ShowAttackRangeCircle();
                     
+                    heroSpawner.SortHeroesInCellDrawOrder();
+                    
                     return;
                 }
             }
         }
         
         AddHero(newHero);
+        
+        heroSpawner.SortHeroesInCellDrawOrder();
             
         ShowAttackRangeCircle();
+    }
+
+    public void SortHeroesDrawOrder(int drawOrder)
+    {
+        foreach (var hero in heroList)
+        {
+            hero.SetHeroDrawOrder(drawOrder++);
+        }
     }
 }

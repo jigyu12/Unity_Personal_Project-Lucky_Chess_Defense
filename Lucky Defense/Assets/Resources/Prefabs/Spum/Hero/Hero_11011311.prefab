@@ -4210,7 +4210,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3658935065688867650}
   - component: {fileID: 3253366228480028816}
-  - component: {fileID: -7870557459376960362}
   m_Layer: 5
   m_Name: Hero_11011311
   m_TagString: Untagged
@@ -11973,18 +11972,6 @@ MonoBehaviour:
   - {fileID: 7400000, guid: 4c70df3312bb83346a1bf065b30d3467, type: 2}
   - {fileID: 7400000, guid: 1ef525d53ae254f7d82ef364ced85490, type: 2}
   - {fileID: 7400000, guid: fabe4f140fdb9cb448bc941c7c93e8b6, type: 2}
---- !u!114 &-7870557459376960362
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7603570953787971613}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d08fc3cfb37412445a4d65d110f9d2ee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &8033432285730432511
 GameObject:
   m_ObjectHideFlags: 0

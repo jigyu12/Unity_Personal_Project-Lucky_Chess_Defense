@@ -1,9 +1,11 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Pool;
-using ColorUtility = UnityEngine.ColorUtility;
+using UnityEngine.Rendering;
 
 public class Hero : MonoBehaviour
 {
@@ -41,6 +43,8 @@ public class Hero : MonoBehaviour
     private HeroSpumSpawner heroSpumSpawner;
     private GameObject spumHeroGo;
     private SPUM_Prefabs spumPrefabs;
+
+    private SortingGroup sortingGroup;
     
     private void Awake()
     {
@@ -61,8 +65,12 @@ public class Hero : MonoBehaviour
         monsterCollList.Clear();
         
         targetMonster = null;
-        
-        heroSpumSpawner.heroSpumPoolDict[heroData.HeroID].Release(spumHeroGo);
+
+        if (spumHeroGo is not null)
+        {
+            heroSpumSpawner?.heroSpumPoolDict[heroData.HeroID].Release(spumHeroGo);
+            spumHeroGo = null;
+        }
     }
     
     private void Start()
@@ -118,6 +126,8 @@ public class Hero : MonoBehaviour
         
         spumHeroGo.TryGetComponent(out spumPrefabs);
         spumPrefabs.OverrideControllerInit();
+
+        spumHeroGo.transform.GetChild(0).gameObject.TryGetComponent(out sortingGroup);
     }
 
     private bool CheckCanAttack()
@@ -169,9 +179,32 @@ public class Hero : MonoBehaviour
     {
         attackSpeedTimeAccum = 0f;
 
-        OnAttack?.Invoke(targetMonster, heroData.HeroDamage);
-
         spumPrefabs.PlayAnimation(PlayerState.ATTACK, 0);
+
+        var localScale = transform.localScale;
+        localScale.x = targetMonster.transform.position.x <= transform.position.x? Mathf.Abs(localScale.x) : -Mathf.Abs(localScale.x);
+        transform.localScale = localScale;
+            
+        StartCoroutine(OnAttackCoroutine());
+    }
+
+    private IEnumerator OnAttackCoroutine()
+    {
+        yield return null;
+    
+        while (true)
+        {
+            if (IsMoving)
+                break;
+            
+            var stateInfo = spumPrefabs._anim.GetCurrentAnimatorStateInfo(0);
+            if (stateInfo.normalizedTime >= 0.5f)
+            {
+                OnAttack?.Invoke(targetMonster, heroData.HeroDamage);
+                break;
+            }
+            yield return null;
+        }
     }
 
     public void SetPool(IObjectPool<Hero> pool)
@@ -218,9 +251,21 @@ public class Hero : MonoBehaviour
         }
     }
     
-    public void SetHeroAnimMove()
+    public void SetHeroAnimMove(bool? heroAnimFlipVal)
     {
+        var localScale = transform.localScale;
+        
+        if(heroAnimFlipVal is not null)
+            localScale.x = (bool)heroAnimFlipVal ? Mathf.Abs(localScale.x) : -Mathf.Abs(localScale.x);
+        
+        transform.localScale = localScale;
+        
         spumPrefabs.PlayAnimation(PlayerState.MOVE, 0);
+    }
+
+    public void SetHeroDrawOrder(int drawOrder)
+    {
+        sortingGroup.sortingOrder = drawOrder;
     }
     
 #if UNITY_STANDALONE || UNITY_EDITOR
