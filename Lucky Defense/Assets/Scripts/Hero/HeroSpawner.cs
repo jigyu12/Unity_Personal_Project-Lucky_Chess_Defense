@@ -48,6 +48,9 @@ public class HeroSpawner : MonoBehaviour
     public float LegendarySummonOnlyProbability => 10f;
 
     public Dictionary<int, List<HeroSpawnPointInCell>> CellsByOccupyHeroIdDict { get; } = new();
+    
+    private const int DefaultHeroSortingOrderOffset = 5;
+
     private void Awake()
     {
         HeroPool = new ObjectPool<Hero>(OnCreateHero, OnGetHero, OnReleaseHero, OnDestroyHero);
@@ -202,16 +205,24 @@ public class HeroSpawner : MonoBehaviour
             foreach (var cell in CellsByOccupyHeroIdDict[hero.HeroId])
             {
                 bool canSpawnHeroInCell = CanSpawnHeroInCell(cell, hero);
-                if(canSpawnHeroInCell)
+                if (canSpawnHeroInCell)
+                {
+                    SortHeroesInCellDrawOrder();
+                    
                     return hero;
+                }
             }
         }
         
         foreach (var cell in HeroSpawnPointInCellList)
         {
             bool canSpawnHeroInCell = CanSpawnHeroInCell(cell, hero);
-            if(canSpawnHeroInCell)
+            if (canSpawnHeroInCell)
+            {
+                SortHeroesInCellDrawOrder();
+                    
                 return hero;
+            }
         }
 
         Debug.Log("There is no cell available to spawn a hero.");
@@ -334,6 +345,20 @@ public class HeroSpawner : MonoBehaviour
     public void SortHeroSpawnPointInCellList()
     {
         HeroSpawnPointInCellList.Sort(CellPositionCmp);
+
+        SortHeroesInCellDrawOrder();
+    }
+
+    public void SortHeroesInCellDrawOrder()
+    {
+        int order = 0;
+        
+        foreach (var cell in HeroSpawnPointInCellList)
+        {
+            cell.SortHeroesDrawOrder(DefaultHeroSortingOrderOffset + order);
+
+            order += 3;
+        }
     }
 
     private int CellPositionCmp(HeroSpawnPointInCell cell1, HeroSpawnPointInCell cell2)
@@ -368,7 +393,7 @@ public class HeroSpawner : MonoBehaviour
         
         inGameUIManager.SetHeroCountText(currHeroCount, MaxHeroCount);
     }
-
+    
     [System.Serializable]
     public class HeroDataList
     {

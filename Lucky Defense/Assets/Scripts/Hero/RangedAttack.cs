@@ -21,7 +21,7 @@ public class RangedAttack : MonoBehaviour, IAttackMethod
     {
         var projectile = heroProjectilePool.Get();
         
-        projectile.Initialize(targetMonster, damage, owner.transform.position);
+        projectile.Initialize(targetMonster, damage, owner.transform.position, owner.HeroGrade);
     }
     
     private HeroProjectile OnCreateHeroProjectile()

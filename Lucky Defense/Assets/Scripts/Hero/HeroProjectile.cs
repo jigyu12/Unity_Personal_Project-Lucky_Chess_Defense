@@ -1,3 +1,4 @@
+using System;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -16,10 +17,20 @@ public class HeroProjectile : MonoBehaviour
     
     private GameObject parent;
     
+    private HeroProjectileSpawner heroProjectileSpawner;
+    
+    private HeroGrade ownerHeroGrade;
+    private GameObject heroFireProjectile;
+    
     private void Start()
     {
         parent = GameObject.FindGameObjectWithTag("Projectiles");
         transform.SetParent(parent.transform);
+
+        GameObject.FindGameObjectWithTag("HeroProjectileSpawner").TryGetComponent(out heroProjectileSpawner);
+        heroFireProjectile = heroProjectileSpawner.heroProjectilePoolDict[ownerHeroGrade].Get();
+        heroFireProjectile.transform.SetParent(transform);
+        heroFireProjectile.transform.localPosition = Vector3.zero;
     }
 
     private void Update()
@@ -44,24 +55,30 @@ public class HeroProjectile : MonoBehaviour
         }
         
         Vector3 movePosition = projectilePosition + direction * (ProjectileSpeed * Time.deltaTime);
+        
+        Quaternion rotation = transform.rotation;
+        rotation.x = 0f; 
+        rotation.y = 0f;
 
-        Quaternion lookRotation = Quaternion.LookRotation(targetLastPosition - projectilePosition);
-        lookRotation.x = 0f; 
-        lookRotation.y = 0f;
-
-        transform.SetPositionAndRotation(movePosition, lookRotation);
+        transform.SetPositionAndRotation(movePosition, rotation);
+        
+        heroFireProjectile.transform.localRotation = Quaternion.identity;
     }
 
-    public void Initialize(Monster targetMon, int dmg, Vector3 firePosition)
+    public void Initialize(Monster targetMon, int dmg, Vector3 firePosition, HeroGrade heroGrade)
     {
         targetMonster = targetMon;
         damage = dmg;
         
         SetTargetLastPosAndDir(firePosition);
         
-        Quaternion lookRotation = Quaternion.LookRotation(targetLastPosition - firePosition);
+        Quaternion rotation = transform.rotation;
+        rotation.x = 0f; 
+        rotation.y = 0f;
         
-        transform.SetPositionAndRotation(firePosition, lookRotation);
+        transform.SetPositionAndRotation(firePosition, rotation);
+        
+        ownerHeroGrade = heroGrade;
     }
 
     private void SetTargetLastPosAndDir(Vector3 currObjPos)

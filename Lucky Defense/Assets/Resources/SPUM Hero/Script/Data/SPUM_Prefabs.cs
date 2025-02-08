@@ -35,51 +35,69 @@ public class SPUM_Prefabs : MonoBehaviour
     public List<AnimationClip> DEATH_List = new();
     public List<AnimationClip> OTHER_List = new();
     public void OverrideControllerInit()
+{
+    Animator animator = _anim;
+    RuntimeAnimatorController baseController;
+
+    // animator.runtimeAnimatorController가 이미 AnimatorOverrideController라면 기본 컨트롤러를 추출합니다.
+    if (animator.runtimeAnimatorController is AnimatorOverrideController)
     {
-        Animator animator = _anim;
-        OverrideController = new AnimatorOverrideController();
-        OverrideController.runtimeAnimatorController= animator.runtimeAnimatorController;
+        AnimatorOverrideController temp = animator.runtimeAnimatorController as AnimatorOverrideController;
+        baseController = temp.runtimeAnimatorController;
+    }
+    else
+    {
+        baseController = animator.runtimeAnimatorController;
+    }
 
-        // 모든 애니메이션 클립을 가져옵니다
-        AnimationClip[] clips = animator.runtimeAnimatorController.animationClips;
+    // 기본 컨트롤러를 이용해 새 AnimatorOverrideController를 생성합니다.
+    OverrideController = new AnimatorOverrideController(baseController);
 
-        foreach (AnimationClip clip in clips)
+    // 기본 컨트롤러에 포함된 모든 애니메이션 클립을 가져옵니다.
+    AnimationClip[] clips = baseController.animationClips;
+
+    foreach (AnimationClip clip in clips)
+    {
+        // 클립 이름을 기준으로 오버라이드를 진행합니다.
+        OverrideController[clip.name] = clip;
+    }
+
+    // Animator에 새 OverrideController를 할당합니다.
+    animator.runtimeAnimatorController = OverrideController;
+
+    // 각 PlayerState별 애니메이션 리스트 초기화
+    foreach (PlayerState state in Enum.GetValues(typeof(PlayerState)))
+    {
+        var stateText = state.ToString();
+        StateAnimationPairs[stateText] = new List<AnimationClip>();
+
+        switch (stateText)
         {
-            // 복제된 클립으로 오버라이드합니다
-            OverrideController[clip.name] = clip;
-        }
-
-        animator.runtimeAnimatorController= OverrideController;
-        foreach (PlayerState state in Enum.GetValues(typeof(PlayerState)))
-        {
-            var stateText = state.ToString();
-            StateAnimationPairs[stateText] = new List<AnimationClip>();
-            switch (stateText)
-            {
-                case "IDLE":
-                    StateAnimationPairs[stateText] = IDLE_List;
-                    break;
-                case "MOVE":
-                    StateAnimationPairs[stateText] = MOVE_List;
-                    break;
-                case "ATTACK":
-                    StateAnimationPairs[stateText] = ATTACK_List;
-                    break;
-                case "DAMAGED":
-                    StateAnimationPairs[stateText] = DAMAGED_List;
-                    break;
-                case "DEBUFF":
-                    StateAnimationPairs[stateText] = DEBUFF_List;
-                    break;
-                case "DEATH":
-                    StateAnimationPairs[stateText] = DEATH_List;
-                    break;
-                case "OTHER":
-                    StateAnimationPairs[stateText] = OTHER_List;
-                    break;
-            }
+            case "IDLE":
+                StateAnimationPairs[stateText] = IDLE_List;
+                break;
+            case "MOVE":
+                StateAnimationPairs[stateText] = MOVE_List;
+                break;
+            case "ATTACK":
+                StateAnimationPairs[stateText] = ATTACK_List;
+                break;
+            case "DAMAGED":
+                StateAnimationPairs[stateText] = DAMAGED_List;
+                break;
+            case "DEBUFF":
+                StateAnimationPairs[stateText] = DEBUFF_List;
+                break;
+            case "DEATH":
+                StateAnimationPairs[stateText] = DEATH_List;
+                break;
+            case "OTHER":
+                StateAnimationPairs[stateText] = OTHER_List;
+                break;
         }
     }
+}
+
     public bool allListsHaveItemsExist(){
         List<List<AnimationClip>> allLists = new List<List<AnimationClip>>()
         {
