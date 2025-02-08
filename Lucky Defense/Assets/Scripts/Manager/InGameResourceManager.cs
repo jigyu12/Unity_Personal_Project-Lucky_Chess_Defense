@@ -37,8 +37,8 @@ public class InGameResourceManager : MonoBehaviour
 
     public void OnClickShowMeTheMoney()
     {
-        AddCoin(10000);
-        AddGem(100);
+        AddCoin(450000);
+        AddGem(4500);
     }
     
 #endif

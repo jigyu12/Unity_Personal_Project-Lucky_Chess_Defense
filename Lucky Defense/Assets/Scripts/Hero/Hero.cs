@@ -139,6 +139,7 @@ public class Hero : MonoBehaviour
         
         if (isTargetInvalid)
         {
+            monsterCollList.Clear();
             int monsterCount = Physics2D.OverlapCircle(transform.position, heroData.AtkRange, contactFilter, monsterCollList);
             
             if (monsterCount <= 0)

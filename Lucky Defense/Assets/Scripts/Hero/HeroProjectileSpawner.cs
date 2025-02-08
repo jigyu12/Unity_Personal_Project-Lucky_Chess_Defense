@@ -15,8 +15,8 @@ public class HeroProjectileSpawner : MonoBehaviour
         {
             int index = i;
             IObjectPool<GameObject> heroProjectilePool = new ObjectPool<GameObject>
-                (() => OnCreateHeroProjectile(prefabList[index - 1]), OnGetHeroProjectile, OnReleaseHeroProjectile, OnDestroyHeroProjectile);
-            heroProjectilePoolDict.Add((HeroGrade)i, heroProjectilePool);
+                (() => OnCreateHeroProjectile(prefabList[index]), OnGetHeroProjectile, OnReleaseHeroProjectile, OnDestroyHeroProjectile);
+            heroProjectilePoolDict.Add((HeroGrade)i + 1, heroProjectilePool);
         }
     }
 
