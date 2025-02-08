@@ -17,6 +17,7 @@ TagManager:
   - HeroSpawner
   - HeroSpumSpawner
   - HeroProjectileSpawner
+  - MonsterSpumSpawner
   layers:
   - Default
   - TransparentFX

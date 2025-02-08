@@ -96,6 +96,14 @@ public class MonsterSpawnerEditor : Editor
                     .GetField("monQuantity",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
                     ?.SetValue(monsterData, record.MonQuantity);
+                GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(Utility.MonsterPrefabPath + record.PrefabName + ".prefab");
+                if (prefab == null)
+                {
+                    Debug.Assert(false, $"Prefab not found at path: {Utility.MonsterPrefabPath + record.PrefabName + ".prefab"} for Monster ID {record.MonsterID}");
+                }
+                typeof(MonsterData)
+                    .GetField("monsterSpumPrefab", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    ?.SetValue(monsterData, prefab);
 
                 string assetPath = $"Assets/Scriptables/MonsterDatas/Monster_{record.MonsterID}.asset";
                 Directory.CreateDirectory("Assets/Scriptables/MonsterDatas");

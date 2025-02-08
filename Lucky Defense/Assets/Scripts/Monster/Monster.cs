@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Pool;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 public class Monster : MonoBehaviour
@@ -42,6 +43,14 @@ public class Monster : MonoBehaviour
     public Collider2D Coll2D { get; private set; }
 
     private InGameResourceManager inGameResourceManager;
+    
+    private MonsterSpumSpawner monsterSpumSpawner;
+    private GameObject spumMonsterGo;
+    private SPUM_Prefabs spumPrefabs;
+
+    private SortingGroup sortingGroup;
+    
+    private const int DefaultMonsterSortingOrderOffset = 5;
 
     private void Awake()
     {
@@ -67,7 +76,16 @@ public class Monster : MonoBehaviour
         
         destroyTimeAccum = 0f;
     }
-    
+
+    private void OnDisable()
+    {
+        if (spumMonsterGo is not null)
+        {
+            monsterSpumSpawner?.monsterSpumPoolDict[monsterData.MonsterID].Release(spumMonsterGo);
+            spumMonsterGo = null;
+        }
+    }
+
     private void Start()
     {
         parent = GameObject.FindGameObjectWithTag("Monsters");
@@ -88,6 +106,15 @@ public class Monster : MonoBehaviour
             transform.position = waypoint[currentWaypointIndex];
             
             currentWaypointIndex = ++currentWaypointIndex % waypoint.Count;
+
+            if (!Mathf.Approximately(waypoint[currentWaypointIndex].y, transform.position.y))
+            {
+                var localScale = transform.localScale;
+                
+                localScale.x = -localScale.x;
+                
+                transform.localScale = localScale;
+            }
         }
     }
     
@@ -122,11 +149,44 @@ public class Monster : MonoBehaviour
         }
         else
             Debug.Assert(false, "Invalid monster reward type");
+        OnDead.AddListener(() => spumPrefabs.PlayAnimation(PlayerState.DEATH, 0));
         
         OnDestroy.RemoveAllListeners();
         if (monsterData.MonType == MonsterType.Boss)
             OnDestroy.AddListener(() => waveManager.ReduceBossMonsterCount());
         OnDestroy.AddListener(DestroyMonster);
+        
+        if(monsterSpumSpawner is null)
+            GameObject.FindGameObjectWithTag("MonsterSpumSpawner").TryGetComponent(out monsterSpumSpawner); 
+        
+        spumMonsterGo = monsterSpumSpawner.monsterSpumPoolDict[monsterData.MonsterID].Get();
+        spumMonsterGo.transform.SetParent(transform);
+        spumMonsterGo.transform.localPosition = Vector3.zero;
+        
+        spumMonsterGo.TryGetComponent(out spumPrefabs);
+        spumPrefabs.OverrideControllerInit();
+
+        spumMonsterGo.transform.GetChild(0).gameObject.TryGetComponent(out sortingGroup);
+
+        spumPrefabs.PlayAnimation(PlayerState.MOVE, 0);
+
+        if (monsterData.MonType == MonsterType.Normal)
+            sortingGroup.sortingOrder = DefaultMonsterSortingOrderOffset;
+        else if (monsterData.MonType == MonsterType.Boss)
+            sortingGroup.sortingOrder = DefaultMonsterSortingOrderOffset + 1;
+
+        bool isFlip = (waypoint[currentWaypointIndex] - transform.position).x > 0f;
+        {
+            var localScale = transform.localScale;
+            localScale.x = isFlip ? Mathf.Abs(localScale.x) : -Mathf.Abs(localScale.x);
+            transform.localScale = localScale;
+            
+        }
+        {
+            var localScale = spumMonsterGo.transform.localScale;
+            localScale.x = isFlip ? -Mathf.Abs(localScale.x) : Mathf.Abs(localScale.x);
+            spumMonsterGo.transform.localScale = localScale;
+        }
     }
 
     public void SetPool(IObjectPool<Monster> pool)

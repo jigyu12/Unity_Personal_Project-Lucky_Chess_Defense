@@ -19,3 +19,4 @@ MonoBehaviour:
   monSpeed: 2
   monReward: 1
   monQuantity: 1
+  monsterSpumPrefab: {fileID: 1186056581406665119, guid: e5909a59a695ff240ab860e18ebef82d, type: 3}

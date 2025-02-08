@@ -10069,14 +10069,14 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 9969fbbfbc6abf846a243127de65573a, type: 2}
   - dataList: []
   - dataList:
-    - {fileID: 11400000, guid: cc4e7c869434e0b48b0ba62bebf3b257, type: 2}
-    - {fileID: 11400000, guid: eea368595ce691c48aa430ba347950e1, type: 2}
-    - {fileID: 11400000, guid: 2196f2e44fe3cdf42ac50a3222cc7bc1, type: 2}
-    - {fileID: 11400000, guid: f8ffc0e4c04d817489c0ef23b23efde2, type: 2}
-    - {fileID: 11400000, guid: cd9444659e3ba3941a41bba09d9cdfd8, type: 2}
-    - {fileID: 11400000, guid: 95eb23fa65bfde3489b6d3e93f72568e, type: 2}
-    - {fileID: 11400000, guid: 5c10e94ad80d7bb43980860d22ce5ce2, type: 2}
-    - {fileID: 11400000, guid: d7ec0185ff81bd04faa0147e28ed3506, type: 2}
+    - {fileID: 11400000, guid: 4add94a509156ca45bff30328cd719e5, type: 2}
+    - {fileID: 11400000, guid: 4fb4955da7b99de44a5e2e90b8fb1dd5, type: 2}
+    - {fileID: 11400000, guid: c06a15b48a6242f4fb81728a62eb7a9c, type: 2}
+    - {fileID: 11400000, guid: f8c7796e1c8287642bcc7ce744e27cdd, type: 2}
+    - {fileID: 11400000, guid: 73fade4ce152dde44a27adef2ee0689c, type: 2}
+    - {fileID: 11400000, guid: 4979fd25bc0920d4187bfe20e9f9f604, type: 2}
+    - {fileID: 11400000, guid: f667656b2c243df4795f71b5f406dde1, type: 2}
+    - {fileID: 11400000, guid: ae7f884b0046a4c45a04772904bbd785, type: 2}
 --- !u!1 &1613318650
 GameObject:
   m_ObjectHideFlags: 0
@@ -10408,6 +10408,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1639178849}
   m_CullTransparentMesh: 1
+--- !u!1 &1655163270
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1655163271}
+  - component: {fileID: 1655163272}
+  m_Layer: 0
+  m_Name: MonsterSpumSpawner
+  m_TagString: MonsterSpumSpawner
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1655163271
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1655163270}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1655163272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1655163270}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c8a9b4778f3c30419e80e4b8cbd8915, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  monsterSpawner: {fileID: 1612137362}
 --- !u!1 &1657120220
 GameObject:
   m_ObjectHideFlags: 0
@@ -18567,6 +18612,7 @@ SceneRoots:
   - {fileID: 1437915599}
   - {fileID: 1967845500}
   - {fileID: 1612137361}
+  - {fileID: 1655163271}
   - {fileID: 1856945765}
   - {fileID: 849834463}
   - {fileID: 1936059136}
