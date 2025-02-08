@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
     private void AccelerateTime()
     {
         if(DebugModeUI.IsDebugMode)
-            Time.timeScale = 2;
+            Time.timeScale = 5;
         else
             Time.timeScale = 1;
     }

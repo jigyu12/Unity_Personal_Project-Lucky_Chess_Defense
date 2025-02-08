@@ -1,7 +1,5 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
@@ -119,8 +117,10 @@ public class Hero : MonoBehaviour
         OnAttack.AddListener(attackMethod.Attack);
 
         attackSpeedTimeAccum = heroData.AtkSpeed;
-
-        GameObject.FindGameObjectWithTag("HeroSpumSpawner").TryGetComponent(out heroSpumSpawner);
+        
+        if(heroSpumSpawner is null)
+            GameObject.FindGameObjectWithTag("HeroSpumSpawner").TryGetComponent(out heroSpumSpawner);
+        
         spumHeroGo = heroSpumSpawner.heroSpumPoolDict[heroData.HeroID].Get();
         spumHeroGo.transform.SetParent(transform);
         spumHeroGo.transform.localPosition = Vector3.zero;
