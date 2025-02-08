@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
@@ -140,9 +141,11 @@ public class Hero : MonoBehaviour
         if (isTargetInvalid)
         {
             monsterCollList.Clear();
-            int monsterCount = Physics2D.OverlapCircle(transform.position, heroData.AtkRange, contactFilter, monsterCollList);
+            Physics2D.OverlapCircle(transform.position, heroData.AtkRange, contactFilter, monsterCollList);
+
+            monsterCollList.RemoveAll(coll => Vector3.Distance(transform.position, coll.gameObject.transform.position) > heroData.AtkRange);
             
-            if (monsterCount <= 0)
+            if (monsterCollList.Count <= 0)
                 return false;
 
             monsterCollList.Sort(MonsterAttackPriorityCmp);
@@ -185,7 +188,7 @@ public class Hero : MonoBehaviour
         var localScale = transform.localScale;
         localScale.x = targetMonster.transform.position.x <= transform.position.x? Mathf.Abs(localScale.x) : -Mathf.Abs(localScale.x);
         transform.localScale = localScale;
-            
+        
         StartCoroutine(OnAttackCoroutine());
     }
 
