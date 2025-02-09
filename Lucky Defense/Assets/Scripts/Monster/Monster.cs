@@ -200,8 +200,6 @@ public class Monster : MonoBehaviour
             localScale.x = isFlip ? -Mathf.Abs(localScale.x) : Mathf.Abs(localScale.x);
             spumMonsterGo.transform.localScale = localScale;
         }
-        
-        
     }
 
     public void SetPool(IObjectPool<Monster> pool)

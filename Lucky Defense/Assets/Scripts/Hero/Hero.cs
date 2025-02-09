@@ -124,6 +124,9 @@ public class Hero : MonoBehaviour
         spumHeroGo = heroSpumSpawner.heroSpumPoolDict[heroData.HeroID].Get();
         spumHeroGo.transform.SetParent(transform);
         spumHeroGo.transform.localPosition = Vector3.zero;
+        var localScale = spumHeroGo.transform.localScale;
+        localScale.x = Mathf.Abs(localScale.x);
+        spumHeroGo.transform.localScale = localScale;
         
         spumHeroGo.TryGetComponent(out spumPrefabs);
         spumPrefabs.OverrideControllerInit();

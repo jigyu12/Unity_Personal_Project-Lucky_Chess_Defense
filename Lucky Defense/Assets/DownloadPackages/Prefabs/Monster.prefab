@@ -126,7 +126,7 @@ MonoBehaviour:
   currentWaypointIndex: 0
   hpSlider: {fileID: 2394716122442939013}
   hpFill: {fileID: 8018042057712477327}
-  sliderPosOffset: {x: -0.15, y: 1.5, z: 0}
+  sliderPosOffset: {x: 0, y: 1.5, z: 0}
 --- !u!58 &2662048261956627102
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -462,5 +462,5 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.25}
   m_AnchorMax: {x: 1, y: 0.75}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -4, y: -2}
+  m_SizeDelta: {x: -6, y: -4}
   m_Pivot: {x: 0.5, y: 0.5}
