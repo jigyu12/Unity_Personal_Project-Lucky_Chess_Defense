@@ -54,14 +54,30 @@ public class HeroProjectile : MonoBehaviour
         }
         
         Vector3 movePosition = projectilePosition + direction * (ProjectileSpeed * Time.deltaTime);
-        
-        Quaternion rotation = transform.rotation;
-        rotation.x = 0f; 
-        rotation.y = 0f;
-
-        transform.SetPositionAndRotation(movePosition, rotation);
-        
+    
+        Quaternion baseRotation = Quaternion.LookRotation(direction);
+    
+        float angle = Mathf.Atan2(direction.x, direction.y) * Mathf.Rad2Deg;
+        if (angle < 0f)
+            angle += 360f;
+    
+        float additionalAngle = angle < 180f ? 90f : -90f;
+    
+        Quaternion finalRotation = baseRotation * Quaternion.Euler(0f, 0f, additionalAngle);
+        finalRotation.x = 0f;
+        finalRotation.y = 0f;
+    
+        transform.SetPositionAndRotation(movePosition, finalRotation);
+    
         heroFireProjectile.transform.localRotation = Quaternion.identity;
+        
+        // Quaternion rotation = transform.rotation;
+        // rotation.x = 0f; 
+        // rotation.y = 0f;
+        //
+        // transform.SetPositionAndRotation(movePosition, rotation);
+        //
+        // heroFireProjectile.transform.localRotation = rotation;
     }
 
     public void Initialize(Monster targetMon, int dmg, Vector3 firePosition, HeroGrade heroGrade)
