@@ -52,8 +52,8 @@ public class Monster : MonoBehaviour
     
     private const int DefaultMonsterSortingOrderOffset = 5;
     
-    private Vector3 originalScale = new Vector3(0.5f, 0.5f, 1f);
-    private Vector3 spumOriginalScale = new Vector3(2f, 2f, 1f);
+    private readonly Vector3 originalScale = new Vector3(0.5f, 0.5f, 1f);
+    private readonly Vector3 spumOriginalScale = new Vector3(2f, 2f, 1f);
 
     private void Awake()
     {
