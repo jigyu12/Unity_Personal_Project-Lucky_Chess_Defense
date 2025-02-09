@@ -18,7 +18,7 @@ MonoBehaviour:
   atkType: 2
   atkRange: 2.5
   heroDamage: 1750
-  atkSpeed: 33
+  atkSpeed: 0.33
   synergyClass1: 2
   blockCost: 3
   saleType: 2

@@ -17,7 +17,7 @@ MonoBehaviour:
   grade: 4
   atkType: 1
   atkRange: 1.5
-  heroDamage: 4000
+  heroDamage: 2000
   atkSpeed: 1
   synergyClass1: 1
   blockCost: 1
