@@ -52,7 +52,8 @@ public class Monster : MonoBehaviour
     
     private const int DefaultMonsterSortingOrderOffset = 5;
     
-    private readonly Vector3 OriginalScale = new Vector3(0.5f, 0.5f, 1f);
+    private Vector3 originalScale = new Vector3(0.5f, 0.5f, 1f);
+    private Vector3 spumOriginalScale = new Vector3(2f, 2f, 1f);
 
     private void Awake()
     {
@@ -176,13 +177,15 @@ public class Monster : MonoBehaviour
         {
             sortingGroup.sortingOrder = DefaultMonsterSortingOrderOffset;
             
-            transform.localScale = OriginalScale;
+            transform.localScale = originalScale;
+            spumMonsterGo.transform.localScale = spumOriginalScale;
         }
         else if (monsterData.MonType == MonsterType.Boss)
         {
             sortingGroup.sortingOrder = DefaultMonsterSortingOrderOffset + 1;
             
-            transform.localScale = OriginalScale * 1.5f;
+            transform.localScale = originalScale * 1.5f;
+            spumMonsterGo.transform.localScale = spumOriginalScale * 1.5f;
         }
 
         bool isFlip = (waypoint[currentWaypointIndex] - transform.position).x > 0f;
