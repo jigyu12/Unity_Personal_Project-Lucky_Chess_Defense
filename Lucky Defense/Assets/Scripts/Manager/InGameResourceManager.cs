@@ -6,7 +6,7 @@ public class InGameResourceManager : MonoBehaviour
     [SerializeField] private InGameUIManager inGameUIManager;
     [SerializeField] private TMP_Text currCoinInButtonText;
     
-    private const int InitialCoin = 200;
+    private const int InitialCoin = 240;
     private int currentCoin;
 
     private const int InitialGem = 0;

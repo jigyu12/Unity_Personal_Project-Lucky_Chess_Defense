@@ -15,6 +15,6 @@ MonoBehaviour:
   waveID: 1354
   waveNumber: 54
   monsterID: 120181
-  monHpMlt: 6.3
+  monHpMlt: 9.6
   createMonNumber: 20
   waveTime: 20

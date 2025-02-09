@@ -51,6 +51,8 @@ public class Monster : MonoBehaviour
     private SortingGroup sortingGroup;
     
     private const int DefaultMonsterSortingOrderOffset = 5;
+    
+    private readonly Vector3 OriginalScale = new Vector3(0.5f, 0.5f, 1f);
 
     private void Awake()
     {
@@ -171,9 +173,17 @@ public class Monster : MonoBehaviour
         spumPrefabs.PlayAnimation(PlayerState.MOVE, 0);
 
         if (monsterData.MonType == MonsterType.Normal)
+        {
             sortingGroup.sortingOrder = DefaultMonsterSortingOrderOffset;
+            
+            transform.localScale = OriginalScale;
+        }
         else if (monsterData.MonType == MonsterType.Boss)
+        {
             sortingGroup.sortingOrder = DefaultMonsterSortingOrderOffset + 1;
+            
+            transform.localScale = OriginalScale * 1.5f;
+        }
 
         bool isFlip = (waypoint[currentWaypointIndex] - transform.position).x > 0f;
         {
@@ -187,6 +197,8 @@ public class Monster : MonoBehaviour
             localScale.x = isFlip ? -Mathf.Abs(localScale.x) : Mathf.Abs(localScale.x);
             spumMonsterGo.transform.localScale = localScale;
         }
+        
+        
     }
 
     public void SetPool(IObjectPool<Monster> pool)

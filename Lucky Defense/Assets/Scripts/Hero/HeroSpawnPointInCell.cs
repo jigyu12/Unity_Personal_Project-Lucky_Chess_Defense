@@ -61,7 +61,9 @@ public class HeroSpawnPointInCell : MonoBehaviour
     private delegate void HeroSellEvent(HeroSpawnPointInCell sellerCell);
     private static event HeroSellEvent OnHeroSellEvent;
     [SerializeField] private TMP_Text sellTypeInHeroSellButtonText;
-    private StringBuilder stringBuilder; 
+    private StringBuilder stringBuilder;
+    [SerializeField] private Image sellTypeInHeroSellButtonImage;
+    private InGameUIManager inGameUIManager;
     
 #if UNITY_STANDALONE || UNITY_EDITOR
 
@@ -157,9 +159,10 @@ public class HeroSpawnPointInCell : MonoBehaviour
         triplePosList.Add(triplePos2);
 
         circleSpeed = Hero.HeroSwapSpeed;
-        
-        inGameResourceManager = GameObject.FindGameObjectWithTag("InGameResourceManager").GetComponent<InGameResourceManager>();
-        heroSpawner = GameObject.FindGameObjectWithTag("HeroSpawner").GetComponent<HeroSpawner>();
+
+        GameObject.FindGameObjectWithTag("InGameResourceManager").TryGetComponent(out inGameResourceManager);
+        GameObject.FindGameObjectWithTag("HeroSpawner").TryGetComponent(out heroSpawner);
+        GameObject.FindGameObjectWithTag("InGameUIManager").TryGetComponent(out inGameUIManager);
     }
     
     private void Update()
@@ -467,6 +470,8 @@ public class HeroSpawnPointInCell : MonoBehaviour
             {
                 heroSpawner.CellsByOccupyHeroIdDict[OccupyHeroId].Add(this);
             }
+
+            sellTypeInHeroSellButtonImage.sprite = inGameUIManager.inGameResourceIcons[hero.SaleType - 1];
         }
         Cost -= hero.Cost;
         AttackRange = hero.AttackRange;
@@ -547,8 +552,6 @@ public class HeroSpawnPointInCell : MonoBehaviour
         ClearCell();
         
         heroSpawner.SpawnHeroInit(newHero);
-        
-        Debug.Log($"Fused hero ID : {newHero.HeroId}");
 
         if (heroSpawner.CellsByOccupyHeroIdDict.ContainsKey(newHero.HeroId))
         {

@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Text;
 using TMPro;
 using UnityEngine;
@@ -52,12 +54,31 @@ public class InGameUIManager : MonoBehaviour
     [SerializeField] private Button rareSummonButton;
     [SerializeField] private Button heroicSummonButton;
     [SerializeField] private Button legendarySummonButton;
+
+    [SerializeField] private List<TMP_Text> logTextLineList;
+    private int logTextStringQueueMaxSize;
+    private Queue<String> logTextStringQueue = new();
     
     private readonly StringBuilder stringBuilder = new(20);
+
+    public List<Sprite> inGameResourceIcons;
 
     private void Awake()
     {
         stringBuilder.Clear();
+        
+        logTextStringQueue.Clear();
+
+        logTextStringQueueMaxSize = logTextLineList.Count;
+
+        foreach (var logTextLine in logTextLineList)
+        {
+            stringBuilder.Clear();
+
+            stringBuilder.Append(" ");
+            
+            logTextLine.SetText(stringBuilder.ToString());
+        }
     }
 
     private void Start()
@@ -298,6 +319,30 @@ public class InGameUIManager : MonoBehaviour
             stringBuilder.Append(inGameResourceManager.InitialLegendarySummonGemCost.ToString());
             
             legendarySummonCostButtonText.SetText(stringBuilder.ToString());
+        }
+    }
+
+    public void SetLogText(string logText)
+    {
+        if (logTextStringQueue.Count > logTextStringQueueMaxSize)
+        {
+            Debug.Assert(false, "Invalid logTextStringQueue operation.");
+            return;
+        }
+
+        if (logTextStringQueue.Count == logTextStringQueueMaxSize)
+            logTextStringQueue.Dequeue();
+    
+        logTextStringQueue.Enqueue(logText);
+
+        var logs = logTextStringQueue.ToArray();
+        int index = 0;
+        for (int i = logs.Length - 1; i >= 0; i--)
+        {
+            stringBuilder.Clear();
+            stringBuilder.Append(logs[i]);
+        
+            logTextLineList[index++].SetText(stringBuilder.ToString());
         }
     }
 }
