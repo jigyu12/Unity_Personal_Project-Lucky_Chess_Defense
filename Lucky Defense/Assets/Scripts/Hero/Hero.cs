@@ -198,7 +198,7 @@ public class Hero : MonoBehaviour
     private IEnumerator OnAttackCoroutine()
     {
         yield return null;
-    
+     
         while (true)
         {
             if (IsMoving)
@@ -207,7 +207,12 @@ public class Hero : MonoBehaviour
             var stateInfo = spumPrefabs._anim.GetCurrentAnimatorStateInfo(0);
             if (stateInfo.normalizedTime >= 0.5f)
             {
-                OnAttack?.Invoke(targetMonster, heroData.HeroDamage);
+                int heroDamage = heroData.HeroDamage;
+
+                if (Random.value <= heroData.CriticalPercent)
+                    heroDamage = (int)(heroDamage * heroData.CriticalMlt);
+                
+                OnAttack?.Invoke(targetMonster, heroDamage);
                 break;
             }
             yield return null;
