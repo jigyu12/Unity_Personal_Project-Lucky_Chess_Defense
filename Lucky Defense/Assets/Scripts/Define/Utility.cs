@@ -7,4 +7,7 @@ public static class Utility
 
     public static readonly String HeroPrefabPath = "Assets/DownloadPackages/Prefabs/Spum/Hero/";
     public static readonly String MonsterPrefabPath = "Assets/DownloadPackages/Prefabs/Spum/Monster/";
+    
+    public static readonly String BgmString = "BGM";
+    public static readonly String SfxString = "SFX";
 }

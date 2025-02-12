@@ -1,0 +1,119 @@
+using UnityEngine;
+using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
+
+public class SoundManager : MonoBehaviour
+{
+    private static SoundManager instance;
+    
+    [SerializeField] private AudioMixer audioMixer;
+
+    private bool isBgmPlaying;
+    private bool isSfxPlaying;
+    
+    private MainTitleUIManager mainTitleUIManager;
+    private InGameUIManager inGameUIManager;
+    
+    void Awake()
+    {
+        if (instance is null)
+        {
+            instance = this;
+
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+           
+            Destroy(gameObject);
+        }
+        
+        isBgmPlaying = true;
+        isSfxPlaying = true;
+    }
+    
+    public static SoundManager Instance
+    {
+        get
+        {
+            if (instance is null)
+            {
+                return null;
+            }
+            
+            return instance;
+        }
+    }
+    
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+    
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+    
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.buildIndex == 0)
+        {
+            GameObject.FindGameObjectWithTag("MainTitleUIManager").TryGetComponent(out mainTitleUIManager);
+            
+            mainTitleUIManager.bgmButton.onClick.RemoveAllListeners();
+            mainTitleUIManager.bgmButton.onClick.AddListener(SwitchBgmVolume);
+            
+            mainTitleUIManager.sfxButton.onClick.RemoveAllListeners();
+            mainTitleUIManager.sfxButton.onClick.AddListener(SwitchSfxVolume);
+        }
+        else if (scene.buildIndex == 1)
+        {
+            GameObject.FindGameObjectWithTag("InGameUIManager").TryGetComponent(out inGameUIManager);
+            
+            inGameUIManager.bgmButton.onClick.RemoveAllListeners();
+            inGameUIManager.bgmButton.onClick.AddListener(SwitchBgmVolume);
+            
+            inGameUIManager.sfxButton.onClick.RemoveAllListeners();
+            inGameUIManager.sfxButton.onClick.AddListener(SwitchSfxVolume);
+        }
+        
+        if(isBgmPlaying)
+            audioMixer.SetFloat("BGM", Mathf.Log10(1) * 20);
+        else
+            audioMixer.SetFloat("BGM", -80f);
+        
+        if(isSfxPlaying)
+            audioMixer.SetFloat("SFX", Mathf.Log10(1) * 20);
+        else
+            audioMixer.SetFloat("SFX", -80f);
+    }
+    
+    public void SwitchBgmVolume()
+    {
+        if (!isBgmPlaying)
+        {
+            isBgmPlaying = true;
+            audioMixer.SetFloat("BGM", Mathf.Log10(1) * 20);
+        }
+        else
+        {
+            isBgmPlaying = false;
+            audioMixer.SetFloat("BGM", -80f);
+        }
+    }
+ 
+    public void SwitchSfxVolume()
+    { 
+        if (!isSfxPlaying)
+        {
+            isSfxPlaying = true;
+            audioMixer.SetFloat("SFX", Mathf.Log10(1) * 20);
+        }
+        else
+        {
+            isSfxPlaying = false;
+            audioMixer.SetFloat("SFX", -80f);
+        }
+    }
+}
