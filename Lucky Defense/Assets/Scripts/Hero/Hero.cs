@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
@@ -14,7 +13,7 @@ public class Hero : MonoBehaviour
 
     private IObjectPool<Hero> heroPool;
 
-    private readonly UnityEvent<Monster, int> OnAttack = new();
+    private readonly UnityEvent<Monster, int, UnityAction<Monster>> OnAttack = new();
     private IAttackMethod attackMethod;
     private RangedAttack rangedAttack;
 
@@ -110,7 +109,7 @@ public class Hero : MonoBehaviour
     {
         attackSpeedTimeAccum += Time.deltaTime;
 
-        if (attackSpeedTimeAccum >= (heroData.AtkSpeed - (heroData.AtkSpeed * additionalAtkSpeedRate)))
+        if (attackSpeedTimeAccum >= Mathf.Max(0.1f, heroData.AtkSpeed - additionalAtkSpeedValue) - (heroData.AtkSpeed * additionalAtkSpeedRate))
         {
             bool canAttack = CheckCanAttack();
 
@@ -259,7 +258,7 @@ public class Hero : MonoBehaviour
                 else if (heroData.AtkType == HeroAttackType.Ranged)
                     SoundManager.Instance.PlaySfx(SfxClipId.RangedAttackSfxSoundId);
                 
-                OnAttack?.Invoke(targetMonster, heroDamage);
+                OnAttack?.Invoke(targetMonster, heroDamage, OnAttackToMon);
                 OnAdditionalAttack?.Invoke();
 
                 isAttacking = false;
@@ -398,6 +397,25 @@ public class Hero : MonoBehaviour
         {
             if(isExist)
                 OnAdditionalAttack -= additionalAttack;
+        }
+    }
+    
+    public void SetOnAttackToMon(UnityAction<Monster> onAttackToMon, bool isAddAction)
+    {
+        bool isExist = OnAttackToMon != null &&
+                       OnAttackToMon.GetInvocationList().Any(d =>
+                           d.Method == (onAttackToMon).Method &&
+                           d.Target == (onAttackToMon).Target);
+
+        if (isAddAction)
+        {
+            if (!isExist)
+                OnAttackToMon += onAttackToMon;
+        }
+        else
+        {
+            if(isExist)
+                OnAttackToMon -= onAttackToMon;
         }
     }
     

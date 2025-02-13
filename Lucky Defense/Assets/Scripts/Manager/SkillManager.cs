@@ -141,11 +141,11 @@ public class SkillManager : MonoBehaviour
         
         if ((SkillEffectType)newPassiveSkillData.EffectType is SkillEffectType.SpeedValue)
         {
-            return (monster) => monster.ReduceMoveSpeedValue(newPassiveSkillData.Value, newPassiveSkillData.Duration);
+            return (monster) => monster.ReduceMoveSpeedValue(newPassiveSkillData.Value, newPassiveSkillData.Duration, newPassiveSkillData.Probability);
         }
         else if ((SkillEffectType)newPassiveSkillData.EffectType is SkillEffectType.SpeedRate)
         {
-            return (monster) => monster.ReduceMoveSpeedRate(newPassiveSkillData.Value, newPassiveSkillData.Duration);
+            return (monster) => monster.ReduceMoveSpeedRate(newPassiveSkillData.Value, newPassiveSkillData.Duration, newPassiveSkillData.Probability);
         }
         
         Debug.Assert(false, "CreateAttackSkillToMon Failed");

@@ -1,5 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Pool;
 
 public class HeroProjectile : MonoBehaviour
@@ -20,6 +21,8 @@ public class HeroProjectile : MonoBehaviour
     
     private HeroGrade ownerHeroGrade;
     private GameObject heroFireProjectile;
+
+    private UnityAction<Monster> OnAttackToMon;
     
     private void Start()
     {
@@ -45,8 +48,15 @@ public class HeroProjectile : MonoBehaviour
         
         if (Vector3.Distance(projectilePosition, targetLastPosition) < 0.5f)
         {
-            if(isTargetValid)
+            if (isTargetValid)
+            {
                 targetMonster.OnDamaged(damage);
+                OnAttackToMon?.Invoke(targetMonster);
+            }
+            else
+            {
+                OnAttackToMon = null;
+            }
             
             DestroyHeroProjectile();
             
@@ -80,7 +90,7 @@ public class HeroProjectile : MonoBehaviour
         // heroFireProjectile.transform.localRotation = rotation;
     }
 
-    public void Initialize(Monster targetMon, int dmg, Vector3 firePosition, HeroGrade heroGrade)
+    public void Initialize(Monster targetMon, int dmg, Vector3 firePosition, HeroGrade heroGrade, UnityAction<Monster> attackSkillToMon)
     {
         targetMonster = targetMon;
         
@@ -95,6 +105,8 @@ public class HeroProjectile : MonoBehaviour
         transform.SetPositionAndRotation(firePosition, rotation);
         
         ownerHeroGrade = heroGrade;
+
+        OnAttackToMon = attackSkillToMon;
     }
 
     private void SetTargetLastPosAndDir(Vector3 currObjPos)

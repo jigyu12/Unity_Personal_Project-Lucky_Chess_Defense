@@ -777,7 +777,10 @@ public class HeroSpawnPointInCell : MonoBehaviour
                         }
                     }
                 }
-                else if ((SkillEffectType)passiveSkillData.EffectType is
+            }
+            else if ((SkillTargetType)passiveSkillData.TargetType == SkillTargetType.AllEnemy)
+            {
+                if ((SkillEffectType)passiveSkillData.EffectType is
                          SkillEffectType.SpeedValue or SkillEffectType.SpeedRate)
                 {
                     var attackSkillToMon = skillManager.attackSkillToMonDict[skillId];
@@ -786,14 +789,14 @@ public class HeroSpawnPointInCell : MonoBehaviour
                     {
                         foreach (var hero in heroList)
                         {
-                            hero.OnAttackToMon += attackSkillToMon;
+                            hero.SetOnAttackToMon(attackSkillToMon, true);
                         }
                     }
                     else
                     {
                         foreach (var hero in heroList)
                         {
-                            hero.OnAttackToMon -= attackSkillToMon;
+                            hero.SetOnAttackToMon(attackSkillToMon, false);
                         }
                     }
                 }
