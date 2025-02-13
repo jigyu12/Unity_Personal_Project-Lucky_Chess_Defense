@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
@@ -22,6 +23,7 @@ public class Hero : MonoBehaviour
     private readonly List<Collider2D> monsterCollList = new();
 
     private Monster targetMonster;
+    private bool isAttacking;
     [SerializeField] private GameObject heroProjectilePrefab;
     private WaveManager waveManager;
 
@@ -76,6 +78,8 @@ public class Hero : MonoBehaviour
         additionalAtkRate = 0f;
         additionalAtkSpeedValue = 0;
         additionalAtkSpeedRate = 0f;
+
+        isAttacking = false;
     }
     
     private void OnDisable()
@@ -153,11 +157,13 @@ public class Hero : MonoBehaviour
         spumPrefabs.OverrideControllerInit();
 
         spumHeroGo.transform.GetChild(0).gameObject.TryGetComponent(out sortingGroup);
+        
+        isAttacking = false;
     }
 
     private bool CheckCanAttack()
     {
-        if (IsMoving)
+        if (IsMoving || isAttacking)
             return false;
         
         bool isTargetInvalid = IsTargetInvalid();
@@ -207,6 +213,13 @@ public class Hero : MonoBehaviour
     {
         attackSpeedTimeAccum = 0f;
 
+        isAttacking = true;
+        
+        float originAtkSpeed = heroData.AtkSpeed;
+        float currAtkSpeed = heroData.AtkSpeed - (heroData.AtkSpeed * additionalAtkSpeedRate);
+        float attackAnimSpeed = originAtkSpeed / currAtkSpeed;
+        spumPrefabs._anim.speed = attackAnimSpeed;
+        
         spumPrefabs.PlayAnimation(PlayerState.ATTACK, 0);
 
         var localScale = transform.localScale;
@@ -219,14 +232,22 @@ public class Hero : MonoBehaviour
     private IEnumerator OnAttackCoroutine()
     {
         yield return null;
+        
+        bool hasAttacked = false;
      
         while (true)
         {
             if (IsMoving)
-                break;
+            {
+                isAttacking = false;
+
+                spumPrefabs._anim.speed = 1f;
+                
+                yield break;
+            }
             
             var stateInfo = spumPrefabs._anim.GetCurrentAnimatorStateInfo(0);
-            if (stateInfo.normalizedTime >= 0.5f)
+            if (!hasAttacked && stateInfo.normalizedTime >= 0.5f)
             {
                 int heroDamage = (heroData.HeroDamage + additionalAtkValue) + (int)(heroData.HeroDamage * additionalAtkRate);
 
@@ -235,8 +256,18 @@ public class Hero : MonoBehaviour
                 
                 OnAttack?.Invoke(targetMonster, heroDamage);
                 OnAdditionalAttack?.Invoke();
-                break;
+
+                isAttacking = false;
+                hasAttacked = true;
             }
+
+            if (stateInfo.normalizedTime >= 1f)
+            {
+                spumPrefabs._anim.speed = 1f;
+                
+                yield break;
+            }
+            
             yield return null;
         }
     }
