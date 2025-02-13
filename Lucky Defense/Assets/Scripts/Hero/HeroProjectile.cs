@@ -83,10 +83,11 @@ public class HeroProjectile : MonoBehaviour
     public void Initialize(Monster targetMon, int dmg, Vector3 firePosition, HeroGrade heroGrade)
     {
         targetMonster = targetMon;
-        damage = dmg;
         
         SetTargetLastPosAndDir(firePosition);
-        
+      
+        damage = dmg;
+
         Quaternion rotation = transform.rotation;
         rotation.x = 0f; 
         rotation.y = 0f;

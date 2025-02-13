@@ -46,9 +46,9 @@ public class HeroSpawner : MonoBehaviour
     
     [SerializeField] private Button probabilityEnforceButton;
 
-    public float RareSummonOnlyProbability => 60f;
-    public float HeroicSummonOnlyProbability => 20f;
-    public float LegendarySummonOnlyProbability => 10f;
+    public float RareSummonOnlyProbability => 100f;
+    public float HeroicSummonOnlyProbability => 100f;
+    public float LegendarySummonOnlyProbability => 100f;
 
     public Dictionary<int, List<HeroSpawnPointInCell>> CellsByOccupyHeroIdDict { get; } = new();
     

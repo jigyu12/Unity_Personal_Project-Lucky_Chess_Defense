@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
@@ -21,6 +23,7 @@ public class Hero : MonoBehaviour
     private readonly List<Collider2D> monsterCollList = new();
 
     private Monster targetMonster;
+    private bool isAttacking;
     [SerializeField] private GameObject heroProjectilePrefab;
     private WaveManager waveManager;
 
@@ -32,6 +35,7 @@ public class Hero : MonoBehaviour
     public float AttackRange => heroData.AtkRange;
     public int SaleType => heroData.SaleType;
     public int SaleQuantity => heroData.SaleQuantity;
+    public int SynergyClass1 => heroData.SynergyClass1;
     
     public bool IsMoving { get; set; }
     public Vector3 destPosition;
@@ -44,6 +48,16 @@ public class Hero : MonoBehaviour
     private SPUM_Prefabs spumPrefabs;
 
     private SortingGroup sortingGroup;
+
+    public List<StatValueData> statValueDataList;
+    public List<StatRateData> statRateDataList;
+    public UnityAction OnAdditionalAttack;
+    public UnityAction<Monster> OnAttackToMon;
+    
+    private int additionalAtkValue;
+    private float additionalAtkRate;
+    private int additionalAtkSpeedValue;    
+    private float additionalAtkSpeedRate;    
     
     private void Awake()
     {
@@ -55,6 +69,17 @@ public class Hero : MonoBehaviour
         
         IsMoving = false;
         destPosition = new(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
+
+        statValueDataList = new();
+        statRateDataList = new();
+        OnAdditionalAttack = null;
+
+        additionalAtkValue = 0;
+        additionalAtkRate = 0f;
+        additionalAtkSpeedValue = 0;
+        additionalAtkSpeedRate = 0f;
+
+        isAttacking = false;
     }
     
     private void OnDisable()
@@ -85,7 +110,7 @@ public class Hero : MonoBehaviour
     {
         attackSpeedTimeAccum += Time.deltaTime;
 
-        if (attackSpeedTimeAccum >= heroData.AtkSpeed)
+        if (attackSpeedTimeAccum >= (heroData.AtkSpeed - (heroData.AtkSpeed * additionalAtkSpeedRate)))
         {
             bool canAttack = CheckCanAttack();
 
@@ -132,11 +157,13 @@ public class Hero : MonoBehaviour
         spumPrefabs.OverrideControllerInit();
 
         spumHeroGo.transform.GetChild(0).gameObject.TryGetComponent(out sortingGroup);
+        
+        isAttacking = false;
     }
 
     private bool CheckCanAttack()
     {
-        if (IsMoving)
+        if (IsMoving || isAttacking)
             return false;
         
         bool isTargetInvalid = IsTargetInvalid();
@@ -186,6 +213,13 @@ public class Hero : MonoBehaviour
     {
         attackSpeedTimeAccum = 0f;
 
+        isAttacking = true;
+        
+        float originAtkSpeed = heroData.AtkSpeed;
+        float currAtkSpeed = heroData.AtkSpeed - (heroData.AtkSpeed * additionalAtkSpeedRate);
+        float attackAnimSpeed = originAtkSpeed / currAtkSpeed;
+        spumPrefabs._anim.speed = attackAnimSpeed;
+        
         spumPrefabs.PlayAnimation(PlayerState.ATTACK, 0);
 
         var localScale = transform.localScale;
@@ -198,23 +232,42 @@ public class Hero : MonoBehaviour
     private IEnumerator OnAttackCoroutine()
     {
         yield return null;
+        
+        bool hasAttacked = false;
      
         while (true)
         {
             if (IsMoving)
-                break;
+            {
+                isAttacking = false;
+
+                spumPrefabs._anim.speed = 1f;
+                
+                yield break;
+            }
             
             var stateInfo = spumPrefabs._anim.GetCurrentAnimatorStateInfo(0);
-            if (stateInfo.normalizedTime >= 0.5f)
+            if (!hasAttacked && stateInfo.normalizedTime >= 0.5f)
             {
-                int heroDamage = heroData.HeroDamage;
+                int heroDamage = (heroData.HeroDamage + additionalAtkValue) + (int)(heroData.HeroDamage * additionalAtkRate);
 
                 if (Random.value <= heroData.CriticalPercent)
                     heroDamage = (int)(heroDamage * heroData.CriticalMlt);
                 
                 OnAttack?.Invoke(targetMonster, heroDamage);
-                break;
+                OnAdditionalAttack?.Invoke();
+
+                isAttacking = false;
+                hasAttacked = true;
             }
+
+            if (stateInfo.normalizedTime >= 1f)
+            {
+                spumPrefabs._anim.speed = 1f;
+                
+                yield break;
+            }
+            
             yield return null;
         }
     }
@@ -278,6 +331,75 @@ public class Hero : MonoBehaviour
     public void SetHeroDrawOrder(int drawOrder)
     {
         sortingGroup.sortingOrder = drawOrder;
+    }
+
+    public void SetValueDataList(StatValueData statValueData, bool isAddData)
+    {
+        if (isAddData)
+        {
+            if(!statValueDataList.Contains(statValueData))
+                statValueDataList.Add(statValueData);
+        }
+        else
+        {
+            if(statValueDataList.Contains(statValueData))
+                statValueDataList.Remove(statValueData);
+        }
+        
+        additionalAtkValue = 0;
+        additionalAtkSpeedValue = 0;
+        foreach (var data in statValueDataList)
+        {
+            additionalAtkValue += (int)data.AtkDamageValue;
+            additionalAtkSpeedValue += (int)data.AtkDamageValue;
+        }
+        
+        Debug.Log("Value Synergy dmg: " + additionalAtkValue);
+        Debug.Log("Value Synergy atkspeed: " + additionalAtkSpeedValue);
+    }
+
+    public void SetRateDataList(StatRateData statRateData, bool isAddData)
+    {
+        if (isAddData)
+        {
+            if(!statRateDataList.Contains(statRateData))
+                statRateDataList.Add(statRateData);
+        }
+        else
+        {
+            if(statRateDataList.Contains(statRateData))
+                statRateDataList.Remove(statRateData);
+        }
+
+        additionalAtkRate = 0;
+        additionalAtkSpeedRate = 0;
+        foreach (var data in statRateDataList)
+        {
+            additionalAtkRate += data.AtkDamageRate;
+            additionalAtkSpeedRate += data.AtkSpeedRate;
+        }
+        
+        Debug.Log("Rate Synergy dmg: " + additionalAtkRate);
+        Debug.Log("Rate Synergy atkspeed: " + additionalAtkSpeedRate);
+    }
+
+    public void SetOnAdditionalAttack(UnityAction additionalAttack, bool isAddAction)
+    {
+        bool isExist = OnAdditionalAttack != null &&
+                            OnAdditionalAttack.GetInvocationList().Any(d =>
+                                d.Method == (additionalAttack).Method &&
+                                d.Target == (additionalAttack).Target);
+
+        if (isAddAction)
+        {
+            if (!isExist)
+                OnAdditionalAttack += additionalAttack;
+        }
+        else
+        {
+            if(isExist)
+                OnAdditionalAttack -= additionalAttack;
+        }
     }
     
 #if UNITY_STANDALONE || UNITY_EDITOR
