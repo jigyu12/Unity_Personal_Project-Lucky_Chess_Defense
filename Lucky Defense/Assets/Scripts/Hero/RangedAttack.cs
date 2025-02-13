@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Pool;
 
 public class RangedAttack : MonoBehaviour, IAttackMethod
@@ -17,11 +18,11 @@ public class RangedAttack : MonoBehaviour, IAttackMethod
         owner = newOwner;
     }
     
-    public void Attack(Monster targetMonster, int damage)
+    public void Attack(Monster targetMonster, int damage, UnityAction<Monster> attackSkillToMon)
     {
         var projectile = heroProjectilePool.Get();
         
-        projectile.Initialize(targetMonster, damage, owner.transform.position, owner.HeroGrade);
+        projectile.Initialize(targetMonster, damage, owner.transform.position, owner.HeroGrade, attackSkillToMon);
     }
     
     private HeroProjectile OnCreateHeroProjectile()

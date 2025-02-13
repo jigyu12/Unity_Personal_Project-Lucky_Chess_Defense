@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -9,6 +10,12 @@ public class MainTitleUIManager : MonoBehaviour
     
     [SerializeField] private GameObject settingPanel;
     [SerializeField] private Button settingPanelButton;
+
+    public Button bgmButton;
+    public Button sfxButton;
+    public List<Image> soundImageList;
+    
+    [SerializeField] private List<Button> buttonList = new();
     
     private void Start()
     {
@@ -20,6 +27,11 @@ public class MainTitleUIManager : MonoBehaviour
         
         settingPanelButton.onClick.RemoveAllListeners();
         settingPanelButton.onClick.AddListener(OnClickSwitchSettingPanelActive);
+        
+        foreach (var button in buttonList)
+        {
+            button.onClick.AddListener(() => SoundManager.Instance.PlaySfx(SfxClipId.UiButtonClickSfxSoundId));
+        }
     }
     
     private void OnClickChangeSceneToInGame()

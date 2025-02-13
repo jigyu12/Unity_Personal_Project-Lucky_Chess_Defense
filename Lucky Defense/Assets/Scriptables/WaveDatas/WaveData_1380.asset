@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   waveID: 1380
   waveNumber: 80
-  monsterID: 120173
+  monsterID: 120333
   monHpMlt: 1
   createMonNumber: 1
   waveTime: 60

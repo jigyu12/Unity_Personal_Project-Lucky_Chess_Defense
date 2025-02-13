@@ -105,9 +105,9 @@ public class HeroSpawnerEditor : Editor
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
                     ?.SetValue(heroData, record.AtkSpeed);
                 typeof(HeroData)
-                    .GetField("heroSkill",
+                    .GetField("synergyClass1",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                    ?.SetValue(heroData, record.HeroSkill);
+                    ?.SetValue(heroData, record.SynergyClass1);
                 typeof(HeroData)
                     .GetField("blockCost",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
@@ -129,7 +129,7 @@ public class HeroSpawnerEditor : Editor
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
                     ?.SetValue(heroData, record.CriticalMlt);
                 GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(Utility.HeroPrefabPath + record.PrefabName + ".prefab");
-                if (prefab == null)
+                if (prefab is null)
                 {
                     Debug.Assert(false, $"Prefab not found at path: {Utility.HeroPrefabPath + record.PrefabName + ".prefab"} for Hero ID {record.HeroID}");
                 }

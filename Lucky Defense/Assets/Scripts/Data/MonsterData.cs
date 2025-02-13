@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "MonsterData", menuName = "Scriptable Object/MonsterData")]
@@ -30,6 +31,10 @@ public class MonsterData : ScriptableObject
     [SerializeField] private int monQuantity;
 
     public int MonQuantity => monQuantity;
+    
+    [SerializeField] private GameObject monsterSpumPrefab;
+    
+    public GameObject MonsterSpumPrefab => monsterSpumPrefab;
 }
 
 public class MonsterCsvData
@@ -41,4 +46,5 @@ public class MonsterCsvData
     public float MonSpeed { get; set; }
     public int MonReward { get; set; }
     public int MonQuantity { get; set; }
+    public String PrefabName { get; set; }
 }

@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Text;
 using TMPro;
 using UnityEngine;
@@ -52,12 +54,49 @@ public class InGameUIManager : MonoBehaviour
     [SerializeField] private Button rareSummonButton;
     [SerializeField] private Button heroicSummonButton;
     [SerializeField] private Button legendarySummonButton;
+
+    [SerializeField] private List<TMP_Text> logTextLineList;
+    private int logTextStringQueueMaxSize;
+    private Queue<String> logTextStringQueue = new();
     
     private readonly StringBuilder stringBuilder = new(20);
+
+    public List<Sprite> inGameResourceIcons;
+    
+    public Button bgmButton;
+    public Button sfxButton;
+    public List<Image> soundImageList;
+    
+    [SerializeField] private List<Button> buttonList = new();
+    
+    [SerializeField] private Button synergyButton;
+    [SerializeField] private Button synergyPanelCloseButton;
+    [SerializeField] private GameObject synergyPanel;
+    
+    [SerializeField] private List<Button> allySynergyButtonList;
+    [SerializeField] private List<GameObject> allySynergyPanelList;
+    [SerializeField] private List<TMP_Text> knightsSynergyTextList;
+    [SerializeField] private List<TMP_Text> thievesSynergyTextList;
+    [SerializeField] private List<TMP_Text> religiousSynergyTextList;
+    private readonly Color inActiveSynergyColor = new Color(255f, 255f, 255f, 0.4f);
+    private readonly Color activeSynergyColor = new Color(255f, 255f, 255f, 1f);
 
     private void Awake()
     {
         stringBuilder.Clear();
+        
+        logTextStringQueue.Clear();
+
+        logTextStringQueueMaxSize = logTextLineList.Count;
+
+        foreach (var logTextLine in logTextLineList)
+        {
+            stringBuilder.Clear();
+
+            stringBuilder.Append(" ");
+            
+            logTextLine.SetText(stringBuilder.ToString());
+        }
     }
 
     private void Start()
@@ -107,6 +146,25 @@ public class InGameUIManager : MonoBehaviour
         legendarySummonButton.onClick.AddListener(() => 
             heroSpawner.OnClickCreateHero(true, heroSpawner.LegendarySummonOnlyProbability, HeroGrade.Legendary,
                 true,true,false));
+        
+        synergyButton.onClick.RemoveAllListeners();
+        synergyButton.onClick.AddListener(OnClickSwitchSynergyPanelActive);
+        
+        synergyPanelCloseButton.onClick.RemoveAllListeners();
+        synergyPanelCloseButton.onClick.AddListener(OnClickSynergyPanelInactive);
+
+        for (int i = 0; i < allySynergyButtonList.Count; i++)
+        {
+            int index = i;
+            
+            allySynergyButtonList[i].onClick.RemoveAllListeners();
+            allySynergyButtonList[i].onClick.AddListener(() => OnClickSwitchAllySynergyPanelActive(index));
+        }
+        
+        foreach (var button in buttonList)
+        {
+            button.onClick.AddListener(() => SoundManager.Instance.PlaySfx(SfxClipId.UiButtonClickSfxSoundId));
+        }
     }
 
     public void SetWaveNumberText(int waveNumber)
@@ -298,6 +356,129 @@ public class InGameUIManager : MonoBehaviour
             stringBuilder.Append(inGameResourceManager.InitialLegendarySummonGemCost.ToString());
             
             legendarySummonCostButtonText.SetText(stringBuilder.ToString());
+        }
+    }
+
+    public void SetLogText(string logText)
+    {
+        if (logTextStringQueue.Count > logTextStringQueueMaxSize)
+        {
+            Debug.Assert(false, "Invalid logTextStringQueue operation.");
+            return;
+        }
+
+        if (logTextStringQueue.Count == logTextStringQueueMaxSize)
+            logTextStringQueue.Dequeue();
+    
+        logTextStringQueue.Enqueue(logText);
+
+        var logs = logTextStringQueue.ToArray();
+        int index = 0;
+        for (int i = logs.Length - 1; i >= 0; i--)
+        {
+            stringBuilder.Clear();
+            stringBuilder.Append(logs[i]);
+        
+            logTextLineList[index++].SetText(stringBuilder.ToString());
+        }
+    }
+
+    private void OnClickSwitchSynergyPanelActive()
+    {
+        synergyPanel.SetActive(!synergyPanel.activeSelf);
+    }
+    
+    private void OnClickSynergyPanelInactive()
+    {
+        synergyPanel.SetActive(false);
+    }
+
+    private void OnClickSwitchAllySynergyPanelActive(int index)
+    {
+        for (int i = 0; i < allySynergyPanelList.Count; ++i)
+        {
+            if (i < 0 || i >= allySynergyPanelList.Count)
+            {
+                Debug.Assert(false,"Invalid index operation in active AllySynergyPanel.");
+            }
+            
+            if(i == index)
+                allySynergyPanelList[i].SetActive(true);
+            else
+                allySynergyPanelList[i].SetActive(false);
+        }
+    }
+
+    public void SetAllySynergyTextActive(SynergyClass synergyClass, int index)
+    {
+        switch (synergyClass)
+        {
+            case SynergyClass.Knights:
+            {
+                for (int i = 0; i < knightsSynergyTextList.Count; ++i)
+                {
+                    if (index == -1)
+                    {
+                        knightsSynergyTextList[i].color = inActiveSynergyColor;
+                        
+                        continue;
+                    }
+                    
+                    if (i == index)
+                    {
+                        knightsSynergyTextList[i].color = activeSynergyColor;
+                    }
+                    else
+                    {
+                        knightsSynergyTextList[i].color = inActiveSynergyColor;
+                    }
+                }
+            }
+                break;
+            case SynergyClass.Thieves:
+            {
+                for (int i = 0; i < thievesSynergyTextList.Count; ++i)
+                {
+                    if (index == -1)
+                    {
+                        thievesSynergyTextList[i].color = inActiveSynergyColor;
+                        
+                        continue;
+                    }
+                    
+                    if (i == index)
+                    {
+                        thievesSynergyTextList[i].color = activeSynergyColor;
+                    }
+                    else
+                    {
+                        thievesSynergyTextList[i].color = inActiveSynergyColor;
+                    }
+                }
+            }
+                break;
+            case SynergyClass.Religious:
+            {
+                for (int i = 0; i < religiousSynergyTextList.Count; ++i)
+                {
+                    if (index == -1)
+                    {
+                        religiousSynergyTextList[i].color = inActiveSynergyColor;
+                        
+                        continue;
+                    }
+                    
+                    if (i == index)
+                    {
+                        religiousSynergyTextList[i].color = activeSynergyColor;
+                    }
+                    else
+                    {
+                        religiousSynergyTextList[i].color = inActiveSynergyColor;
+                    }
+                }
+            }
+                break;
         }
     }
 }

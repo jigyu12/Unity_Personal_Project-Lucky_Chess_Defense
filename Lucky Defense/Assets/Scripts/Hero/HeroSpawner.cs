@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Reflection;
+using System.Text;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.Tilemaps;
@@ -31,6 +32,8 @@ public class HeroSpawner : MonoBehaviour
 
     private int currHeroCount;
     public int MaxHeroCount { get; private set; } = 20;
+
+    private StringBuilder stringBuilder = new();
 
     public HeroSummonProbabilityData CurrentHeroSummonProbabilityData
     {
@@ -122,7 +125,9 @@ public class HeroSpawner : MonoBehaviour
         
         if (currHeroCount >= MaxHeroCount)
         {
-            Debug.Log("Hero count is full");
+            inGameUIManager.SetLogText("Hero count is full");
+            
+            SoundManager.Instance.PlaySfx(SfxClipId.FailedSfxSoundId);
 
             return null;
         }
@@ -134,7 +139,9 @@ public class HeroSpawner : MonoBehaviour
                 bool canUseCoin = inGameResourceManager.TryUseCoin(inGameResourceManager.CurrentHeroSummonCoinCost);
                 if (!canUseCoin)
                 {
-                    Debug.Log("Not enough coins to summon a hero.");
+                    inGameUIManager.SetLogText("Not enough coins to summon a hero.");
+                    
+                    SoundManager.Instance.PlaySfx(SfxClipId.FailedSfxSoundId);
 
                     return null;
                 }
@@ -154,15 +161,17 @@ public class HeroSpawner : MonoBehaviour
                         gemCost = inGameResourceManager.InitialLegendarySummonGemCost;
                         break;
                     default:
-                        Debug.Log("Invalid Hero Grade for luckySummon.");
+                        Debug.Assert(false, "Invalid Hero Grade for luckySummon.");
                         return null;
                 }
             
                 bool canUseGem = inGameResourceManager.TryUseGem(gemCost);
                 if (!canUseGem)
                 {
-                    Debug.Log("Not enough gems to summon a hero.");
+                    inGameUIManager.SetLogText("Not enough gems to summon a hero.");
 
+                    SoundManager.Instance.PlaySfx(SfxClipId.FailedSfxSoundId);
+                    
                     return null;
                 }
             }
@@ -178,7 +187,9 @@ public class HeroSpawner : MonoBehaviour
 
         if (success is false)
         {
-            Debug.Log("Lucky Summon failed.....");
+            inGameUIManager.SetLogText("Lucky Summon failed.....");
+            
+            SoundManager.Instance.PlaySfx(SfxClipId.FailedSfxSoundId);
             
             HeroPool.Release(hero);
             
@@ -208,6 +219,8 @@ public class HeroSpawner : MonoBehaviour
                 if (canSpawnHeroInCell)
                 {
                     SortHeroesInCellDrawOrder();
+
+                    SetLogTextInHeroSummonSuccess(isLuckySummon, hero);
                     
                     return hero;
                 }
@@ -220,15 +233,74 @@ public class HeroSpawner : MonoBehaviour
             if (canSpawnHeroInCell)
             {
                 SortHeroesInCellDrawOrder();
+
+                SetLogTextInHeroSummonSuccess(isLuckySummon, hero);
                     
                 return hero;
             }
         }
-
-        Debug.Log("There is no cell available to spawn a hero.");
+        
+        inGameUIManager.SetLogText("There is no cell available to spawn a hero.");
+        
+        SoundManager.Instance.PlaySfx(SfxClipId.FailedSfxSoundId);
+        
         HeroPool.Release(hero);
 
         return null;
+    }
+
+    private void SetLogTextInHeroSummonSuccess(bool isLuckySummon, Hero hero)
+    {
+        stringBuilder.Clear();
+        
+        if (isLuckySummon)
+        {
+            switch (hero.HeroGrade)
+            {
+                case HeroGrade.Rare:
+                {
+                    stringBuilder.AppendFormat($"Lucky Summon Success! You've summoned a <color=#0000FF>{hero.HeroGrade.ToString()}</color> hero!");
+                }
+                    break;
+                case HeroGrade.Heroic:
+                {
+                    stringBuilder.AppendFormat($"Lucky Summon Success! You've summoned a <color=#A652EB>{hero.HeroGrade.ToString()}</color> hero!");
+                }
+                    break;
+                case HeroGrade.Legendary:
+                {
+                    stringBuilder.AppendFormat($"Lucky Summon Success! You've summoned a <color=#FFEB04>{hero.HeroGrade.ToString()}</color> hero!");
+                }
+                    break;
+                default:
+                    return;
+            }
+        }
+        else
+        {
+            switch (hero.HeroGrade)
+            {
+                case HeroGrade.Rare:
+                {
+                    stringBuilder.AppendFormat($"With a {heroSummonProbabilityDataLists[HeroSummonProbabilityIndex].RareProbability}% chance, summon the <color=#0000FF>{hero.HeroGrade.ToString()}</color> hero!");
+                }
+                    break;
+                case HeroGrade.Heroic:
+                {
+                    stringBuilder.AppendFormat($"With a {heroSummonProbabilityDataLists[HeroSummonProbabilityIndex].HeroicProbability}% chance, summon the <color=#A652EB>{hero.HeroGrade.ToString()}</color> hero!");
+                }
+                    break;
+                case HeroGrade.Legendary:
+                {
+                    stringBuilder.AppendFormat($"With a {heroSummonProbabilityDataLists[HeroSummonProbabilityIndex].LegendaryProbability}% chance, summon the <color=#FFEB04>{hero.HeroGrade.ToString()}</color> hero!");
+                }
+                    break;
+                default:
+                    return;
+            }
+        }
+        
+        inGameUIManager.SetLogText(stringBuilder.ToString());
     }
 
     private bool CanSpawnHeroInCell(HeroSpawnPointInCell cell, Hero hero)
@@ -237,8 +309,6 @@ public class HeroSpawner : MonoBehaviour
         {
             SpawnHeroInit(hero);
             
-            Debug.Log($"Summoned hero ID : {hero.HeroId}");
-
             return true;
         }
         
@@ -257,8 +327,10 @@ public class HeroSpawner : MonoBehaviour
         bool canUseCoin = inGameResourceManager.TryUseCoin(CurrentHeroSummonProbabilityData.EnforceCost);
         if (!canUseCoin)
         {
-            Debug.Log("Not enough coins to enforce a probability.");
-
+            inGameUIManager.SetLogText("Not enough coins to enforce a probability.");
+            
+            SoundManager.Instance.PlaySfx(SfxClipId.FailedSfxSoundId);
+            
             return;
         }
 

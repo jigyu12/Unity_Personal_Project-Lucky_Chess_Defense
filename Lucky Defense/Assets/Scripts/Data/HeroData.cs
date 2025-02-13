@@ -32,9 +32,9 @@ public class HeroData : ScriptableObject
 
     public float AtkSpeed => atkSpeed;
     
-    [SerializeField] private int heroSkill;
+    [SerializeField] private int synergyClass1;
 
-    public int HeroSkill => heroSkill;
+    public int SynergyClass1 => synergyClass1;
     
     [SerializeField] private int blockCost;
     
@@ -70,7 +70,7 @@ public class HeroCsvData
     public float AtkRange { get; set; }
     public int HeroDamage { get; set; }
     public float AtkSpeed  { get; set; }
-    public int HeroSkill { get; set; }
+    public int SynergyClass1 { get; set; }
     public int BlockCost { get; set; }
     public int SaleType { get; set; }
     public int SaleQuantity { get; set; }

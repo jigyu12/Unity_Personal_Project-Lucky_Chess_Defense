@@ -15,7 +15,8 @@ MonoBehaviour:
   monsterID: 120201
   stringKey: 2000042
   monType: 1
-  monHp: 400
+  monHp: 1000
   monSpeed: 2
   monReward: 1
   monQuantity: 1
+  monsterSpumPrefab: {fileID: 1359973204202205158, guid: fbc34d812cb9fd54bb76555f54068561, type: 3}

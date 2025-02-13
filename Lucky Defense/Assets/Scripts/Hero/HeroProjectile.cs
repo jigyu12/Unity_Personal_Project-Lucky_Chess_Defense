@@ -1,6 +1,6 @@
-using System;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Pool;
 
 public class HeroProjectile : MonoBehaviour
@@ -21,6 +21,8 @@ public class HeroProjectile : MonoBehaviour
     
     private HeroGrade ownerHeroGrade;
     private GameObject heroFireProjectile;
+
+    private UnityAction<Monster> OnAttackToMon;
     
     private void Start()
     {
@@ -46,8 +48,15 @@ public class HeroProjectile : MonoBehaviour
         
         if (Vector3.Distance(projectilePosition, targetLastPosition) < 0.5f)
         {
-            if(isTargetValid)
+            if (isTargetValid)
+            {
                 targetMonster.OnDamaged(damage);
+                OnAttackToMon?.Invoke(targetMonster);
+            }
+            else
+            {
+                OnAttackToMon = null;
+            }
             
             DestroyHeroProjectile();
             
@@ -55,23 +64,40 @@ public class HeroProjectile : MonoBehaviour
         }
         
         Vector3 movePosition = projectilePosition + direction * (ProjectileSpeed * Time.deltaTime);
-        
-        Quaternion rotation = transform.rotation;
-        rotation.x = 0f; 
-        rotation.y = 0f;
-
-        transform.SetPositionAndRotation(movePosition, rotation);
-        
+    
+        Quaternion baseRotation = Quaternion.LookRotation(direction);
+    
+        float angle = Mathf.Atan2(direction.x, direction.y) * Mathf.Rad2Deg;
+        if (angle < 0f)
+            angle += 360f;
+    
+        float additionalAngle = angle < 180f ? 90f : -90f;
+    
+        Quaternion finalRotation = baseRotation * Quaternion.Euler(0f, 0f, additionalAngle);
+        finalRotation.x = 0f;
+        finalRotation.y = 0f;
+    
+        transform.SetPositionAndRotation(movePosition, finalRotation);
+    
         heroFireProjectile.transform.localRotation = Quaternion.identity;
+        
+        // Quaternion rotation = transform.rotation;
+        // rotation.x = 0f; 
+        // rotation.y = 0f;
+        //
+        // transform.SetPositionAndRotation(movePosition, rotation);
+        //
+        // heroFireProjectile.transform.localRotation = rotation;
     }
 
-    public void Initialize(Monster targetMon, int dmg, Vector3 firePosition, HeroGrade heroGrade)
+    public void Initialize(Monster targetMon, int dmg, Vector3 firePosition, HeroGrade heroGrade, UnityAction<Monster> attackSkillToMon)
     {
         targetMonster = targetMon;
-        damage = dmg;
         
         SetTargetLastPosAndDir(firePosition);
-        
+      
+        damage = dmg;
+
         Quaternion rotation = transform.rotation;
         rotation.x = 0f; 
         rotation.y = 0f;
@@ -79,6 +105,8 @@ public class HeroProjectile : MonoBehaviour
         transform.SetPositionAndRotation(firePosition, rotation);
         
         ownerHeroGrade = heroGrade;
+
+        OnAttackToMon = attackSkillToMon;
     }
 
     private void SetTargetLastPosAndDir(Vector3 currObjPos)

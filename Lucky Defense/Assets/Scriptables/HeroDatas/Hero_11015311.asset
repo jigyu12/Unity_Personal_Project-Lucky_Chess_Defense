@@ -17,12 +17,12 @@ MonoBehaviour:
   grade: 3
   atkType: 1
   atkRange: 1.5
-  heroDamage: 650
-  atkSpeed: 2
-  heroSkill: 0
+  heroDamage: 1000
+  atkSpeed: 0.5
+  synergyClass1: 1
   blockCost: 1
   saleType: 2
   saleQuantity: 2
-  criticalPercent: 0
-  criticalMlt: 0
+  criticalPercent: 0.1
+  criticalMlt: 1.5
   heroSpumPrefab: {fileID: 2027500579807154114, guid: aff99aaff74813a4abfae025be064d40, type: 3}

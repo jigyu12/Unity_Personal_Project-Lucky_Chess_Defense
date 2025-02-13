@@ -17,6 +17,10 @@ TagManager:
   - HeroSpawner
   - HeroSpumSpawner
   - HeroProjectileSpawner
+  - MonsterSpumSpawner
+  - SkillManager
+  - MainTitleUIManager
+  - SoundManager
   layers:
   - Default
   - TransparentFX

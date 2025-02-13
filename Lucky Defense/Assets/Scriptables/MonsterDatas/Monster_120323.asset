@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 499350db71452b94dafaad880dc022d3, type: 3}
+  m_Name: Monster_120323
+  m_EditorClassIdentifier: 
+  monsterID: 120323
+  stringKey: 2000054
+  monType: 3
+  monHp: 130000
+  monSpeed: 2
+  monReward: 2
+  monQuantity: 2
+  monsterSpumPrefab: {fileID: 6125928211404798377, guid: 161e8aa6155aa684692691ae2e0b7cc7, type: 3}

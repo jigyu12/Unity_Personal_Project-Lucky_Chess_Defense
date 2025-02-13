@@ -6,6 +6,7 @@ public class WaveManager : MonoBehaviour
     [SerializeField] private InGameUIManager inGameUIManager;
     [SerializeField] private MonsterSpawner monsterSpawner;
     [SerializeField] private GameManager gameManager;
+    [SerializeField] private InGameResourceManager inGameResourceManager;
     
     private int currWaveIndex;
     private float waveTimeAccumF;
@@ -48,7 +49,7 @@ public class WaveManager : MonoBehaviour
         bossMonsterCount = 0;
         
         isGameEnd = false;
-        
+
         LastBossWaveRemainder = waveDataList.Count / BossWaveDivider;
     }
 
@@ -93,9 +94,10 @@ public class WaveManager : MonoBehaviour
 
                     return;
                 }
+
+                ++currWaveIndex;
                 
-                if (++currWaveIndex >= waveDataList.Count)
-                    currWaveIndex = waveDataList.Count - 1;
+                inGameResourceManager.AddGem(1);
                 
                 if (waveDataList[currWaveIndex].WaveNumber % BossWaveDivider == 0)
                     bossMonsterCount = waveDataList[currWaveIndex].CreateMonNumber;
