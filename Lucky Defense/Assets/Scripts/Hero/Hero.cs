@@ -358,9 +358,6 @@ public class Hero : MonoBehaviour
             additionalAtkValue += (int)data.AtkDamageValue;
             additionalAtkSpeedValue += (int)data.AtkDamageValue;
         }
-        
-        Debug.Log("Value Synergy dmg: " + additionalAtkValue);
-        Debug.Log("Value Synergy atkspeed: " + additionalAtkSpeedValue);
     }
 
     public void SetRateDataList(StatRateData statRateData, bool isAddData)
@@ -383,9 +380,6 @@ public class Hero : MonoBehaviour
             additionalAtkRate += data.AtkDamageRate;
             additionalAtkSpeedRate += data.AtkSpeedRate;
         }
-        
-        Debug.Log("Rate Synergy dmg: " + additionalAtkRate);
-        Debug.Log("Rate Synergy atkspeed: " + additionalAtkSpeedRate);
     }
 
     public void SetOnAdditionalAttack(UnityAction additionalAttack, bool isAddAction)

@@ -116,8 +116,6 @@ public class SkillManager : MonoBehaviour
                 if (Random.value <= newPassiveSkillData.Probability * 0.01f)
                 {
                     inGameResourceManager.AddCoin((int)newPassiveSkillData.Value);
-                    
-                    Debug.Log("Get Coin : " + (int)newPassiveSkillData.Value);
                 }
             };
         }
@@ -128,8 +126,6 @@ public class SkillManager : MonoBehaviour
                 if (Random.value <= newPassiveSkillData.Probability * 0.01f)
                 {
                     inGameResourceManager.AddGem((int)newPassiveSkillData.Value);
-                    
-                    Debug.Log("Get Gem : " + (int)newPassiveSkillData.Value);
                 }
             };
         }
@@ -145,11 +141,11 @@ public class SkillManager : MonoBehaviour
         
         if ((SkillEffectType)newPassiveSkillData.EffectType is SkillEffectType.SpeedValue)
         {
-            return (monster) => monster.MoveSpeedTestValue(newPassiveSkillData.Value);
+            return (monster) => monster.ReduceMoveSpeedValue(newPassiveSkillData.Value, newPassiveSkillData.Duration);
         }
         else if ((SkillEffectType)newPassiveSkillData.EffectType is SkillEffectType.SpeedRate)
         {
-            return (monster) => monster.MoveSpeedTestRate(newPassiveSkillData.Value);
+            return (monster) => monster.ReduceMoveSpeedRate(newPassiveSkillData.Value, newPassiveSkillData.Duration);
         }
         
         Debug.Assert(false, "CreateAttackSkillToMon Failed");

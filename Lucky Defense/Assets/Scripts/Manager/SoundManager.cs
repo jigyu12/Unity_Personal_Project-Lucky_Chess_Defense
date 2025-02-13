@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class SoundManager : MonoBehaviour
 {
@@ -17,6 +18,9 @@ public class SoundManager : MonoBehaviour
     private InGameUIManager inGameUIManager;
 
     [SerializeField] private List<AudioClip> sfxClips;
+    
+    [SerializeField] private List<Sprite> soundSpriteList;
+    private List<Image> soundImageList;
     
     void Awake()
     {
@@ -73,6 +77,8 @@ public class SoundManager : MonoBehaviour
             
             mainTitleUIManager.sfxButton.onClick.RemoveAllListeners();
             mainTitleUIManager.sfxButton.onClick.AddListener(SwitchSfxVolume);
+            
+            soundImageList = mainTitleUIManager.soundImageList;
         }
         else if (scene.buildIndex == 1)
         {
@@ -83,17 +89,35 @@ public class SoundManager : MonoBehaviour
             
             inGameUIManager.sfxButton.onClick.RemoveAllListeners();
             inGameUIManager.sfxButton.onClick.AddListener(SwitchSfxVolume);
+            
+            soundImageList = inGameUIManager.soundImageList;
         }
-        
-        if(isBgmPlaying)
+
+        if (isBgmPlaying)
+        {
             audioMixer.SetFloat("BGM", Mathf.Log10(1) * 20);
+            
+            soundImageList[0].sprite = soundSpriteList[0];
+        }
         else
+        {
             audioMixer.SetFloat("BGM", -80f);
-        
-        if(isSfxPlaying)
+            
+            soundImageList[0].sprite = soundSpriteList[1];
+        }
+
+        if (isSfxPlaying)
+        {
             audioMixer.SetFloat("SFX", Mathf.Log10(1) * 20);
+            
+            soundImageList[1].sprite = soundSpriteList[0];
+        }
         else
+        {
             audioMixer.SetFloat("SFX", -80f);
+            
+            soundImageList[1].sprite = soundSpriteList[1];
+        }
     }
     
     public void SwitchBgmVolume()
@@ -102,11 +126,15 @@ public class SoundManager : MonoBehaviour
         {
             isBgmPlaying = true;
             audioMixer.SetFloat("BGM", Mathf.Log10(1) * 20);
+            
+            soundImageList[0].sprite = soundSpriteList[0];
         }
         else
         {
             isBgmPlaying = false;
             audioMixer.SetFloat("BGM", -80f);
+            
+            soundImageList[0].sprite = soundSpriteList[1];
         }
     }
  
@@ -116,11 +144,15 @@ public class SoundManager : MonoBehaviour
         {
             isSfxPlaying = true;
             audioMixer.SetFloat("SFX", Mathf.Log10(1) * 20);
+            
+            soundImageList[1].sprite = soundSpriteList[0];
         }
         else
         {
             isSfxPlaying = false;
             audioMixer.SetFloat("SFX", -80f);
+            
+            soundImageList[1].sprite = soundSpriteList[1];
         }
     }
 

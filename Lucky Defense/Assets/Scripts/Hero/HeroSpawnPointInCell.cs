@@ -69,12 +69,6 @@ public class HeroSpawnPointInCell : MonoBehaviour
 
     public static UnityEvent<HeroSpawnPointInCell, bool> OnOccupyHeroIdChangedInCell = new();
 
-    public int SpApplySynergyClass { get; private set; }
-    public int SpApplySynergyIndex { get; private set; }
-
-    public int AllApplySynergyClass { get; private set; }
-    public int AllApplySynergyIndex { get; private set; }
-
     private SkillManager skillManager;
 
     public int currCellSynergyClass;
@@ -110,13 +104,7 @@ public class HeroSpawnPointInCell : MonoBehaviour
         stringBuilder = new();
         stringBuilder.Clear();
         
-        currCellSynergyClass = -1; 
-
-        SpApplySynergyClass = -1;
-        SpApplySynergyIndex = -1;
-
-        AllApplySynergyClass = -1;
-        AllApplySynergyIndex = -1;
+        currCellSynergyClass = -1;
 
 #if UNITY_STANDALONE || UNITY_EDITOR
 

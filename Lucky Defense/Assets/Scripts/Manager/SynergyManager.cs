@@ -11,6 +11,8 @@ public class SynergyManager : MonoBehaviour
 
     public static UnityEvent<List<int>, bool, int> OnSynergyCalcualted = new();
     
+    [SerializeField] private InGameUIManager inGameUIManager;
+    
     private void Start()
     {
         HeroSpawnPointInCell.OnOccupyHeroIdChangedInCell.AddListener(OnOccupyHeroIdChangedHandler);
@@ -92,6 +94,8 @@ public class SynergyManager : MonoBehaviour
                     {
                         SetSkillIdsInSkillIdList(synergyDataList[0]);
                         OnSynergyCalcualted?.Invoke(skillIdList, false, cellSynergyClass1);
+                        
+                        inGameUIManager.SetAllySynergyTextActive((SynergyClass)cellSynergyClass1, i);
                     }
 
                     break;
@@ -107,6 +111,8 @@ public class SynergyManager : MonoBehaviour
                     {
                         SetSkillIdsInSkillIdList(synergyDataList[i]);
                         OnSynergyCalcualted?.Invoke(skillIdList, true, cellSynergyClass1);
+                        
+                        inGameUIManager.SetAllySynergyTextActive((SynergyClass)cellSynergyClass1, i);
 
                         if (i != 0)
                         {
@@ -118,6 +124,8 @@ public class SynergyManager : MonoBehaviour
                     {
                         SetSkillIdsInSkillIdList(synergyDataList[i]);
                         OnSynergyCalcualted?.Invoke(skillIdList, true, cellSynergyClass1);
+                        
+                        inGameUIManager.SetAllySynergyTextActive((SynergyClass)cellSynergyClass1, i);
                         
                         SetSkillIdsInSkillIdList(synergyDataList[i+1]);
                         OnSynergyCalcualted?.Invoke(skillIdList, false, cellSynergyClass1);
@@ -132,6 +140,8 @@ public class SynergyManager : MonoBehaviour
                 {
                     SetSkillIdsInSkillIdList(synergyDataList[i]);
                     OnSynergyCalcualted?.Invoke(skillIdList, true, cellSynergyClass1);
+                    
+                    inGameUIManager.SetAllySynergyTextActive((SynergyClass)cellSynergyClass1, i);
                         
                     SetSkillIdsInSkillIdList(synergyDataList[i-1]);
                     OnSynergyCalcualted?.Invoke(skillIdList, false, cellSynergyClass1);

@@ -13,6 +13,7 @@ public class MainTitleUIManager : MonoBehaviour
 
     public Button bgmButton;
     public Button sfxButton;
+    public List<Image> soundImageList;
     
     [SerializeField] private List<Button> buttonList = new();
     

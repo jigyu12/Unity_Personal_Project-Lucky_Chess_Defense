@@ -15,7 +15,7 @@ MonoBehaviour:
   monsterID: 120273
   stringKey: 2000049
   monType: 3
-  monHp: 25000
+  monHp: 30000
   monSpeed: 2
   monReward: 2
   monQuantity: 2

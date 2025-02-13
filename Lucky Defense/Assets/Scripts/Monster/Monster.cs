@@ -247,12 +247,12 @@ public class Monster : MonoBehaviour
         monsterData = newMonsterData;
     }
 
-    public void MoveSpeedTestValue(float value)
+    public void ReduceMoveSpeedValue(float value, float durationTime)
     {
         
     }
     
-    public void MoveSpeedTestRate(float value)
+    public void ReduceMoveSpeedRate(float value, float durationTime)
     {
         
     }
