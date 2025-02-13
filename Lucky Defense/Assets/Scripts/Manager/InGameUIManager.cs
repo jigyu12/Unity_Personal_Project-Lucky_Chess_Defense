@@ -62,6 +62,9 @@ public class InGameUIManager : MonoBehaviour
     private readonly StringBuilder stringBuilder = new(20);
 
     public List<Sprite> inGameResourceIcons;
+    
+    public Button bgmButton;
+    public Button sfxButton;
 
     private void Awake()
     {

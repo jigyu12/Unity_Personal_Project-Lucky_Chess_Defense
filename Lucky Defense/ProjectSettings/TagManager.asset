@@ -19,6 +19,7 @@ TagManager:
   - HeroProjectileSpawner
   - MonsterSpumSpawner
   - SkillManager
+  - MainTitleUIManager
   layers:
   - Default
   - TransparentFX

@@ -9,6 +9,9 @@ public class MainTitleUIManager : MonoBehaviour
     
     [SerializeField] private GameObject settingPanel;
     [SerializeField] private Button settingPanelButton;
+
+    public Button bgmButton;
+    public Button sfxButton;
     
     private void Start()
     {
