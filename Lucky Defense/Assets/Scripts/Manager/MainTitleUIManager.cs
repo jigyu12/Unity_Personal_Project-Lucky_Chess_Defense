@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -13,6 +14,8 @@ public class MainTitleUIManager : MonoBehaviour
     public Button bgmButton;
     public Button sfxButton;
     
+    [SerializeField] private List<Button> buttonList = new();
+    
     private void Start()
     {
         gameStartButton.onClick.RemoveAllListeners();
@@ -23,6 +26,11 @@ public class MainTitleUIManager : MonoBehaviour
         
         settingPanelButton.onClick.RemoveAllListeners();
         settingPanelButton.onClick.AddListener(OnClickSwitchSettingPanelActive);
+        
+        foreach (var button in buttonList)
+        {
+            button.onClick.AddListener(() => SoundManager.Instance.PlaySfx(SfxClipId.UiButtonClickSfxSoundId));
+        }
     }
     
     private void OnClickChangeSceneToInGame()

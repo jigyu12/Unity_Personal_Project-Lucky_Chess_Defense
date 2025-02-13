@@ -7689,6 +7689,18 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 20390c1c8b13a446c91f57d88aa1f368, type: 3}
   bgmButton: {fileID: 1398352383}
   sfxButton: {fileID: 181272221}
+  buttonList:
+  - {fileID: 2063040552}
+  - {fileID: 1737234369}
+  - {fileID: 802233988}
+  - {fileID: 724574459}
+  - {fileID: 108944948}
+  - {fileID: 874128067}
+  - {fileID: 1929818595}
+  - {fileID: 1075778400}
+  - {fileID: 1273555987}
+  - {fileID: 9748518}
+  - {fileID: 1657120222}
 --- !u!114 &1170194221
 MonoBehaviour:
   m_ObjectHideFlags: 0

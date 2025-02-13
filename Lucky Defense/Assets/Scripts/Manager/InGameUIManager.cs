@@ -65,6 +65,8 @@ public class InGameUIManager : MonoBehaviour
     
     public Button bgmButton;
     public Button sfxButton;
+    
+    [SerializeField] private List<Button> buttonList = new();
 
     private void Awake()
     {
@@ -131,6 +133,11 @@ public class InGameUIManager : MonoBehaviour
         legendarySummonButton.onClick.AddListener(() => 
             heroSpawner.OnClickCreateHero(true, heroSpawner.LegendarySummonOnlyProbability, HeroGrade.Legendary,
                 true,true,false));
+        
+        foreach (var button in buttonList)
+        {
+            button.onClick.AddListener(() => SoundManager.Instance.PlaySfx(SfxClipId.UiButtonClickSfxSoundId));
+        }
     }
 
     public void SetWaveNumberText(int waveNumber)

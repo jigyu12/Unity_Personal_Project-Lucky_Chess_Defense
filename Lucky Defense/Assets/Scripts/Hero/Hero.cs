@@ -254,6 +254,11 @@ public class Hero : MonoBehaviour
                 if (Random.value <= heroData.CriticalPercent)
                     heroDamage = (int)(heroDamage * heroData.CriticalMlt);
                 
+                if (heroData.AtkType == HeroAttackType.Melee)
+                    SoundManager.Instance.PlaySfx(SfxClipId.MeleeAttackSfxSoundId);
+                else if (heroData.AtkType == HeroAttackType.Ranged)
+                    SoundManager.Instance.PlaySfx(SfxClipId.RangedAttackSfxSoundId);
+                
                 OnAttack?.Invoke(targetMonster, heroDamage);
                 OnAdditionalAttack?.Invoke();
 
