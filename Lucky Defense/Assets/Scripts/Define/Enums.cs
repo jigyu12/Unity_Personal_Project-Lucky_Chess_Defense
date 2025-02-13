@@ -1,3 +1,11 @@
+public enum SfxClipId
+{
+    UiButtonClickSfxSoundId = 0,
+    FailedSfxSoundId,
+    MeleeAttackSfxSoundId,
+    RangedAttackSfxSoundId,
+}
+
 public enum HeroGrade
 {
     Common = 1,

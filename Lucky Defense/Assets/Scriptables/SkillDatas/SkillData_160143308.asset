@@ -16,6 +16,6 @@ MonoBehaviour:
   skillType: 3
   targetType: 3
   effectType: 8
-  probability: 5
+  probability: 2
   value: 1
   duration: 0

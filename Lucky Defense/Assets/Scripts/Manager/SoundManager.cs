@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
@@ -7,12 +8,15 @@ public class SoundManager : MonoBehaviour
     private static SoundManager instance;
     
     [SerializeField] private AudioMixer audioMixer;
+    [SerializeField] private AudioSource sfxSource; 
 
     private bool isBgmPlaying;
     private bool isSfxPlaying;
     
     private MainTitleUIManager mainTitleUIManager;
     private InGameUIManager inGameUIManager;
+
+    [SerializeField] private List<AudioClip> sfxClips;
     
     void Awake()
     {
@@ -30,6 +34,9 @@ public class SoundManager : MonoBehaviour
         
         isBgmPlaying = true;
         isSfxPlaying = true;
+        
+        sfxSource.loop = false;
+        sfxSource.playOnAwake = false;
     }
     
     public static SoundManager Instance
@@ -115,5 +122,15 @@ public class SoundManager : MonoBehaviour
             isSfxPlaying = false;
             audioMixer.SetFloat("SFX", -80f);
         }
+    }
+
+    public void PlaySfx(SfxClipId clipId)
+    {
+        PlaySfx(sfxClips[(int)clipId]);
+    }
+    
+    private void PlaySfx(AudioClip clip)
+    {
+        sfxSource.PlayOneShot(clip);
     }
 }

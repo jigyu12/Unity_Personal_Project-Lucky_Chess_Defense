@@ -46,9 +46,9 @@ public class HeroSpawner : MonoBehaviour
     
     [SerializeField] private Button probabilityEnforceButton;
 
-    public float RareSummonOnlyProbability => 100f;
-    public float HeroicSummonOnlyProbability => 100f;
-    public float LegendarySummonOnlyProbability => 100f;
+    public float RareSummonOnlyProbability => 60f;
+    public float HeroicSummonOnlyProbability => 20f;
+    public float LegendarySummonOnlyProbability => 10f;
 
     public Dictionary<int, List<HeroSpawnPointInCell>> CellsByOccupyHeroIdDict { get; } = new();
     
@@ -126,6 +126,8 @@ public class HeroSpawner : MonoBehaviour
         if (currHeroCount >= MaxHeroCount)
         {
             inGameUIManager.SetLogText("Hero count is full");
+            
+            SoundManager.Instance.PlaySfx(SfxClipId.FailedSfxSoundId);
 
             return null;
         }
@@ -138,6 +140,8 @@ public class HeroSpawner : MonoBehaviour
                 if (!canUseCoin)
                 {
                     inGameUIManager.SetLogText("Not enough coins to summon a hero.");
+                    
+                    SoundManager.Instance.PlaySfx(SfxClipId.FailedSfxSoundId);
 
                     return null;
                 }
@@ -166,6 +170,8 @@ public class HeroSpawner : MonoBehaviour
                 {
                     inGameUIManager.SetLogText("Not enough gems to summon a hero.");
 
+                    SoundManager.Instance.PlaySfx(SfxClipId.FailedSfxSoundId);
+                    
                     return null;
                 }
             }
@@ -182,6 +188,8 @@ public class HeroSpawner : MonoBehaviour
         if (success is false)
         {
             inGameUIManager.SetLogText("Lucky Summon failed.....");
+            
+            SoundManager.Instance.PlaySfx(SfxClipId.FailedSfxSoundId);
             
             HeroPool.Release(hero);
             
@@ -231,8 +239,10 @@ public class HeroSpawner : MonoBehaviour
                 return hero;
             }
         }
-
+        
         inGameUIManager.SetLogText("There is no cell available to spawn a hero.");
+        
+        SoundManager.Instance.PlaySfx(SfxClipId.FailedSfxSoundId);
         
         HeroPool.Release(hero);
 
@@ -265,8 +275,6 @@ public class HeroSpawner : MonoBehaviour
                 default:
                     return;
             }
-            
-            inGameUIManager.SetLogText(stringBuilder.ToString());
         }
         else
         {
@@ -290,9 +298,9 @@ public class HeroSpawner : MonoBehaviour
                 default:
                     return;
             }
-            
-            inGameUIManager.SetLogText(stringBuilder.ToString());
         }
+        
+        inGameUIManager.SetLogText(stringBuilder.ToString());
     }
 
     private bool CanSpawnHeroInCell(HeroSpawnPointInCell cell, Hero hero)
@@ -320,6 +328,8 @@ public class HeroSpawner : MonoBehaviour
         if (!canUseCoin)
         {
             inGameUIManager.SetLogText("Not enough coins to enforce a probability.");
+            
+            SoundManager.Instance.PlaySfx(SfxClipId.FailedSfxSoundId);
             
             return;
         }

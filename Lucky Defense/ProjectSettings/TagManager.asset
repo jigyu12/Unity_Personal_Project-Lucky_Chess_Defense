@@ -20,6 +20,7 @@ TagManager:
   - MonsterSpumSpawner
   - SkillManager
   - MainTitleUIManager
+  - SoundManager
   layers:
   - Default
   - TransparentFX
