@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillID: 160103306
   skillType: 3
-  targetType: 3
+  targetType: 2
   effectType: 6
   probability: 5
   value: 1

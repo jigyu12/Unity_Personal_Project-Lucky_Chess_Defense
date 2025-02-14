@@ -226,7 +226,7 @@ public class HeroSpawnPointInCell : MonoBehaviour
 
             if (touch.phase == TouchPhase.Began)
             {
-                if (hitCollider?.gameObject == gameObject && AttackRange != DefaultAttackRange)
+                if (hitCollider?.gameObject == gameObject && !Mathf.Approximately(AttackRange, DefaultAttackRange))
                 {
                     ShowAttackRangeCircle();
                     ShowHeroSellButton();
@@ -621,88 +621,7 @@ public class HeroSpawnPointInCell : MonoBehaviour
             hero.SetHeroDrawOrder(drawOrder++);
         }
     }
-
-    /// <param name="isAddData">If this value is true, add the data; if false, remove the data.</param>
-    public void SetStatValueDataToHeroList(StatValueData statValueData, bool isAddData)
-    {
-        if (isAddData)
-        {
-            foreach (var hero in heroList)
-            {
-                hero.SetValueDataList(statValueData, true);
-            }
-        }
-        else
-        {
-            foreach (var hero in heroList)
-            {
-                hero.SetValueDataList(statValueData, false);
-            }
-        }
-    }
-
-    /// <param name="isAddData">If this value is true, add the data; if false, remove the data.</param>
-    public void SetStatRateDataToHeroList(StatRateData statRateData, bool isAddData)
-    {
-        if (isAddData)
-        {
-            foreach (var hero in heroList)
-            {
-                hero.SetRateDataList(statRateData, true);
-            }
-        }
-        else
-        {
-            foreach (var hero in heroList)
-            {
-                hero.SetRateDataList(statRateData, false);
-            }
-        }
-    }
-
-    /// <param name="isAddAction">If this value is true, add the action; if false, remove the action.</param>
-    public void SetAdditionalAttackToHeroList(UnityAction additionalAttack, bool isAddAction)
-    {
-        if (isAddAction)
-        {
-            foreach (var hero in heroList)
-            {
-                hero.OnAdditionalAttack += additionalAttack;
-            }
-        }
-        else
-        {
-            foreach (var hero in heroList)
-            {
-                hero.OnAdditionalAttack -= additionalAttack;
-            }
-        }
-    }
-
-    public void RemoveAllAdditionalAttackToHeroList()
-    {
-        foreach (var hero in heroList)
-        {
-            hero.statValueDataList = null;
-        }
-    }
-
-    public void RemoveAllStatValueDataToHeroList()
-    {
-        foreach (var hero in heroList)
-        {
-            hero.statValueDataList.Clear();
-        }
-    }
-
-    public void RemoveAllStatRateDataToHeroList()
-    {
-        foreach (var hero in heroList)
-        {
-            hero.statRateDataList.Clear();
-        }
-    }
-
+    
     /// <param name="isAddSynergy">If this value is true, add the synergy; if false, remove the synergy.</param>
     private void OnSynergyCalcualtedHandler(List<int> skillIdList, bool isAddSynergy, int cellSynergyClass1)
     {

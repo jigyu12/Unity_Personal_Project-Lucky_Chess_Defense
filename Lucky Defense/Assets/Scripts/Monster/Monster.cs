@@ -110,7 +110,7 @@ public class Monster : MonoBehaviour
         if(IsDead)
             return;
         
-        transform.position = Vector3.MoveTowards(transform.position, waypoint[currentWaypointIndex], monsterData.MonSpeed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, waypoint[currentWaypointIndex], newSpeed * Time.deltaTime);
         
         hpSliderRectTr.position = mainCamera.WorldToScreenPoint(transform.position + sliderPosOffset * transform.localScale.y);
         
@@ -215,9 +215,19 @@ public class Monster : MonoBehaviour
         newSpeed = originalSpeed;
         currentSlowValue = 0f;
         currentSlowRate = 0f;
-        
+
+        if (slowValueCoroutine != null)
+        {
+            StopCoroutine(slowValueCoroutine);
+        }
         slowValueCoroutine = null;
+        
+        if (slowRateCoroutine != null)
+        {
+            StopCoroutine(slowRateCoroutine);
+        }
         slowRateCoroutine = null;
+        
         isStuned = false;
         
         spumPrefabs._anim.speed = 1f;
@@ -251,6 +261,7 @@ public class Monster : MonoBehaviour
 
     private IEnumerator OnDeadCoroutine()
     {
+        spumPrefabs._anim.speed = 1f;
         OnDead?.Invoke();
         
         while (destroyTimeAccum <  DestroyTimeDelay)
@@ -270,8 +281,16 @@ public class Monster : MonoBehaviour
 
     public void ReduceMoveSpeedValue(float value, float durationTime, float probability)
     {
+        if(IsDead)
+            return;
+        
         if (Random.value > probability * 0.01f)
             return;
+        
+        if (Mathf.Approximately(durationTime, 0f))
+        {
+            durationTime = 9999f;
+        }
     
         if (slowValueCoroutine != null)
         {
@@ -290,7 +309,7 @@ public class Monster : MonoBehaviour
         }
     
         currentSlowValue = value;
-        UpdateMoveSpeed();
+        MoveSpeedUpdateBySkill();
         slowValueCoroutine = StartCoroutine(CalculateSlowValue(durationTime, value));
     }
     
@@ -301,7 +320,7 @@ public class Monster : MonoBehaviour
         if (Mathf.Approximately(currentSlowValue, value))
         {
             currentSlowValue = 0f;
-            UpdateMoveSpeed();
+            MoveSpeedUpdateBySkill();
         
             spumPrefabs.PlayAnimation(PlayerState.MOVE, 0);
             
@@ -312,8 +331,16 @@ public class Monster : MonoBehaviour
     
     public void ReduceMoveSpeedRate(float value, float durationTime, float probability)
     {
+        if(IsDead)
+            return;
+        
         if (Random.value > probability * 0.01f)
             return;
+        
+        if (Mathf.Approximately(durationTime, 0f))
+        {
+            durationTime = 9999f;
+        }
     
         if (slowRateCoroutine != null)
         {
@@ -331,7 +358,7 @@ public class Monster : MonoBehaviour
         }
     
         currentSlowRate = value;
-        UpdateMoveSpeed();
+        MoveSpeedUpdateBySkill();
         slowRateCoroutine = StartCoroutine(CalculateSlowRate(durationTime, value));
     }
     
@@ -342,7 +369,7 @@ public class Monster : MonoBehaviour
         if (Mathf.Approximately(currentSlowRate, value))
         {
             currentSlowRate = 0f;
-            UpdateMoveSpeed();
+            MoveSpeedUpdateBySkill();
             
             spumPrefabs.PlayAnimation(PlayerState.MOVE, 0);
             
@@ -351,18 +378,22 @@ public class Monster : MonoBehaviour
         }
     }
     
-    private void UpdateMoveSpeed()
+    private void MoveSpeedUpdateBySkill()
     {
         newSpeed = (originalSpeed - currentSlowValue) - (originalSpeed * currentSlowRate);
         newSpeed = Mathf.Max(0f, newSpeed);
-        
-        float moveAnimSpeed = newSpeed / originalSpeed;
-        spumPrefabs._anim.speed = moveAnimSpeed;
+
+        if (!isStuned)
+        {
+            float moveAnimSpeed = newSpeed / originalSpeed;
+            spumPrefabs._anim.speed = moveAnimSpeed;
+        }
 
         if (Mathf.Approximately(newSpeed, 0f))
         {
             if (!isStuned)
             {
+                spumPrefabs._anim.speed = 1f;
                 spumPrefabs.PlayAnimation(PlayerState.DEBUFF, 0);
                 isStuned = true;
             }

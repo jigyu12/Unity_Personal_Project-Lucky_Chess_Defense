@@ -17,5 +17,5 @@ MonoBehaviour:
   targetType: 2
   effectType: 6
   probability: 100
-  value: 0.1
+  value: 0.4
   duration: 0
