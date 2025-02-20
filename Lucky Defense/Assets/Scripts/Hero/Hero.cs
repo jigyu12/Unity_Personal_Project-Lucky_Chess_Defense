@@ -179,6 +179,14 @@ public class Hero : MonoBehaviour
 
             monsterCollList.Sort(MonsterAttackPriorityCmp);
             targetMonster = waveManager.CurrMonstersDict[monsterCollList[0]];
+            
+            // Physics2D.OverlapCircle(transform.position, heroData.AtkRange, contactFilter, monsterCollList);
+            //
+            // if (monsterCollList.Count <= 0)
+            //     return false;
+            //
+            // monsterCollList.Sort(MonsterAttackPriorityCmp);
+            // targetMonster = waveManager.CurrMonstersDict[monsterCollList[0]];
         }
 
         return true;
@@ -294,8 +302,8 @@ public class Hero : MonoBehaviour
         if (cmp1 != 0)
             return cmp1;
 
-        return Vector3.Distance(transform.position, coll1.transform.position)
-            .CompareTo(Vector3.Distance(transform.position, coll2.transform.position));
+        return Vector2.Distance(transform.position, coll1.transform.position)
+            .CompareTo(Vector2.Distance(transform.position, coll2.transform.position));
     }
 
     public void SetHeroData(HeroData setHeroData)
