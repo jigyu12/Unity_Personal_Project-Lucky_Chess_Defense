@@ -639,7 +639,7 @@ public class HeroSpawnPointInCell : MonoBehaviour
                 if ((SkillEffectType)passiveSkillData.EffectType is
                     SkillEffectType.AtkValue or SkillEffectType.AtkSpeedValue)
                 {
-                    var statValueData = skillManager.statValuePassiveSkillDict[skillId];
+                    var statValueData = skillManager.StatValuePassiveSkillDict[skillId];
 
                     if (isAddSynergy)
                     {
@@ -659,7 +659,7 @@ public class HeroSpawnPointInCell : MonoBehaviour
                 else if ((SkillEffectType)passiveSkillData.EffectType is
                          SkillEffectType.AtkRate or SkillEffectType.AtkSpeedRate)
                 {
-                    var statRateData = skillManager.statRatePassiveSkillDict[skillId];
+                    var statRateData = skillManager.StatRatePassiveSkillDict[skillId];
 
                     if (isAddSynergy)
                     {
@@ -679,7 +679,7 @@ public class HeroSpawnPointInCell : MonoBehaviour
                 else if ((SkillEffectType)passiveSkillData.EffectType is
                          SkillEffectType.AcquireCoin or SkillEffectType.AcquireGem)
                 {
-                    var additionalAttack = skillManager.attackPassiveSkillDict[skillId];
+                    var additionalAttack = skillManager.AttackPassiveSkillDict[skillId];
 
                     if (isAddSynergy)
                     {
@@ -702,7 +702,7 @@ public class HeroSpawnPointInCell : MonoBehaviour
                 if ((SkillEffectType)passiveSkillData.EffectType is
                          SkillEffectType.SpeedValue or SkillEffectType.SpeedRate)
                 {
-                    var attackSkillToMon = skillManager.attackSkillToMonDict[skillId];
+                    var attackSkillToMon = skillManager.AttackSkillToMonDict[skillId];
 
                     if (isAddSynergy)
                     {

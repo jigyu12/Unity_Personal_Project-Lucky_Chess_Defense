@@ -5,19 +5,19 @@ using UnityEngine.Events;
 public class SkillManager : MonoBehaviour
 {
     public Dictionary<int, PassiveSkillData> AllPassiveSkillDict { get; } = new();
-    public Dictionary<int, StatValueData> statValuePassiveSkillDict { get; } = new();
-    public Dictionary<int, StatRateData> statRatePassiveSkillDict { get; } = new();
-    public Dictionary<int, UnityAction> attackPassiveSkillDict { get; } = new();
-    public Dictionary<int, UnityAction<Monster>> attackSkillToMonDict { get; } = new();
+    public Dictionary<int, StatValueData> StatValuePassiveSkillDict { get; } = new();
+    public Dictionary<int, StatRateData> StatRatePassiveSkillDict { get; } = new();
+    public Dictionary<int, UnityAction> AttackPassiveSkillDict { get; } = new();
+    public Dictionary<int, UnityAction<Monster>> AttackSkillToMonDict { get; } = new();
     
     [SerializeField] private InGameResourceManager inGameResourceManager;
     
     private void Awake()
     {
         AllPassiveSkillDict.Clear();
-        statValuePassiveSkillDict.Clear();
-        statRatePassiveSkillDict.Clear();
-        attackPassiveSkillDict.Clear();
+        StatValuePassiveSkillDict.Clear();
+        StatRatePassiveSkillDict.Clear();
+        AttackPassiveSkillDict.Clear();
 
         foreach (var passiveSkillData in passiveSkillDataList)
         {
@@ -26,22 +26,22 @@ public class SkillManager : MonoBehaviour
             if ((SkillEffectType)passiveSkillData.EffectType is
                 SkillEffectType.AtkValue or SkillEffectType.AtkSpeedValue)
             {
-                statValuePassiveSkillDict.Add(passiveSkillData.SkillID, CreateStatValueData(passiveSkillData));
+                StatValuePassiveSkillDict.Add(passiveSkillData.SkillID, CreateStatValueData(passiveSkillData));
             }
             else if ((SkillEffectType)passiveSkillData.EffectType is
                      SkillEffectType.AtkRate or SkillEffectType.AtkSpeedRate)
             {
-                statRatePassiveSkillDict.Add(passiveSkillData.SkillID, CreateStatRateData(passiveSkillData));
+                StatRatePassiveSkillDict.Add(passiveSkillData.SkillID, CreateStatRateData(passiveSkillData));
             }
             else if ((SkillEffectType)passiveSkillData.EffectType is
                      SkillEffectType.AcquireCoin or SkillEffectType.AcquireGem)
             {
-                attackPassiveSkillDict.Add(passiveSkillData.SkillID, CreateAttackPassiveSkill(passiveSkillData));
+                AttackPassiveSkillDict.Add(passiveSkillData.SkillID, CreateAttackPassiveSkill(passiveSkillData));
             }
             else if ((SkillEffectType)passiveSkillData.EffectType is
                      SkillEffectType.SpeedValue or SkillEffectType.SpeedRate)
             {
-                attackSkillToMonDict.Add(passiveSkillData.SkillID, CreateAttackSkillToMon(passiveSkillData));
+                AttackSkillToMonDict.Add(passiveSkillData.SkillID, CreateAttackSkillToMon(passiveSkillData));
             }
             else
                 Debug.Assert(false,
