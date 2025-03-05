@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
+using AYellowpaper.SerializedCollections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -81,6 +83,27 @@ public class InGameUIManager : MonoBehaviour
     private readonly Color inActiveSynergyColor = new Color(255f, 255f, 255f, 0.4f);
     private readonly Color activeSynergyColor = new Color(255f, 255f, 255f, 1f);
 
+    [SerializeField] private GameObject heroInfoPanel;
+    private HeroSpawnPointInCell clickedCell;
+    
+    [SerializedDictionary("Hero Id","Hero Image")]
+    [SerializeField] private SerializedDictionary<int, Sprite> heroImageDict;
+    [SerializeField] private Image heroImage;
+    [SerializeField] private TMP_Text nameText;
+    [SerializeField] private TMP_Text gradeText;
+    [SerializeField] private TMP_Text synergyText;
+    [SerializeField] private TMP_Text attackTypeText;
+    [SerializeField] private TMP_Text attackDamageText;
+    [SerializeField] private TMP_Text attackSpeedText;
+    [SerializeField] private TMP_Text criticalRateText;
+    [SerializeField] private TMP_Text criticalDamageText;
+    [SerializeField] private Image synergyImage;
+    [SerializeField] private Image attackTypeImage;
+    [SerializedDictionary("Synergy","Synergy Image")]
+    [SerializeField] private SerializedDictionary<SynergyClass, Sprite> synergyImageDict;
+    [SerializedDictionary("Attack Type","Attack Type Image")]
+    [SerializeField] private SerializedDictionary<HeroAttackType, Sprite> attackTypeImageDict;
+    
     private void Awake()
     {
         stringBuilder.Clear();
@@ -97,6 +120,8 @@ public class InGameUIManager : MonoBehaviour
             
             logTextLine.SetText(stringBuilder.ToString());
         }
+
+        clickedCell = null;
     }
 
     private void Start()
@@ -480,5 +505,36 @@ public class InGameUIManager : MonoBehaviour
             }
                 break;
         }
+    }
+
+    public void SetHeroInfoPanelActive(HeroSpawnPointInCell cell, HeroInfoData heroInfoData)
+    {
+        clickedCell = cell;
+
+        if (heroImageDict.TryGetValue(heroInfoData.HeroID, out _))
+            heroImage.sprite = heroImageDict[heroInfoData.HeroID];
+
+        nameText.SetText(heroInfoData.HeroID.ToString());
+        gradeText.SetText(heroInfoData.HeroGrade.ToString());
+        synergyText.SetText(((SynergyClass)heroInfoData.HeroSynergyClass).ToString());
+        attackTypeText.SetText(heroInfoData.AtkType.ToString());
+        attackDamageText.SetText(heroInfoData.AtkDamage.ToString());
+        attackSpeedText.SetText(heroInfoData.AtkSpeed.ToString());
+        criticalRateText.SetText(heroInfoData.CriticalRate.ToString());
+        criticalDamageText.SetText(heroInfoData.CriticalMlt.ToString());
+        
+        if (synergyImageDict.TryGetValue((SynergyClass)heroInfoData.HeroSynergyClass, out _))
+            synergyImage.sprite = synergyImageDict[(SynergyClass)heroInfoData.HeroSynergyClass];
+        
+        if (attackTypeImageDict.TryGetValue(heroInfoData.AtkType, out _))
+            attackTypeImage.sprite = attackTypeImageDict[heroInfoData.AtkType];
+        
+        heroInfoPanel.SetActive(true);
+    }
+
+    public void SetHeroInfoPanelInactive(HeroSpawnPointInCell cell)
+    {
+        if(clickedCell == cell)
+            heroInfoPanel.SetActive(false);
     }
 }
