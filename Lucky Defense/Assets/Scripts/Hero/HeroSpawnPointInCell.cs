@@ -147,6 +147,8 @@ public class HeroSpawnPointInCell : MonoBehaviour
         HideHighlightMoveCell();
         HideHeroSellButton();
         HideHeroFusionButton();
+        if(inGameUIManager is not null)
+            HideCurrHeroInfoPanel();
 
 #if UNITY_STANDALONE || UNITY_EDITOR
 
@@ -176,6 +178,7 @@ public class HeroSpawnPointInCell : MonoBehaviour
         GameObject.FindGameObjectWithTag("InGameResourceManager").TryGetComponent(out inGameResourceManager);
         GameObject.FindGameObjectWithTag("HeroSpawner").TryGetComponent(out heroSpawner);
         GameObject.FindGameObjectWithTag("InGameUIManager").TryGetComponent(out inGameUIManager);
+        HideCurrHeroInfoPanel();
 
         SynergyManager.OnSynergyCalcualted.AddListener(OnSynergyCalcualtedHandler);
         GameObject.FindGameObjectWithTag("SkillManager").TryGetComponent(out skillManager);
@@ -217,25 +220,30 @@ public class HeroSpawnPointInCell : MonoBehaviour
         {
             Touch touch = Input.GetTouch(0);
 
-            if (EventSystem.current.IsPointerOverGameObject(touch.fingerId))
-                return;
-
             Vector2 touchWorldPosition = mainCamera.ScreenToWorldPoint(touch.position);
 
             Collider2D hitCollider = Physics2D.OverlapPoint(touchWorldPosition, cellLayer);
-
             if (touch.phase == TouchPhase.Began)
             {
                 if (hitCollider?.gameObject == gameObject && !Mathf.Approximately(AttackRange, DefaultAttackRange))
                 {
+                    if (EventSystem.current.IsPointerOverGameObject(touch.fingerId))
+                        return;
+                    
                     ShowAttackRangeCircle();
                     ShowHeroSellButton();
+                    ShowCurrHeroInfoPanel();
 
                     if (heroList[0].HeroGrade != HeroGrade.Mythic)
                         ShowHeroFusionButton();
                 }
                 else
                 {
+                    HideCurrHeroInfoPanel();
+                    
+                    if (EventSystem.current.IsPointerOverGameObject(touch.fingerId))
+                        return;
+
                     HideAttackRangeCircle();
                     HideHeroSellButton();
                     HideHeroFusionButton();
@@ -541,6 +549,7 @@ public class HeroSpawnPointInCell : MonoBehaviour
             HideAttackRangeCircle();
             HideHeroSellButton();
             HideHeroFusionButton();
+            HideCurrHeroInfoPanel();
 
             stringBuilder.Clear();
             stringBuilder.Append(00);
@@ -612,6 +621,7 @@ public class HeroSpawnPointInCell : MonoBehaviour
         heroSpawner.SortHeroesInCellDrawOrder();
 
         ShowAttackRangeCircle();
+        ShowCurrHeroInfoPanel();
     }
 
     public void SortHeroesDrawOrder(int drawOrder)
@@ -721,5 +731,15 @@ public class HeroSpawnPointInCell : MonoBehaviour
                 }
             }
         }
+    }
+    
+    private void ShowCurrHeroInfoPanel()
+    {
+        inGameUIManager.SetHeroInfoPanelActive(this, heroList[0].GetCurrHeroInfoData());
+    }
+
+    private void HideCurrHeroInfoPanel()
+    {
+        inGameUIManager.SetHeroInfoPanelInactive(this);
     }
 }

@@ -55,8 +55,10 @@ public class Hero : MonoBehaviour
     
     private int additionalAtkValue;
     private float additionalAtkRate;
-    private int additionalAtkSpeedValue;    
-    private float additionalAtkSpeedRate;    
+    private int additionalAtkSpeedValue;   
+    private float additionalAtkSpeedRate;
+    
+    private HeroInfoData heroInfoData; 
     
     private void Awake()
     {
@@ -79,6 +81,8 @@ public class Hero : MonoBehaviour
         additionalAtkSpeedRate = 0f;
 
         isAttacking = false;
+
+        heroInfoData = new();
     }
     
     private void OnDisable()
@@ -109,7 +113,7 @@ public class Hero : MonoBehaviour
     {
         attackSpeedTimeAccum += Time.deltaTime;
 
-        if (attackSpeedTimeAccum >= Mathf.Max(0.1f, heroData.AtkSpeed - additionalAtkSpeedValue) - (heroData.AtkSpeed * additionalAtkSpeedRate))
+        if (attackSpeedTimeAccum >= Mathf.Max(0.1f, (heroData.AtkSpeed - additionalAtkSpeedValue)  - (heroData.AtkSpeed * additionalAtkSpeedRate)))
         {
             bool canAttack = CheckCanAttack();
 
@@ -425,6 +429,20 @@ public class Hero : MonoBehaviour
             if(isExist)
                 OnAttackToMon -= onAttackToMon;
         }
+    }
+
+    public HeroInfoData GetCurrHeroInfoData()
+    {
+        heroInfoData.HeroID = HeroId;
+        heroInfoData.HeroGrade = HeroGrade;
+        heroInfoData.HeroSynergyClass = SynergyClass1;
+        heroInfoData.AtkType = heroData.AtkType;
+        heroInfoData.AtkDamage = (heroData.HeroDamage + additionalAtkValue) + (int)(heroData.HeroDamage * additionalAtkRate);
+        heroInfoData.AtkSpeed = (heroData.AtkSpeed - additionalAtkSpeedValue)  - (heroData.AtkSpeed * additionalAtkSpeedRate);
+        heroInfoData.CriticalRate = heroData.CriticalPercent;
+        heroInfoData.CriticalMlt = heroData.CriticalMlt;
+        
+        return heroInfoData;
     }
     
 #if UNITY_STANDALONE || UNITY_EDITOR
