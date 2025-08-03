@@ -20,7 +20,7 @@
 ## 🛠️ 주요 구현 요소
 <table>
   <tr>
-    <td align="center"><strong>영웅 선택 및 전투</strong></td>
+    <td align="center"><strong>영웅 소환 및 전투</strong></td>
     <td align="center"><strong>영웅 배치</strong></td>
     <td align="center"><strong>영웅 판매 및 합성</strong></td>
    <td align="center"><strong>판매 후/합성 후</strong></td>
