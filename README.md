@@ -21,13 +21,13 @@
 <table>
   <tr>
     <td align="center"><strong>영웅 선택 및 전투</strong></td>
-    <td align="center"><strong>스킬 선택</strong></td>
-    <td align="center"><strong>보스 전투</strong></td>
+    <td align="center"><strong>영웅 배치</strong></td>
+    <td align="center"><strong>영웅 판매 및 합성</strong></td>
   </tr>
   <tr>
     <td><img src="./Screenshots/영웅 전투.png" width="250"/></td>
-    <td><img src="./Screenshot/스킬선택화면.png" width="250"/></td>
-    <td><img src="./Screenshot/스킬과보스전화면.png" width="250"/></td>
+    <td><img src="./Screenshot/프로젝트 소개 2.png" width="250"/></td>
+    <td><img src="./Screenshot/영웅 합성 전.png" width="250"/></td>
   </tr>
 </table>
 
