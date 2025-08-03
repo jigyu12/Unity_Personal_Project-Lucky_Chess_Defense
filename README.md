@@ -35,23 +35,13 @@
   <tr>
     <td align="center"><strong>소환 확률 강화</strong></td>
     <td align="center"><strong>행운 뽑기</strong></td>
+   <td align="center"><strong>시너지</strong></td>
   </tr>
   <tr>
-    <td><img src="./Screenshots/확률 강화.png" width="260"/>
+    <td><img src="./Screenshots/확률 강화.png" width="260"/></td>
     <td><img src="./Screenshots/행운 뽑기.png" width="250"/></td>
+   <td><img src="./Screenshots/시너지 효과.png" width="250"/></td>
   </tr>
- 
-</table>
-<table>
-  <tr>
-    <td align="center"><strong>로컬라이제이션</strong></td>
-    <td align="center"><strong>애드몹 보상 광고</strong></td>
-  </tr>
-  <tr>
-    <td><img src="./Screenshot/설정화면.png" width="250"/></td>
-    <td><img src="./Screenshot/광고.jpg" width="500"/></td>
-  </tr>
-</table>
 
 - **플레이어 조작** 구현 👉 [PlayerMove.cs](https://github.com/KALI-UM/Unity-AnimalBreakOut/blob/main/Assets/Scripts/Player/PlayerMove.cs)
    
