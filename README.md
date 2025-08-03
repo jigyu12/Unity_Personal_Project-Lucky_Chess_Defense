@@ -38,7 +38,7 @@
    <td align="center"><strong>시너지</strong></td>
   </tr>
   <tr>
-    <td><img src="./Screenshots/확률 강화.png" width="260"/></td>
+    <td><img src="./Screenshots/확률 강화.png" width="250"/></td>
     <td><img src="./Screenshots/행운 뽑기.png" width="250"/></td>
    <td><img src="./Screenshots/시너지 효과.png" width="250"/></td>
   </tr>
