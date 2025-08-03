@@ -29,7 +29,7 @@
     <td><img src="./Screenshots/영웅 전투.png" width="250"/></td>
     <td><img src="./Screenshots/프로젝트 소개 2.png" width="250"/></td>
     <td><img src="./Screenshots/영웅 합성 전.png" width="250"/></td>
-   <td><img src="./Screenshots/영웅 판매.png" width="250"/><img src="./Screenshots/영웅 합성 후 2.png" width="250"/></td>
+   <td><img src="./Screenshots/영웅 판매.png" width="150"/><img src="./Screenshots/영웅 합성 후 2.png" width="150"/></td>
   </tr>
 </table>
 
