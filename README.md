@@ -23,11 +23,13 @@
     <td align="center"><strong>영웅 선택 및 전투</strong></td>
     <td align="center"><strong>영웅 배치</strong></td>
     <td align="center"><strong>영웅 판매 및 합성</strong></td>
+   <td align="center"><strong>판매 후/합성 후</strong></td>
   </tr>
   <tr>
     <td><img src="./Screenshots/영웅 전투.png" width="250"/></td>
     <td><img src="./Screenshots/프로젝트 소개 2.png" width="250"/></td>
     <td><img src="./Screenshots/영웅 합성 전.png" width="250"/></td>
+   <td><img src="./Screenshots/영웅 판매.png" width="250"/><img src="./Screenshots/영웅 합성 후 2.png" width="250"/></td>
   </tr>
 </table>
 
