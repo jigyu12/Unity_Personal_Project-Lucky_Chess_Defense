@@ -4,10 +4,10 @@
  <img src="https://img.shields.io/badge/C%23-80247B?style=flat-square&logo=csharp&logoColor=white"/> <img src="https://img.shields.io/badge/Unity-000000?style=flat-square&logo=unity&logoColor=white"/>
 
 📅 **개발 기간**
- 25.03.20 ~ 25.05.19 (9주)
+ 25.01.21 ~ 25.02.14 (4주)
 
 🧑‍💻 **개발진**
- <img src="https://img.shields.io/badge/김희정, 민지규, 박민재-80247B?style=flat-square&logo=&logoColor=white"/> <img src="https://img.shields.io/badge/강지훈, 김용광, 이충림-005E9D?style=flat-square&logo=&logoColor=white"/> 
+ <img src="https://img.shields.io/badge/민지규-80247B?style=flat-square&logo=&logoColor=white"/> <img src="https://img.shields.io/badge/정희재-005E9D?style=flat-square&logo=&logoColor=white"/> 
 
 👉 [구글 플레이스토어 출시](https://play.google.com/store/apps/details?id=com.Kyungil.AnimalBreakOut&pcampaignid=web_share)
 
