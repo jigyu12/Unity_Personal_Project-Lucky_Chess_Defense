@@ -42,6 +42,7 @@
     <td><img src="./Screenshots/행운 뽑기.png" width="250"/></td>
    <td><img src="./Screenshots/시너지 효과.png" width="250"/></td>
   </tr>
+ </table>
 
 - **플레이어 조작** 구현 👉 [PlayerMove.cs](https://github.com/KALI-UM/Unity-AnimalBreakOut/blob/main/Assets/Scripts/Player/PlayerMove.cs)
    
