@@ -43,19 +43,3 @@
    <td><img src="./Screenshots/시너지 효과.png" width="250"/></td>
   </tr>
  </table>
-
-- **플레이어 조작** 구현 👉 [PlayerMove.cs](https://github.com/KALI-UM/Unity-AnimalBreakOut/blob/main/Assets/Scripts/Player/PlayerMove.cs)
-   
-- **구글 애드몹 연동하여 보상형 광고** 구현
-
-- **어드레서블 에셋 시스템**을 활용하여 캐릭터 리소스 비동기 로드 구현 👉 [PlayerLoadManager.cs](https://github.com/KALI-UM/Unity-AnimalBreakOut/blob/main/Assets/Scripts/Managers/PlayerLoadManager.cs)
-
-- **행동 트리** 구현 👉 [BehaviorTree](https://github.com/KALI-UM/Unity-AnimalBreakOut/tree/main/Assets/Scripts/BehaviourTree)
-  
-- **개발 툴**
-  - 게임 오브젝트를 캡처해 png파일로 생성하는 **아이콘 이미지 캡처 툴** 개발 👉 [GameObjectToTexture.cs](https://github.com/KALI-UM/Unity-AnimalBreakOut/blob/main/Assets/Scripts/IconStudio/GameObjectToTexture.cs#L22)
-  - **유니티 웹리퀘스트**를 활용해 최신 데이터 테이블 파일로 갱신하는 **데이터 테이블 갱신 툴** 구현 👉 [GoogleSheetManager.cs](https://github.com/KALI-UM/Unity-AnimalBreakOut/blob/main/Assets/Scripts/Managers/GoogleSheetManager.cs#L59)
-  - 스테미나, 경험치, 보스 HP 등을 테스트 할 수 있는 **에디터 툴** 개발
-    - 👉 [BossStatusEditor.cs](https://github.com/KALI-UM/Unity-AnimalBreakOut/blob/main/Assets/Editor/BossStatusEditor.cs)
-    - 👉 [GameDataManagerEditor.cs](https://github.com/KALI-UM/Unity-AnimalBreakOut/blob/main/Assets/Editor/GameDataManagerEditor.cs)
-    - 👉 [OutGameUIManagerEditor.cs](https://github.com/KALI-UM/Unity-AnimalBreakOut/blob/main/Assets/Editor/OutGameUIManagerEditor.cs)
