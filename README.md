@@ -26,8 +26,8 @@
   </tr>
   <tr>
     <td><img src="./Screenshots/영웅 전투.png" width="250"/></td>
-    <td><img src="./Screenshot/프로젝트 소개 2.png" width="250"/></td>
-    <td><img src="./Screenshot/영웅 합성 전.png" width="250"/></td>
+    <td><img src="./Screenshots/프로젝트 소개 2.png" width="250"/></td>
+    <td><img src="./Screenshots/영웅 합성 전.png" width="250"/></td>
   </tr>
 </table>
 
