@@ -9,11 +9,11 @@
 🧑‍💻 **개발진**
  <img src="https://img.shields.io/badge/민지규-80247B?style=flat-square&logo=&logoColor=white"/> <img src="https://img.shields.io/badge/정희재-005E9D?style=flat-square&logo=&logoColor=white"/> 
 
-유니티로 제작한 모바일 3D 런 게임 프로젝트입니다.
+유니티로 제작한 모바일 2D 타워디펜스 게임 프로젝트입니다.
 
-> 장애물을 피하고, 코인을 섭취하며 달리세요.  
-> 달리면서 얻은 스킬로 보스를 물리쳐야 합니다.  
-> 캐릭터를 뽑고, 강화할 수 있습니다.
+> 영웅을 소환하고, 몰려오는 몬스터를 물리치세요.
+> 다양한 등급의 영웅을 배치하고, 합성할 수 있습니다.
+> 같은 진영의 영웅들을 조합해 시너지를 획득하세요.
 
 ---
 
