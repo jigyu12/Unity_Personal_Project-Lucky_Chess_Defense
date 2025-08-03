@@ -20,12 +20,12 @@
 ## 🛠️ 주요 구현 요소
 <table>
   <tr>
-    <td align="center"><strong>스와이프로 레인 이동, 점프</strong></td>
+    <td align="center"><strong>영웅 선택 및 전투</strong></td>
     <td align="center"><strong>스킬 선택</strong></td>
     <td align="center"><strong>보스 전투</strong></td>
   </tr>
   <tr>
-    <td><img src="./Screenshot/플레이화면.png" width="250"/></td>
+    <td><img src="./Screenshots/영웅 전투.png" width="250"/></td>
     <td><img src="./Screenshot/스킬선택화면.png" width="250"/></td>
     <td><img src="./Screenshot/스킬과보스전화면.png" width="250"/></td>
   </tr>
