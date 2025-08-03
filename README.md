@@ -33,12 +33,12 @@
 
 <table>
   <tr>
-    <td align="center"><strong>동물 캐릭터 가챠</strong></td>
-    <td align="center"><strong>동물 강화</strong></td>
+    <td align="center"><strong>소환 확률 강화</strong></td>
+    <td align="center"><strong>행운 뽑기</strong></td>
   </tr>
   <tr>
-    <td><img src="./Screenshot/가챠화면.png" width="260"/><img src="./Screenshot/가챠결과.png" width="255"/></td>
-    <td><img src="./Screenshot/동물강화화면.png" width="250"/></td>
+    <td><img src="./Screenshots/확률 강화.png" width="260"/><img src="./Screenshot/가챠결과.png" width="255"/></td>
+    <td><img src="./Screenshots/행운 뽑기.png" width="250"/></td>
   </tr>
  
 </table>
