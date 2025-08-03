@@ -9,8 +9,6 @@
 🧑‍💻 **개발진**
  <img src="https://img.shields.io/badge/민지규-80247B?style=flat-square&logo=&logoColor=white"/> <img src="https://img.shields.io/badge/정희재-005E9D?style=flat-square&logo=&logoColor=white"/> 
 
-👉 [구글 플레이스토어 출시](https://play.google.com/store/apps/details?id=com.Kyungil.AnimalBreakOut&pcampaignid=web_share)
-
 유니티로 제작한 모바일 3D 런 게임 프로젝트입니다.
 
 > 장애물을 피하고, 코인을 섭취하며 달리세요.  
